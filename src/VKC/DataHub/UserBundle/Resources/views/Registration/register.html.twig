@@ -1,0 +1,16 @@
+{% extends 'VKCDataHubUserBundle::layout.html.twig' %}
+
+{% set page_title = 'layout.register' | trans({}, 'FOSUserBundle') %}
+
+{% block content %}
+<form action="{{ path("fos_user_registration_register") }}" {{ form_enctype(form) }} method="POST">
+    {{ form_widget(form) }}
+
+    <div class="clearfix">
+        <input type="submit" id="_submit" name="_submit" class="btn btn-success" value="{{ 'registration.submit' | trans({}, 'FOSUserBundle') }}">
+        <a href="{{ path('vkc_datahub_shared_default_index') }}" class="btn btn-link pull-right">
+            <i class="fa fa-chevron-circle-left"></i> {{ 'Back' | trans }}
+        </a>
+    </div>
+</form>
+{% endblock %}

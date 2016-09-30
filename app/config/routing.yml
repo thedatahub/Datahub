@@ -1,0 +1,40 @@
+vkc_datahub_resource_api:
+    resource: "@VKCDataHubResourceAPIBundle/Resources/config/routing.yml"
+    type:     rest
+    prefix:   /api/resources/
+
+vkc_datahub_oauth:
+    resource: "@VKCDataHubOAuthBundle/Controller/"
+    type:     annotation
+    prefix:   /oauth/
+
+vkc_datahub_users:
+    resource: "@VKCDataHubUserBundle/Controller/"
+    type:     annotation
+    prefix:   /users/
+
+vkc_datahub_shared:
+    resource: "@VKCDataHubSharedBundle/Controller"
+    type:     annotation
+    prefix:   /
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /docs/api
+
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_oauth_server_token:
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"
+
+fos_oauth_server_authorize:
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/authorize.xml"

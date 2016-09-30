@@ -1,0 +1,87 @@
+#!/bin/bash
+
+CONTAINER_NAME_PREFIX='datahub-test'
+MONGODB_CONTAINER="${CONTAINER_NAME_PREFIX}-mongodb"
+TESTING_CONTAINER="${CONTAINER_NAME_PREFIX}-testing"
+SUCCESSFUL=1
+
+print_info () {
+    echo -e "\033[34m$1\033[0m"
+}
+
+print_success () {
+    echo -e "\033[32m$1\033[0m"
+}
+
+print_error () {
+    echo -e "\033[31m$1\033[0m"
+}
+
+log_info () {
+    print_info "[INFO]    $1"
+}
+
+log_success () {
+    print_success "[SUCCESS] $1"
+}
+
+log_error () {
+    print_error "[ERROR]   $1"
+}
+
+check_output () {
+    echo ">> $@"
+    $@
+
+    if [ $? == 0 ]; then
+        echo -n '>> '
+        print_success 'OK'
+    else
+        SUCCESSFUL=0
+        echo -n '>> '
+        print_error 'ERROR'
+    fi
+    echo ''
+}
+
+build_container () {
+    log_info "Building container image '$1' from dockerfile '$2'"
+    check_output docker build -t "$1" -f "$2" './scripts/docker/'
+}
+
+start_container () {
+    log_info "Launching container '$1' [$2]"
+    check_output docker run --name "$1" "$3" "$2" "$4"
+}
+
+stop_container () {
+    log_info "Stopping container '$1'"
+    check_output docker stop "$1"
+
+    log_info "Removing container '$1'"
+    check_output docker rm -v "$1"
+}
+
+# Remove dangling docker volumes
+# docker volume rm $(docker volume ls -qf dangling=true)
+
+start_container "$MONGODB_CONTAINER" 'mongo' '-d'
+
+build_container "$TESTING_CONTAINER" "./scripts/docker/Dockerfile"
+start_container "$TESTING_CONTAINER" \
+                "$TESTING_CONTAINER" \
+                '-t -i
+                 --volume='"${PWD}"':/var/www
+                 --volume='"${PWD}"'/app/config/parameters.yml.test:/var/www/app/config/parameters.yml
+                 --link '"${MONGODB_CONTAINER}"':mongodb' \
+                 './scripts/run_tests'
+
+stop_container "$TESTING_CONTAINER"
+stop_container "$MONGODB_CONTAINER"
+
+if [ "${SUCCESSFUL}" == 1 ]; then
+    log_success 'All tests ran successfully'
+else
+    log_error 'Some errors were encountered'
+    exit 1
+fi

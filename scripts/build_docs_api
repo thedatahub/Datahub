@@ -1,0 +1,20 @@
+#!/bin/bash
+
+DIR='docs/build/api'
+CONFIG_FILE='app/config/parameters.yml'
+CONFIG_COPIED=0
+
+# If we don't have a parameters.yml, copy parameters.yml.dist
+# and delete it afterwards
+if [ ! -f "${CONFIG_FILE}" ]
+then
+    cp ${CONFIG_FILE}.dist ${CONFIG_FILE}
+    CONFIG_COPIED=1
+fi
+
+mkdir -p ${DIR}
+php app/console api:doc:dump --no-sandbox --format=html --env=test > ${DIR}/index.html
+
+if [ ${CONFIG_COPIED} -eq 1 ]; then
+    rm -f ${CONFIG_FILE}
+fi

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Builds documentation for the project.
+# @author Kalman Olah <kalman@inuits.eu>
+
+./scripts/build_docs_sami
+./scripts/build_docs_api

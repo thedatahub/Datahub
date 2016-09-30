@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Builds documentation for the project, using Sami.
+# @see https://github.com/FriendsOfPHP/Sami
+# @author Kalman Olah <kalman@inuits.eu>
+
+DIR='docs'
+php ${DIR}/sami.phar update ${DIR}/sami_config.php

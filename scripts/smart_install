@@ -1,0 +1,11 @@
+#!/bin/bash
+
+DEPLOY_CHECK_FILE="./.fresh_deployed"
+
+if [ -f "$DEPLOY_CHECK_FILE" ]
+then
+    ./scripts/update_install
+else
+    ./scripts/fresh_install
+    touch $DEPLOY_CHECK_FILE
+fi

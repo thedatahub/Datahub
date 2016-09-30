@@ -1,0 +1,7 @@
+services:
+    vkc.datahub.resource_api.form.type.data_form_type:
+        class: VKC\DataHub\ResourceAPIBundle\Form\Type\DataFormType
+        calls:
+            - [setDataConverters, [@vkc.datahub.resource.data_converters]]
+        tags:
+            - { name: form.type }

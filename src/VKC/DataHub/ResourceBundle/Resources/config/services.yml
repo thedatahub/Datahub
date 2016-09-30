@@ -1,0 +1,35 @@
+services:
+    vkc.datahub.resource.catmandu:
+        class: VKC\DataHub\ResourceBundle\Service\CatmanduService
+        calls:
+            - [setCliPath, [%vkc_data_hub_resource.catmandu_cli_path%]]
+
+    vkc.datahub.resource.data:
+        class: VKC\DataHub\ResourceBundle\Service\DataService
+        calls:
+          - [setDocumentManager, [@vkc.datahub.shared.documents]]
+          - [setCollectionName, [%vkc_data_hub_resource.work_data_collection%]]
+
+    vkc.datahub.resource.data_converters:
+        class: VKC\DataHub\ResourceBundle\Service\DataConvertersService
+
+    vkc.datahub.resource.data.converter.abstract_data_converter:
+        class: VKC\DataHub\ResourceBundle\Data\Converter\AbstractDataConverter
+        abstract: true
+        tags:
+            - { name: vkc.datahub.resource.data.converter }
+
+    vkc.datahub.resource.data.converter.abstract_catmandu_data_converter:
+        parent: vkc.datahub.resource.data.converter.abstract_data_converter
+        class: VKC\DataHub\ResourceBundle\Data\Converter\AbstractCatmanduDataConverter
+        abstract: true
+        calls:
+            - [setCatmandu, [@vkc.datahub.resource.catmandu]]
+        tags:
+            - { name: vkc.datahub.resource.data.converter }
+
+    vkc.datahub.resource.data.converter.catmandu_lidoxml_data_converter:
+        parent: vkc.datahub.resource.data.converter.abstract_catmandu_data_converter
+        class: VKC\DataHub\ResourceBundle\Data\Converter\CatmanduLidoXMLDataConverter
+        tags:
+            - { name: vkc.datahub.resource.data.converter }
