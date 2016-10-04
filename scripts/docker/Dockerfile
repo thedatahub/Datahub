@@ -9,7 +9,7 @@ RUN apt-get install -y \
  curl \
  openjdk-7-jre-headless \
  php5-cli php5-json php5-curl \
- php5-sqlite php5-intl php5-mongo \
+ php5-intl php5-mongo \
  phpunit
 
 RUN echo 'date.timezone = Europe/Brussels' >> /etc/php5/cli/php.ini
