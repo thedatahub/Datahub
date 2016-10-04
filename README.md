@@ -13,6 +13,16 @@ You'll need composer first.
 ./scripts/update_install
 ```
 
+## Initial app setup & first user
+
+Run the following commands:
+
+```
+app/console app:setup
+
+app/console doctrine:mongodb:fixtures:load --append
+```
+
 ## Documentation
 
 The REST API generates documentation available at `/docs/api`.
