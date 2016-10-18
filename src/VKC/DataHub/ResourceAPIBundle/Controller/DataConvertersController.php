@@ -24,28 +24,28 @@ use VKC\DataHub\ResourceAPIBundle\Form\Type\DataFormType;
 class DataConvertersController extends Controller
 {
     /**
-    * List data converters.
-    *
-    * @ApiDoc(
-    *     section = "Resources",
-    *     resource = true,
-    *     statusCodes = {
-    *       200 = "Returned when successful"
-    *     }
-    * )
-    *
-    * @Annotations\Get("/data/converters")
-    *
-    * @Annotations\View(
-    *     serializerGroups={"list"},
-    *     serializerEnableMaxDepthChecks=true
-    * )
-    *
-    * @param ParamFetcherInterface $paramFetcher param fetcher service
-    * @param Request $request the request object
-    *
-    * @return array<mixed>
-    */
+     * List data converters.
+     *
+     * @ApiDoc(
+     *     section = "Resources",
+     *     resource = true,
+     *     statusCodes = {
+     *       200 = "Returned when successful"
+     *     }
+     * )
+     *
+     * @Annotations\Get("/data/converters")
+     *
+     * @Annotations\View(
+     *     serializerGroups={"list"},
+     *     serializerEnableMaxDepthChecks=true
+     * )
+     *
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     * @param Request $request the request object
+     *
+     * @return array<mixed>
+     */
     public function cgetDataConvertersAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
         $dataConverters = $this->get('vkc.datahub.resource.data_converters');

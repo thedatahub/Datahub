@@ -8,7 +8,7 @@ class DataConvertersControllerTest extends OAuthTestCase
 {
     public function testDataConvertersCrudAction()
     {
-        list($crawler, $response, $data) = $this->apiRequest('GET', '/resources/data/converters');
+        list($crawler, $response, $data) = $this->apiRequest('GET', '/v1/data/converters');
         $this->assertTrue($response->isSuccessful());
         $this->assertCRUDListContent($data);
     }

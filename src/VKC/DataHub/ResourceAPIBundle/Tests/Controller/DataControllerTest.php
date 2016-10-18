@@ -15,7 +15,7 @@ class DataControllerTest extends OAuthTestCase
             ],
         ];
 
-        list($crawler, $response, $data) = $this->apiRequest('GET', '/resources/data/converters');
+        list($crawler, $response, $data) = $this->apiRequest('GET', '/v1/data/converters');
         $this->assertTrue($response->isSuccessful());
         $this->assertCRUDListContent($data);
         $dataConverterIds = $data['results'];
@@ -26,7 +26,7 @@ class DataControllerTest extends OAuthTestCase
             }
 
             foreach ($testDataList[$dataConverterId] as $testData) {
-                list($crawler, $response, $data) = $this->apiRequest('POST', '/resources/data', [
+                list($crawler, $response, $data) = $this->apiRequest('POST', '/v1/data', [
                     'format' => $dataConverterId,
                     'data'   => $testData,
                 ]);
@@ -34,20 +34,20 @@ class DataControllerTest extends OAuthTestCase
                 $this->assertArrayHasKey('_id', $data);
                 $dataId = $data['_id'];
 
-                list($crawler, $response, $data) = $this->apiRequest('GET', '/resources/data');
+                list($crawler, $response, $data) = $this->apiRequest('GET', '/v1/data');
                 $this->assertTrue($response->isSuccessful());
                 $this->assertCRUDListContent($data);
                 $this->assertGreaterThan(0, $data['count']);
 
-                list($crawler, $response, $data) = $this->apiRequest('GET', "/resources/data/{$dataId}");
+                list($crawler, $response, $data) = $this->apiRequest('GET', "/v1/data/{$dataId}");
                 $this->assertTrue($response->isSuccessful());
                 $this->assertArrayHasKey('_id', $data);
                 $this->assertEquals($data['_id'], $dataId);
 
-                list($crawler, $response, $data) = $this->apiRequest('DELETE', "/resources/data/{$dataId}");
+                list($crawler, $response, $data) = $this->apiRequest('DELETE', "/v1/data/{$dataId}");
                 $this->assertTrue($response->isSuccessful());
 
-                list($crawler, $response, $data) = $this->apiRequest('GET', "/resources/data/{$dataId}");
+                list($crawler, $response, $data) = $this->apiRequest('GET', "/v1/data/{$dataId}");
                 $this->assertFalse($response->isSuccessful());
             }
         }

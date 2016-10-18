@@ -24,32 +24,32 @@ use VKC\DataHub\ResourceAPIBundle\Form\Type\DataFormType;
 class DataController extends Controller
 {
     /**
-    * List data.
-    *
-    * @ApiDoc(
-    *     section = "Resources",
-    *     resource = true,
-    *     statusCodes = {
-    *       200 = "Returned when successful"
-    *     }
-    * )
-    *
-    * @Annotations\Get("/data")
-    *
-    * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing entries.")
-    * @Annotations\QueryParam(name="limit", requirements="\d{1,2}", default="5", description="How many entries to return.")
-    * @Annotations\QueryParam(name="sort", requirements="[a-zA-Z\.]+,(asc|desc|ASC|DESC)", nullable=true, description="Sorting field and direction.")
-    *
-    * @Annotations\View(
-    *     serializerGroups={"list"},
-    *     serializerEnableMaxDepthChecks=true
-    * )
-    *
-    * @param ParamFetcherInterface $paramFetcher param fetcher service
-    * @param Request $request the request object
-    *
-    * @return array<mixed>
-    */
+     * List data.
+     *
+     * @ApiDoc(
+     *     section = "DataHub",
+     *     resource = true,
+     *     statusCodes = {
+     *       200 = "Returned when successful"
+     *     }
+     * )
+     *
+     * @Annotations\Get("/data")
+     *
+     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing entries.")
+     * @Annotations\QueryParam(name="limit", requirements="\d{1,2}", default="5", description="How many entries to return.")
+     * @Annotations\QueryParam(name="sort", requirements="[a-zA-Z\.]+,(asc|desc|ASC|DESC)", nullable=true, description="Sorting field and direction.")
+     *
+     * @Annotations\View(
+     *     serializerGroups={"list"},
+     *     serializerEnableMaxDepthChecks=true
+     * )
+     *
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     * @param Request $request the request object
+     *
+     * @return array<mixed>
+     */
     public function cgetDatasAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
         $offset = intval($paramFetcher->get('offset'));
@@ -64,32 +64,32 @@ class DataController extends Controller
     }
 
     /**
-    * Get a single data.
-    *
-    * @ApiDoc(
-    *     section = "Resources",
-    *     resource = true,
-    *     statusCodes = {
-    *         200 = "Returned when successful",
-    *         404 = "Returned if the resource was not found"
-    *     }
-    * )
-    *
-    * @Annotations\Get("/data/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
-    *
-    * @Annotations\View(
-    *     serializerGroups={"single"},
-    *     serializerEnableMaxDepthChecks=true
-    * )
-    *
-    * @param ParamFetcherInterface $paramFetcher param fetcher service
-    * @param Request $request the request object
-    * @param integer $id ID of entry to return
-    *
-    * @return mixed
-    *
-    * @throws NotFoundHttpException if the resource was not found
-    */
+     * Get a single data.
+     *
+     * @ApiDoc(
+     *     section = "DataHub",
+     *     resource = true,
+     *     statusCodes = {
+     *         200 = "Returned when successful",
+     *         404 = "Returned if the resource was not found"
+     *     }
+     * )
+     *
+     * @Annotations\Get("/data/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
+     *
+     * @Annotations\View(
+     *     serializerGroups={"single"},
+     *     serializerEnableMaxDepthChecks=true
+     * )
+     *
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     * @param Request $request the request object
+     * @param string $id Data ID of entry to return
+     *
+     * @return mixed
+     *
+     * @throws NotFoundHttpException if the resource was not found
+     */
     public function getDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
@@ -105,29 +105,29 @@ class DataController extends Controller
     }
 
     /**
-    * Create a data.
-    *
-    * @ApiDoc(
-    *     section = "Resources",
-    *     resource = true,
-    *     input = "VKC\DataHub\ResourceAPIBundle\Form\Type\DataFormType",
-    *     statusCodes = {
-    *         201 = "Returned when successful",
-    *         400 = "Returned if the form could not be validated"
-    *     }
-    * )
-    *
-    * @Annotations\View(
-    *     serializerGroups={"single"},
-    *     serializerEnableMaxDepthChecks=true,
-    *     statusCode=201
-    * )
-    *
-    * @Annotations\Post("/data")
-    *
-    * @param ParamFetcherInterface $paramFetcher param fetcher service
-    * @param Request $request the request object
-    */
+     * Create a data.
+     *
+     * @ApiDoc(
+     *     section = "DataHub",
+     *     resource = true,
+     *     input = "VKC\DataHub\ResourceAPIBundle\Form\Type\DataFormType",
+     *     statusCodes = {
+     *         201 = "Returned when successful",
+     *         400 = "Returned if the form could not be validated"
+     *     }
+     * )
+     *
+     * @Annotations\View(
+     *     serializerGroups={"single"},
+     *     serializerEnableMaxDepthChecks=true,
+     *     statusCode=201
+     * )
+     *
+     * @Annotations\Post("/data")
+     *
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     * @param Request $request the request object
+     */
     public function postDataAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
@@ -162,33 +162,33 @@ class DataController extends Controller
     }
 
     /**
-    * Update a data (replaces the entire resource).
-    *
-    * @ApiDoc(
-    *     section = "Resources",
-    *     resource = true,
-    *     input = "VKC\DataHub\ResourceAPIBundle\Form\Type\DataFormType",
-    *     statusCodes = {
-    *         204 = "Returned when successful",
-    *         400 = "Returned if the form could not be validated",
-    *         404 = "Returned if the resource was not found"
-    *     }
-    * )
-    *
-    * @Annotations\View(
-    *     serializerGroups={"single"},
-    *     serializerEnableMaxDepthChecks=true,
-    *     statusCode=204
-    * )
-    *
-    * @Annotations\Put("/data/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
-    *
-    * @param ParamFetcherInterface $paramFetcher param fetcher service
-    * @param Request $request the request object
-    * @param integer $id ID of entry to update
-    *
-    * @throws NotFoundHttpException if the resource was not found
-    */
+     * Update a data (replaces the entire resource).
+     *
+     * @ApiDoc(
+     *     section = "DataHub",
+     *     resource = true,
+     *     input = "VKC\DataHub\ResourceAPIBundle\Form\Type\DataFormType",
+     *     statusCodes = {
+     *         204 = "Returned when successful",
+     *         400 = "Returned if the form could not be validated",
+     *         404 = "Returned if the resource was not found"
+     *     }
+     * )
+     *
+     * @Annotations\View(
+     *     serializerGroups={"single"},
+     *     serializerEnableMaxDepthChecks=true,
+     *     statusCode=204
+     * )
+     *
+     * @Annotations\Put("/data/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
+     *
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     * @param Request $request the request object
+     * @param integer $id ID of entry to update
+     *
+     * @throws NotFoundHttpException if the resource was not found
+     */
     public function putDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
@@ -228,27 +228,27 @@ class DataController extends Controller
     }
 
     /**
-    * Delete a data.
-    *
-    * @ApiDoc(
-    *     section = "Resources",
-    *     resource = true,
-    *     statusCodes = {
-    *         204 = "Returned when successful",
-    *         404 = "Returned if the resource was not found"
-    *     }
-    * )
-    *
-    * @Annotations\View(statusCode="204")
-    *
-    * @Annotations\Delete("/data/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
-    *
-    * @param ParamFetcherInterface $paramFetcher param fetcher service
-    * @param Request $request the request object
-    * @param integer $id ID of entry to delete
-    *
-    * @throws NotFoundHttpException if the resource was not found
-    */
+     * Delete a data.
+     *
+     * @ApiDoc(
+     *     section = "DataHub",
+     *     resource = true,
+     *     statusCodes = {
+     *         204 = "Returned when successful",
+     *         404 = "Returned if the resource was not found"
+     *     }
+     * )
+     *
+     * @Annotations\View(statusCode="204")
+     *
+     * @Annotations\Delete("/data/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
+     *
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     * @param Request $request the request object
+     * @param integer $id ID of entry to delete
+     *
+     * @throws NotFoundHttpException if the resource was not found
+     */
     public function deleteDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');

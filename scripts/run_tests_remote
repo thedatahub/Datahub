@@ -1,0 +1,14 @@
+#!/bin/bash
+
+BASE_URL=${1:-http://localhost:8000}
+
+TOKEN=`curl -s "$BASE_URL/oauth/v2/token?grant_type=client_credentials&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase" | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["access_token"]'`
+
+echo "Token=$TOKEN"
+
+echo "List data:"
+curl -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data.json"
+
+
+echo ""
+

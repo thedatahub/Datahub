@@ -14,3 +14,9 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+doctrine_mongodb:
+    default_database: %mongodb_database%-test
+
+vkc_data_hub_shared:
+    database_name: %mongodb_database%-test

@@ -31,7 +31,7 @@ class OAuthTestCase extends WebTestCase
 
     /**
      * @var string
-    */
+     */
     protected $refreshToken;
 
     /**

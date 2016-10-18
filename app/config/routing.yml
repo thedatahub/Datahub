@@ -1,7 +1,7 @@
 vkc_datahub_resource_api:
     resource: "@VKCDataHubResourceAPIBundle/Resources/config/routing.yml"
     type:     rest
-    prefix:   /api/resources/
+    prefix:   /api/v1/
 
 vkc_datahub_oauth:
     resource: "@VKCDataHubOAuthBundle/Controller/"

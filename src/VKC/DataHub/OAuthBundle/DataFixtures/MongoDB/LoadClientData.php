@@ -20,8 +20,8 @@ class LoadClientData extends AbstractFixture implements FixtureInterface
     {
         $entity = new Client();
         $entity->setLabel('TestClient');
-        $entity->setAllowedGrantTypes(['authorization_code', 'refresh_token', 'token', 'password']);
-        $entity->setRedirectUris(['http://localhost', 'https://vkcdatahub.loc']);
+        $entity->setAllowedGrantTypes(['client_credentials', 'refresh_token', 'token', 'password']);
+        $entity->setRedirectUris([]);
         $entity->setRandomId(static::DEFAULT_CLIENT_PUBLIC_ID);
         $entity->setSecret(static::DEFAULT_CLIENT_SECRET_ID);
 

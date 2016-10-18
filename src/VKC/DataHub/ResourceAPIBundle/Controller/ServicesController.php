@@ -25,32 +25,32 @@ use VKC\DataHub\ResourceAPIBundle\Form\Type\DataVisualizeServiceFormType;
 class ServicesController extends Controller
 {
     /**
-    * Get a resource map.
-    *
-    * @ApiDoc(
-    *     section = "Resources",
-    *     resource = true,
-    *     statusCodes = {
-    *         200 = "Returned when successful",
-    *         404 = "Returned if the resource was not found"
-    *     }
-    * )
-    *
-    * @Annotations\Get("/services/resource_maps/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
-    *
-    * @Annotations\View(
-    *     serializerGroups={"single"},
-    *     serializerEnableMaxDepthChecks=true
-    * )
-    *
-    * @param ParamFetcherInterface $paramFetcher param fetcher service
-    * @param Request $request the request object
-    * @param integer $id ID of entry to return
-    *
-    * @return mixed
-    *
-    * @throws NotFoundHttpException if the resource was not found
-    */
+     * Get a resource map.
+     *
+     * @ApiDoc(
+     *     section = "Resources",
+     *     resource = true,
+     *     statusCodes = {
+     *         200 = "Returned when successful",
+     *         404 = "Returned if the resource was not found"
+     *     }
+     * )
+     *
+     * @Annotations\Get("/services/resource_maps/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
+     *
+     * @Annotations\View(
+     *     serializerGroups={"single"},
+     *     serializerEnableMaxDepthChecks=true
+     * )
+     *
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     * @param Request $request the request object
+     * @param integer $id ID of entry to return
+     *
+     * @return mixed
+     *
+     * @throws NotFoundHttpException if the resource was not found
+     */
     public function getResourceMapServiceAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
         $dataConverters = $this->get('vkc.datahub.resource.data_converters');
@@ -64,33 +64,33 @@ class ServicesController extends Controller
     }
 
     /**
-    * Visualize a piece of data.
-    *
-    * @ApiDoc(
-    *     section = "Resources",
-    *     resource = true,
-    *     statusCodes = {
-    *         200 = "Returned when successful",
-    *         404 = "Returned if the resource was not found",
-    *         400 = "Returned if the form could not be validated"
-    *     }
-    * )
-    *
-    * @Annotations\Get("/services/data_raw/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
-    *
-    * @Annotations\View(
-    *     serializerGroups={"single"},
-    *     serializerEnableMaxDepthChecks=true
-    * )
-    *
-    * @param ParamFetcherInterface $paramFetcher param fetcher service
-    * @param Request $request the request object
-    * @param integer $id ID of entry to return
-    *
-    * @return mixed
-    *
-    * @throws NotFoundHttpException if the resource was not found
-    */
+     * Visualize a piece of data.
+     *
+     * @ApiDoc(
+     *     section = "Resources",
+     *     resource = true,
+     *     statusCodes = {
+     *         200 = "Returned when successful",
+     *         404 = "Returned if the resource was not found",
+     *         400 = "Returned if the form could not be validated"
+     *     }
+     * )
+     *
+     * @Annotations\Get("/services/data_raw/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
+     *
+     * @Annotations\View(
+     *     serializerGroups={"single"},
+     *     serializerEnableMaxDepthChecks=true
+     * )
+     *
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     * @param Request $request the request object
+     * @param integer $id ID of entry to return
+     *
+     * @return mixed
+     *
+     * @throws NotFoundHttpException if the resource was not found
+     */
     public function getRawDataServiceAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');

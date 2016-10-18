@@ -12,7 +12,7 @@
         ]
     },
     "require": {
-        "php": ">=5.3.9",
+        "php": ">=5.6",
         "symfony/symfony": "2.8.*",
         "doctrine/doctrine-bundle": "~1.4",
         "symfony/swiftmailer-bundle": "~2.3",
@@ -36,7 +36,7 @@
         "doctrine/doctrine-migrations-bundle": "*@dev",
         "doctrine/doctrine-fixtures-bundle": "*@dev",
         "friendsofsymfony/user-bundle": "*@dev",
-        "friendsofsymfony/rest-bundle": "*@dev",
+        "friendsofsymfony/rest-bundle": "^2.1",
         "friendsofsymfony/oauth-server-bundle": "*@dev",
         "nelmio/cors-bundle": "*@dev",
         "nelmio/api-doc-bundle": "*@dev",
@@ -68,7 +68,7 @@
     "config": {
         "bin-dir": "bin",
         "platform": {
-            "php": "5.3.9"
+            "php": "5.6"
         }
     },
     "extra": {
