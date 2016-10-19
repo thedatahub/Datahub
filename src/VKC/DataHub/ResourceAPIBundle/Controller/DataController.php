@@ -137,6 +137,10 @@ class DataController extends Controller
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
+     *
+     * @return mixed
+     *
+     * @throws BadRequestHttpException if the request doesn't have all arguments
      */
     public function postDataAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
@@ -198,44 +202,55 @@ class DataController extends Controller
      * @param Request $request the request object
      * @param integer $id ID of entry to update
      *
+     * @return mixed
+     *
      * @throws NotFoundHttpException if the resource was not found
      */
     public function putDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
+        $logger = $this->get('logger');
+        $logger->debug('PUT data');
+
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
         $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
-        $dataConverters = $this->get('vkc.datahub.resource.data_converters');
 
-        $entity = $dataManager->getData($id);
+        $id_path = 'data.administrativeMetadata.recordWrap.recordID._';
+
+        $entity = $dataManager->getData($id_path, $id);
 
         if (!$entity) {
             throw $this->createNotFoundException();
         }
 
-        $form = $this->createForm(DataFormType::class, $entity);
-        $form->submit($request);
+        // if everything is configured correctly there should be a matching converter for the provided content type
+        $converter = $this->get('vkc.datahub.resource.data_converters')->getConverter($request->getContentType());
 
-        if ($form->isValid()) {
-            $rawData = $form->get('data')->getData();
-            $format = $form->get('format')->getData();
-
-            $dataConverter = $dataConverters->getConverter($format);
-
-            try {
-                $data = $dataConverter->toArray($rawData);
-            } catch (\InvalidArgumentException $e) {
-                throw new HttpException(400, $e->getMessage());
-            }
-
-            $entity = $dataManager->updateData($id, [
-                'parsed' => $data,
-                'raw'    => $rawData,
-            ]);
-
-            return $entity;
+        // convert the content
+        try {
+            $data = $converter->toArray($request->getContent());
+        } catch (\InvalidArgumentException $e) {
+            throw new BadRequestHttpException(strtr('Invalid {format}: {error}', [
+                'format' => $request->getContentType(),
+                'error'  => $e->getMessage(),
+            ]));
         }
 
-        return $form;
+        $entity = $dataManager->updateData($id_path, $id, $data, $request->getFormat($request->getContentType()), $request->getContent());
+        $entity['_id'] = (string) $entity['_id'];
+        $pid = $data[0]['administrativeMetadata'][0]['recordWrap']['recordID'][0]['_'];
+
+        $logger->info('Updated data:' . $pid);
+
+        if (!$entity) {
+            throw new HttpException('The record could not be updated.');
+        }
+
+
+        $logger->debug($request->getRequestUri());
+        $logger->debug($request->getUri());
+        $logger->debug($request->getUriForPath('data/' . $pid));
+
+        return new Response('', Response::HTTP_CREATED, ['Location' => $request->getRequestUri() . '/' . $pid]);
     }
 
     /**
@@ -258,6 +273,8 @@ class DataController extends Controller
      * @param Request $request the request object
      * @param integer $id ID of entry to delete
      *
+     * @return mixed
+     *
      * @throws NotFoundHttpException if the resource was not found
      */
     public function deleteDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
@@ -265,16 +282,21 @@ class DataController extends Controller
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
         $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
 
-        $entity = $dataManager->getData($id);
+        $id_path = 'data.administrativeMetadata.recordWrap.recordID._';
+
+        $entity = $dataManager->getData($id_path, $id);
 
         if (!$entity) {
             throw $this->createNotFoundException();
         }
 
-        $result = $dataManager->deleteData($id);
+
+        $result = $dataManager->deleteData($id_path, $id);
 
         if (!$result) {
             throw new HttpException('The record could not be deleted.');
         }
+
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 }
