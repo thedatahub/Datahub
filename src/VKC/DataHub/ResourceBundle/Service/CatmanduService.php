@@ -46,7 +46,7 @@ class CatmanduService
         $cmd = sprintf('%s convert %s to %s', $this->cliPath, $sourceFormat, $targetFormat);
 
         $process = new Process($cmd);
-        $process->setInput($data);
+        $process->setInput(str_replace('[]','{}', $data));
         $process->run();
 
         if (!$process->isSuccessful()) {

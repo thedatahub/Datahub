@@ -108,8 +108,8 @@ class DataController extends Controller
         // if everything is configured correctly there should be a matching converter for the provided content type
         $converter = $this->get('vkc.datahub.resource.data_converters')->getConverter('lidoxml');
 
-        //$data = $converter->fromArray($entity['data']);
-        $data = $entity['raw'];
+        $data = $converter->fromArray($entity['data']);
+        //$data = $entity['raw'];
 
         return new Response($data, Response::HTTP_OK);
     }
