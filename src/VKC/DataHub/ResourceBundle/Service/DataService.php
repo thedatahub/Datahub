@@ -93,18 +93,20 @@ class DataService
     }
 
     /**
-     * Get a specific piece of data.
+     * Get data.
      *
-     * @param  string      $id      Primary identifier (PID) of the data.
-     * @param  string|null $ownerId Owner ID. If left blank, the owner will be
+     * @param  string      $path    Path of the identifier within the data docuement
+     * @param  string      $id      Persistent identifier (PID) of the data.
+     * @param  string      $owner   Optional owner of the data. If left blank, the owner will be
      *                              inferred from the authenticated user/client.
      * @return mixed                [description]
      */
-    public function getData($id, $ownerId = null)
+    public function getData($path, $id, $owner = null)
     {
-        $ownerId = $this->getOwnerId($ownerId);
+        $owner = $this->getOwnerId($owner);
+
         $query = [
-            '_id' => new \MongoId($id),
+            $path => $id
         ];
 
         $entity = $this->documentManager->findOne(
@@ -118,18 +120,23 @@ class DataService
     /**
      * Create data.
      *
-     * @param  mixed       $data    Actual data to use for the operation.
-     * @param  string|null $ownerId Owner ID. If left blank, the owner will be
+     * @param  mixed       $data    Data to create
+     * @param  string      $schema  Schema of the data.
+     * @param  string      $raw     Optional raw data in original format
+     * @param  string      $owner   Optional owner of the data. If ommited or left blank, the owner will be
      *                              inferred from the authenticated user/client.
      * @return mixed                Created data.
      */
-    public function createData($data, $ownerId = null)
+    public function createData($data, $schema, $raw = null, $owner = null)
     {
-        $ownerId = $this->getOwnerID($ownerId);
+        $owner = $this->getOwnerID($owner);
 
         $data = [
-            'ownerId' => $ownerId,
+            'owner'   => $owner,
+            'created' => date('c'),
+            'schema'  => $schema,
             'data'    => $data,
+            'raw'     => $raw,
         ];
 
         $collection = $this->documentManager->getCollection($this->collectionName);
@@ -143,43 +150,48 @@ class DataService
     /**
      * Update data.
      *
-     * @param  string        $id      Primary identifier (PID) of the data.
-     * @param  mixed         $data    Actual data to use for the operation.
-     * @param  string|null   $ownerId Owner ID. If left blank, the owner will be
-     *                                inferred from the authenticated user/client.
-     * @return mixed                  Updated data.
+     * @param  string      $id      Persistent identifier (PID) of the data.
+     * @param  mixed       $data    Actual data to use for the operation.
+     * @param  string      $schema  Schema of the data.
+     * @param  string      $owner   Optional owner of the data. If left blank, the owner will be
+     *                              inferred from the authenticated user/client.
+     * @return mixed                Updated data.
      */
-    public function updateData($id, $data, $ownerId = null)
+    public function updateData($id, $data, $schema, $owner = null)
     {
-        $ownerId = $this->getOwnerID($ownerId);
+        $owner = $this->getOwnerID($owner);
         $query = [
             '_id'     => new \MongoId($id),
-            'ownerId' => $ownerId,
+            'owner'   => $ownerId,
         ];
 
-        $changeset = ['data' => $data];
+        $changeset = [
+            'modified' => date('c'),
+            'schema'   => $schema,
+            'data'     => $data,
+        ];
 
         $collection = $this->documentManager->getCollection($this->collectionName);
         $collection->update($query, $changeset);
 
-        return $this->getData($id, $ownerId);
+        return $this->getData($id, $owner);
     }
 
     /**
      * Delete data.
      *
      * @param  string      $id      Primary identifier (PID) of the data.
-     * @param  string|null $ownerId Owner ID. If left blank, the owner will be
+     * @param  string      $owner   Optional owner of the data. If left blank, the owner will be
      *                              inferred from the authenticated user/client.
      * @return boolean              Boolean indicating whether or not the operation
      *                              succeeded.
      */
-    public function deleteData($id, $ownerId = null)
+    public function deleteData($id, $owner = null)
     {
-        $ownerId = $this->getOwnerID($ownerId);
+        $owner = $this->getOwnerID($owner);
         $query = [
             '_id'     => new \MongoId($id),
-            'ownerId' => $ownerId,
+            'owner'   => $owner,
         ];
 
         $collection = $this->documentManager->getCollection($this->collectionName);

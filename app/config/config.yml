@@ -31,6 +31,9 @@ framework:
         handler_id:  session.handler.mongo
     fragments:       ~
     http_method_override: true
+    request:
+        formats:
+            lidoxml: "application/lidoxml"
 
 # Twig Configuration
 twig:
@@ -85,7 +88,9 @@ nelmio_api_doc:
 
 fos_rest:
     param_fetcher_listener: true
-    body_listener: true
+    body_listener:
+        decoders:
+            lidoxml: vkc.datahub.resource_api.decoder.lidoxml
     format_listener: true
     view:
         view_response_listener: true

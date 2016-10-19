@@ -11,6 +11,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use VKC\DataHub\ResourceAPIBundle\Form\Type\DataFormType;
@@ -92,16 +93,25 @@ class DataController extends Controller
      */
     public function getDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
+        $logger = $this->get('logger');
+        $logger->info('GET data: ' . $id);
+
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
         $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
 
-        $entity = $dataManager->getData($id);
+        $entity = $dataManager->getData('data.administrativeMetadata.recordWrap.recordID._', $id);
 
         if (!$entity) {
             throw $this->createNotFoundException();
         }
 
-        return $entity;
+        // if everything is configured correctly there should be a matching converter for the provided content type
+        $converter = $this->get('vkc.datahub.resource.data_converters')->getConverter('lidoxml');
+
+        //$data = $converter->fromArray($entity['data']);
+        $data = $entity['raw'];
+
+        return new Response($data, Response::HTTP_OK);
     }
 
     /**
@@ -130,35 +140,36 @@ class DataController extends Controller
      */
     public function postDataAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
+        $logger = $this->get('logger');
+        $logger->debug('POST data');
+
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
         $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
-        $dataConverters = $this->get('vkc.datahub.resource.data_converters');
 
-        $form = $this->createForm(DataFormType::class);
-        $form->submit($request);
+        // if everything is configured correctly there should be a matching converter for the provided content type
+        $converter = $this->get('vkc.datahub.resource.data_converters')->getConverter($request->getContentType());
 
-        if ($form->isValid()) {
-            $rawData = $form->get('data')->getData();
-            $format = $form->get('format')->getData();
-
-            $dataConverter = $dataConverters->getConverter($format);
-
-            try {
-                $data = $dataConverter->toArray($rawData);
-            } catch (\InvalidArgumentException $e) {
-                throw new HttpException(400, $e->getMessage());
-            }
-
-            $entity = $dataManager->createData([
-                'parsed' => $data,
-                'raw'    => $rawData,
-            ]);
-            $entity['_id'] = (string) $entity['_id'];
-
-            return $entity;
+        // convert the content
+        try {
+            $data = $converter->toArray($request->getContent());
+        } catch (\InvalidArgumentException $e) {
+            throw new BadRequestHttpException(strtr('Invalid {format}: {error}', [
+                'format' => $request->getContentType(),
+                'error'  => $e->getMessage(),
+            ]));
         }
 
-        return $form;
+        $entity = $dataManager->createData($data, $request->getFormat($request->getContentType()), $request->getContent());
+        $entity['_id'] = (string) $entity['_id'];
+        $pid = $data[0]['administrativeMetadata'][0]['recordWrap']['recordID'][0]['_'];
+
+        $logger->info('Created data:' . $pid);
+
+        $logger->debug($request->getRequestUri());
+        $logger->debug($request->getUri());
+        $logger->debug($request->getUriForPath('data/' . $pid));
+
+        return new Response('', Response::HTTP_CREATED, ['Location' => $request->getRequestUri() . '/' . $pid]);
     }
 
     /**

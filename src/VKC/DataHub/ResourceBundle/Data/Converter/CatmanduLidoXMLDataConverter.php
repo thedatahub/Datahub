@@ -13,7 +13,7 @@ use VKC\DataHub\ResourceBundle\Service\CatmanduService;
  */
 class CatmanduLidoXMLDataConverter extends AbstractCatmanduDataConverter
 {
-    const CONVERTOR_ID = 'LIDOXML';
+    const CONVERTOR_ID = 'lidoxml';
     /**
      * {@inheritDoc}
      */

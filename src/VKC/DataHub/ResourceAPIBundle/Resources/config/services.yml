@@ -5,3 +5,5 @@ services:
             - [setDataConverters, [@vkc.datahub.resource.data_converters]]
         tags:
             - { name: form.type }
+    vkc.datahub.resource_api.decoder.lidoxml:
+        class: VKC\DataHub\ResourceAPIBundle\Decoder\LidoXmlDecoder

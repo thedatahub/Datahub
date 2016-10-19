@@ -9,7 +9,7 @@ class DataControllerTest extends OAuthTestCase
     public function testDataCrudAction()
     {
         $testDataList = [
-            'CatmanduLidoXML' => [
+            'LIDOXML' => [
                 file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml'),
                 file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj20344012-Fontana_del_Moro.xml'),
             ],

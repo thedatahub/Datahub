@@ -2,13 +2,20 @@
 
 BASE_URL=${1:-http://localhost:8000}
 
+LIDOFILE=`dirname $0`/../src/VKC/DataHub/ResourceAPIBundle/Tests/Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml
+
 TOKEN=`curl -s "$BASE_URL/oauth/v2/token?grant_type=client_credentials&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase" | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["access_token"]'`
 
 echo "Token=$TOKEN"
 
-echo "List data:"
-curl -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data.json"
+#echo "List data:"
+#curl -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data.json"
 
+echo "POST data:"
+curl -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/lidoxml" -X "POST" --data @$LIDOFILE "$BASE_URL/api/v1/data"
+
+echo "GET data:"
+curl -i -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data/00154983"
 
 echo ""
 
