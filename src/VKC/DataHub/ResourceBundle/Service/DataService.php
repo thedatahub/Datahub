@@ -95,18 +95,18 @@ class DataService
     /**
      * Get data.
      *
-     * @param  string      $path    Path of the identifier within the data document
+     * @param  string      $id_path    Path of the identifier within the data document
      * @param  string      $id      Persistent identifier (PID) of the data.
      * @param  string      $ownerId   Optional owner of the data. If left blank, the owner will be
      *                              inferred from the authenticated user/client.
      * @return mixed                [description]
      */
-    public function getData($path, $id, $ownerId = null)
+    public function getData($id_path, $id, $ownerId = null)
     {
         $ownerId = $this->getOwnerId($ownerId);
 
         $query = [
-            $path => $id
+            $id_path => $id
         ];
 
         $entity = $this->documentManager->findOne(
@@ -150,19 +150,21 @@ class DataService
     /**
      * Update data.
      *
-     * @param  string      $path    Path of the identifier within the data document
+     * @param  string      $id_path    Path of the identifier within the data document
      * @param  string      $id      Persistent identifier (PID) of the data.
      * @param  mixed       $data    Actual data to use for the operation.
      * @param  string      $schema  Schema of the data.
+     *
+     * @param  string      $raw     Optional raw data in original format
      * @param  string      $ownerId   Optional owner of the data. If left blank, the owner will be
      *                              inferred from the authenticated user/client.
      * @return mixed                Updated data.
      */
-    public function updateData($path, $id, $data, $schema, $ownerId = null)
+    public function updateData($id_path, $id, $data, $schema, $raw = null, $ownerId = null)
     {
         $ownerId = $this->getOwnerID($ownerId);
         $query = [
-            $path     => $id,
+            $id_path     => $id,
             'owner'   => $ownerId,
         ];
 
@@ -170,29 +172,30 @@ class DataService
             'modified' => date('c'),
             'schema'   => $schema,
             'data'     => $data,
+            'raw'      => $raw,
         ];
 
         $collection = $this->documentManager->getCollection($this->collectionName);
         $collection->update($query, $changeset);
 
-        return $this->getData($path, $id, $ownerId);
+        return $this->getData($id_path, $id, $ownerId);
     }
 
     /**
      * Delete data.
      *
-     * @param  string      $path    Path of the identifier within the data document
+     * @param  string      $id_path    Path of the identifier within the data document
      * @param  string      $id      Primary identifier (PID) of the data.
      * @param  string      $ownerId   Optional owner of the data. If left blank, the owner will be
      *                              inferred from the authenticated user/client.
      * @return boolean              Boolean indicating whether or not the operation
      *                              succeeded.
      */
-    public function deleteData($path, $id, $ownerId = null)
+    public function deleteData($id_path, $id, $ownerId = null)
     {
         $ownerId = $this->getOwnerID($ownerId);
         $query = [
-            $path     => $id,
+            $id_path     => $id,
             'owner'   => $ownerId,
         ];
 
