@@ -7,3 +7,12 @@ services:
             - { name: form.type }
     vkc.datahub.resource_api.decoder.lidoxml:
         class: VKC\DataHub\ResourceAPIBundle\Decoder\LidoXmlDecoder
+
+    # This part makes .lidoxml output possible in rest service
+    vkc.datahub.resource_api.view_handler.lidoxml:
+        class: VKC\DataHub\ResourceAPIBundle\View\LidoXMLViewHandler
+
+    vkc.datahub.resource_api.view_handler:
+        parent: fos_rest.view_handler.default
+        calls:
+            - ['registerHandler', ['lidoxml', [@vkc.datahub.resource_api.view_handler.lidoxml, 'createResponse'] ] ]

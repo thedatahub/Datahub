@@ -54,7 +54,7 @@ swiftmailer:
 fos_user:
     db_driver: mongodb # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
-    user_class: VKC\DataHub\UserBundle\Document\User
+    user_class: "VKC\\DataHub\\UserBundle\\Document\\User"
     registration:
         confirmation:
             enabled:    true
@@ -69,10 +69,10 @@ braincrafted_bootstrap:
 
 fos_oauth_server:
     db_driver: mongodb       # Driver availables: orm, mongodb, or propel
-    client_class:        VKC\DataHub\OAuthBundle\Document\Client
-    access_token_class:  VKC\DataHub\OAuthBundle\Document\AccessToken
-    refresh_token_class: VKC\DataHub\OAuthBundle\Document\RefreshToken
-    auth_code_class:     VKC\DataHub\OAuthBundle\Document\AuthCode
+    client_class:        "VKC\\DataHub\\OAuthBundle\\Document\Client"
+    access_token_class:  "VKC\\DataHub\\OAuthBundle\\Document\AccessToken"
+    refresh_token_class: "VKC\\DataHub\\OAuthBundle\\Document\RefreshToken"
+    auth_code_class:     "VKC\\DataHub\\OAuthBundle\\Document\AuthCode"
     service:
         user_provider: fos_user.user_manager
         options:
@@ -89,10 +89,32 @@ nelmio_api_doc:
 fos_rest:
     param_fetcher_listener: true
     body_listener:
+        enabled: true
+        throw_exception_on_unsupported_content_type: true
         decoders:
             lidoxml: vkc.datahub.resource_api.decoder.lidoxml
-    format_listener: true
+    format_listener:
+        rules:
+            -
+                path: '^.*\.lidoxml$'
+                host: ~
+                prefer_extension: true
+                fallback_format: lidoxml
+                priorities: [lidoxml, json]
+            -
+                path: ~
+                host: ~
+                prefer_extension: true
+                fallback_format: json
+                priorities: [json]
     view:
+        formats:
+            json: true
+            xml: true
+            lidoxml: true
+        mime_types:
+            formats:
+                lidoxml: ['application/lidoxml']
         view_response_listener: true
     exception:
         enabled: true
@@ -101,8 +123,13 @@ fos_rest:
     access_denied_listener:
         # all requests using the 'json' format will return a 403 on an access denied violation
         json: true
+        xml: true
+        lidoxml: true
     routing_loader:
         default_format: json
+
+    service:
+        view_handler: vkc.datahub.resource_api.view_handler
 
 nelmio_cors:
     defaults:
