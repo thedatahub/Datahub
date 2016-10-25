@@ -1,24 +1,43 @@
 #!/bin/bash
 
-BASE_URL=${1:-http://localhost:8000}
+BASE_URL=http://192.168.33.10:8000
 
 LIDOFILE=`dirname $0`/../src/VKC/DataHub/ResourceAPIBundle/Tests/Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml
 
-TOKEN=`curl -s "$BASE_URL/oauth/v2/token?grant_type=client_credentials&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase" | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["access_token"]'`
+TOKEN=`curl -s "$BASE_URL/oauth/v2/token?grant_type=password&username=admin&password=vkcdatahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase" | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["access_token"]'`
 
 echo "Token=$TOKEN"
 
 echo ""
+echo ""
 echo "List data:"
-curl -s -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data.json"
+curl -s -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data.json" | head -c 500
 
+echo ""
 echo ""
 echo "POST data:"
-curl -s -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/lidoxml" -X "POST" --data @$LIDOFILE "$BASE_URL/api/v1/data?foo=bar"
+curl -s -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/lidoxml" -X "POST" --data @$LIDOFILE "$BASE_URL/api/v1/data?foo=bar" | head -c 500
 
 echo ""
-echo "GET data:"
-curl -s -i -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data/DE-Mb112%2Flido-obj00154983"
+echo ""
+echo "GET all data:"
+curl -s -i -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data" | head -c 500
 
+echo ""
+echo ""
+echo "GET single data:"
+curl -s -i -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data/DE-Mb112%2Flido-obj00154983" | head -c 500
+
+echo ""
+echo ""
+echo "DELETE data:"
+curl -s -i -H "Authorization: Bearer $TOKEN" -X "DELETE" "$BASE_URL/api/v1/data/DE-Mb112%2Flido-obj00154983" | head -c 500
+
+echo ""
+echo ""
+echo "GET no data:"
+curl -s -i -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data/DE-Mb112%2Flido-obj00154983" | head -c 500
+
+echo ""
 echo ""
 

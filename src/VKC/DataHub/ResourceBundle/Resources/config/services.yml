@@ -10,6 +10,7 @@ services:
         calls:
           - [setDocumentManager, ["@vkc.datahub.shared.documents"]]
           - [setCollectionName, [%vkc_data_hub_resource.work_data_collection%]]
+          - [setAnonymousUser, [%public_api_user_id%]]
 
     vkc.datahub.resource.data_converters:
         class: VKC\DataHub\ResourceBundle\Service\DataConvertersService

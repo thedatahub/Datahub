@@ -32,3 +32,11 @@ parameters:
 
     # Enforced transport channel
     security_requires_channel: http
+
+    # Setting this to some unknown value like [FOO] disables public api access
+    # Leaving this option empty [] means allowing all methods for anonymous access
+    #public_api_method_access: [FOO]
+    public_api_method_access: [GET]
+
+    # Set to null to disable it
+    public_api_user_id: Anonymous

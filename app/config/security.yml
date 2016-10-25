@@ -52,4 +52,5 @@ security:
         # - { path: ^/api_docs.html$, role:ROLE_SUPER_ADMIN, requires_channel: %security_requires_channel% }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
+        - { path: ^/api, methods: %public_api_method_access%, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
         - { path: ^/, role: IS_AUTHENTICATED_REMEMBERED, requires_channel: %security_requires_channel% }

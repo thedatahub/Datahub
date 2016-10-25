@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use VKC\DataHub\ResourceAPIBundle\Form\Type\DataFormType;
 
 /**
@@ -62,7 +63,15 @@ class DataController extends Controller
 
         // prepare data manager
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
-        $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
+        $dataManager = $this->get('vkc.datahub.resource.data');
+
+        try {
+            if ($oauthUtils->getClient() !== null)
+                $dataManager->setOwnerId($oauthUtils->getClient()->getId());
+        } catch (\Exception $e) {
+            // TODO:
+            // pass
+        }
 
         // get data
         $data = $dataManager->cgetData($offset, $limit);
@@ -104,7 +113,15 @@ class DataController extends Controller
 
         // prepare data manager
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
-        $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
+        $dataManager = $this->get('vkc.datahub.resource.data');
+
+        try {
+            if ($oauthUtils->getClient() !== null)
+                $dataManager->setOwnerId($oauthUtils->getClient()->getId());
+        } catch (\Exception $e) {
+            // TODO:
+            // pass
+        }
 
         // get data
         $data = $dataManager->getData($id);
@@ -139,10 +156,8 @@ class DataController extends Controller
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
-     *
      * @return mixed
-     *
-     * @throws BadRequestHttpException if the request doesn't have all arguments
+     * @throws \Exception
      */
     public function postDataAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
@@ -151,7 +166,15 @@ class DataController extends Controller
 
         // prepare data manager
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
-        $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
+        $dataManager = $this->get('vkc.datahub.resource.data');
+
+        try {
+            if ($oauthUtils->getClient() !== null)
+                $dataManager->setOwnerId($oauthUtils->getClient()->getId());
+        } catch (\Exception $e) {
+            // TODO:
+            // pass
+        }
 
         // get decoded data
         $data = $request->request->all();
@@ -228,10 +251,21 @@ class DataController extends Controller
 
         // prepare data manager
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
-        $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
+        $dataManager = $this->get('vkc.datahub.resource.data');
+
+        try {
+            if ($oauthUtils->getClient() !== null)
+                $dataManager->setOwnerId($oauthUtils->getClient()->getId());
+        } catch (\Exception $e) {
+            // TODO:
+            // pass
+        }
 
         // get decoded data
         $data = $request->request->all();
+
+        // if everything is configured correctly there should be a matching converter for the provided content type
+        $converter = $this->get('vkc.datahub.resource.data_converters')->getConverter($request->getContentType());
 
         // store each record separately
         if (count($converter->getRecords($data)) > 1) {
@@ -240,14 +274,9 @@ class DataController extends Controller
 
         $record = array_shift($converter->getRecords());
 
-        $entity = $dataManager->getData($id);
-
         if (!$dataManager->getData($id)) {
             throw $this->createNotFoundException();
         }
-
-        // if everything is configured correctly there should be a matching converter for the provided content type
-        $converter = $this->get('vkc.datahub.resource.data_converters')->getConverter($request->getContentType());
 
         $result = $dataManager->updateData(
             $id,
@@ -294,7 +323,15 @@ class DataController extends Controller
     public function deleteDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
-        $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
+        $dataManager = $this->get('vkc.datahub.resource.data');
+
+        try {
+            if ($oauthUtils->getClient() !== null)
+                $dataManager->setOwnerId($oauthUtils->getClient()->getId());
+        } catch (\Exception $e) {
+            // TODO:
+            // pass
+        }
 
         $data = $dataManager->getData($id);
 
@@ -302,7 +339,7 @@ class DataController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $result = $dataManager->deleteData($id_path, $id);
+        $result = $dataManager->deleteData($id);
 
         if (!$result) {
             throw new HttpException('Unable to delete the requested data');

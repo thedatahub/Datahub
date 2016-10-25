@@ -32,13 +32,18 @@ class DataService
     protected $ownerId = null;
 
     /**
+     * @var string
+     */
+    protected $anonymousUser = null;
+
+    /**
      * Constructor
      *
      * @param Monolog\Logger   $logger
      * @param DocumentsService $documentManager
      * @param string           $collectionName
      */
-    public function __construct($logger, $documentManager = null, $collectioName = null)
+    public function __construct($logger, $documentManager = null, $collectionName = null)
     {
         $this->setLogger($logger);
 
@@ -83,6 +88,19 @@ class DataService
     public function setCollectionName($collectionName)
     {
         $this->collectionName = $collectionName;
+
+        return $this;
+    }
+
+    /**
+     * Set anonymousUser.
+     *
+     * @param string $user
+     * @return DataService
+     */
+    public function setAnonymousUser($user)
+    {
+        $this->anonymousUser = $user;
 
         return $this;
     }
@@ -235,7 +253,11 @@ class DataService
             'owner'     => $ownerId,
         ];
 
-        return $this->documentManager->remove($query);
+        $collection = $this->documentManager->getCollection($this->collectionName);
+        $result = $collection->remove($query);
+        return $result;
+//        return $this->documentManager->remove($query);
+//        return $this->documentManager->remove($this->collectionName, $query);
     }
 
     /**
@@ -256,7 +278,10 @@ class DataService
         }
 
         if (!$ownerId) {
-            throw new \InvalidArgumentException('The `ownerId` value was not able to be determined');
+            if ($this->anonymousUser !== null) {
+                $ownerId = $this->anonymousUser;
+            } else
+                throw new \InvalidArgumentException('The `ownerId` value was not able to be determined');
         }
 
         return $ownerId;
