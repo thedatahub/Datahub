@@ -47,7 +47,7 @@ abstract class AbstractCatmanduDataConverter extends AbstractDataConverter
     /**
      * {@inheritDoc}
      */
-    public function fromArray($data)
+    public function fromArray(array $data)
     {
         if (!is_string($data)) {
             $data = json_encode($data);

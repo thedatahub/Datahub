@@ -102,11 +102,23 @@ fos_rest:
                 fallback_format: lidoxml
                 priorities: [lidoxml, json]
             -
-                path: ~
+                path: '^/api'
                 host: ~
                 prefer_extension: true
                 fallback_format: json
                 priorities: [json]
+            -
+                path: '^/oauth'
+                host: ~
+                prefer_extension: true
+                fallback_format: json
+                priorities: [json]
+            -
+                path: ~
+                host: ~
+                prefer_extension: true
+                fallback_format: html
+                priorities: [html]
     view:
         formats:
             json: true
@@ -127,7 +139,6 @@ fos_rest:
         lidoxml: true
     routing_loader:
         default_format: json
-
     service:
         view_handler: vkc.datahub.resource_api.view_handler
 

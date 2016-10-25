@@ -1,10 +1,11 @@
 <?php
-
 namespace VKC\DataHub\ResourceAPIBundle\Decoder;
 
+use FOS\RestBundle\Decoder\DecoderInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-use FOS\RestBundle\Decoder\DecoderInterface;
+use VKC\DataHub\ResourceBundle\Service\DataConvertersService;
+use VKC\DataHub\ResourceBundle\Data\Converter\DataConverterInterface;
 
 /**
  * Decodes LIDOXML data.
@@ -14,15 +15,54 @@ use FOS\RestBundle\Decoder\DecoderInterface;
  */
 class LidoXmlDecoder implements DecoderInterface
 {
+    /**
+     * @var Monolog\Logger
+     */
+    private $logger;
+
+    /**
+     * @var DataConverterInterface
+     */
     private $converter;
 
-    public function __construct()
+    /**
+     * Constructor
+     *
+     * @param Monolog\Logger $logger
+     * @param DataConvertersService $converters
+     */
+    public function __construct($logger, $converters)
     {
-        $dataConverters = $this->get('vkc.datahub.resource.data_converters');
-        $this->converter = $dataConverters->getConverter('LIDOXML');
+        $this->setLogger($logger);
+        $this->setDataConverters($converters);
 
-        $output = new ConsoleOutput();
-        $output->writeln('Construct LidoXmlDecoder');
+        $this->logger->debug('Initialized LidoXmlDecoder');
+    }
+
+    /**
+     * Set logger service.
+     *
+     * @param  Monolog\Logger $logger
+     * @return LidoXmlDecoder
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * Set dataConverters service.
+     *
+     * @param DataConvertersService $dataConverters
+     * @return LidoXmlDecoder
+     */
+    public function setDataConverters(DataConvertersService $dataConverters)
+    {
+        $this->converter = $dataConverters->getConverter('lidoxml');
+
+        return $this;
     }
 
     /**
@@ -30,8 +70,10 @@ class LidoXmlDecoder implements DecoderInterface
      */
     public function decode($data)
     {
+        $this->logger->debug('Decode LidoXml encoded data');
+
         try {
-            return $dataConverter->toArray($data);
+            return $this->converter->toArray($data);
         } catch (\InvalidArgumentException $e) {
             throw new BadRequestHttpException('Invalid LIDOXML: ' . $e->getMessage());
         }

@@ -17,6 +17,11 @@ class DocumentsService
     const OPTION_DEFAULTS = 5;
 
     /**
+     * @var Monolog\Logger
+     */
+    protected $logger;
+
+    /**
      * @var Connection
      */
     protected $connection;
@@ -25,6 +30,34 @@ class DocumentsService
      * @var string
      */
     protected $databaseName;
+
+    /**
+     * Constructor
+     *
+     * @param Monolog\Logger $logger
+     * @param Connection     $connection
+     */
+    public function __construct($logger, $connection = null, $databaseName = null)
+    {
+        $this->setLogger($logger);
+        if (isset($connection)) $this->setConnection($connection);
+        if (isset($databaseName)) $this->setDatabaseName($databaseName);
+
+        $this->logger->debug('Initialized DocumentsService');
+    }
+
+    /**
+     * Set logger service.
+     *
+     * @param  Monolog\Logger $logger
+     * @return DocumentsService
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
+
+        return $this;
+    }
 
     /**
      * Set connection
@@ -70,6 +103,11 @@ class DocumentsService
      */
     public function getCollection($collectionName)
     {
+        $this->logger->debug(strtr('Get collection {collection} from database {database}', [
+            '{collection}' => $collectionName,
+            '{database}'   => $this->databaseName,
+        ]));
+
         return $this->getConnection()->selectCollection($this->databaseName, $collectionName);
     }
 
@@ -120,6 +158,9 @@ class DocumentsService
         if (!$this->isAssociativeArray($fields)) {
             $fields = array_fill_keys($fields, true);
         }
+
+        // Convert certain values into objects
+        $this->convertValues($query);
 
         $data = $collection
             ->find(
@@ -186,10 +227,74 @@ class DocumentsService
         $options = $options & ~static::OPTION_COUNT_RESULTS;
         $options = $options & ~static::OPTION_KEEP_ITERATOR;
 
+        // Convert certain values into objects
+        $this->convertValues($query);
+
         $result = $this->find($collectionName, $query, $fields, null, null, 1, $options);
         $result = count($result) ? $result[0] : null;
 
         return $result;
+    }
+
+    /**
+     * Insert data into collection
+     *
+     * @param  string $collectionName Name of the collection
+     * @param  array  $data           Data array
+     *
+     * @return mixed                  Id of the inserted data if available, otherwise true upon success
+     */
+    public function insert($collectionName, $data)
+    {
+        $this->logger->debug('Insert data into ' . $collectionName);
+
+        // Convert certain values into objects
+        $this->convertValues($data);
+
+        // Convert ISO8601 dates into MongoDate
+        // TODO: recursively loop over all array values, converting ISO8601 to MongoDate
+
+        $result = $this->getCollection($collectionName)->insert($data);
+
+        return (is_array($result) && isset($result['upserted']))? $result['upserted'] : true;
+    }
+
+    /**
+     * Update data in collection
+     *
+     * @param  string $collectionName Name of the collection
+     * @param  array  $query          Query array
+     * @param  array  $changeset      Array with changes
+     *
+     * @return boolean                True upon success
+     */
+    public function update($collectionName, $query, $changeset)
+    {
+        // Convert certain values into objects
+        $this->convertValues($query);
+        $this->convertValues($changeset);
+
+        $result = $this->getCollection($this->collectionName)->update($query, $changeset);
+
+        return (is_array($result) && isset($result['upserted']))? $result['upserted'] : true;
+    }
+
+    /**
+     * Remove data from collection
+     *
+     * @param  string $collectionName Name of the collection
+     * @param  array  $query          Query array
+     *
+     * @return boolean                True upon success
+     */
+    public function remove($collectionName, $query)
+    {
+        // Convert certain values into objects
+        $this->convertValues($query);
+
+        $result = $this->getCollection($this->collectionName)->remove($query);
+
+        return $result['n'] > 0;
     }
 
     /**
@@ -212,5 +317,24 @@ class DocumentsService
     protected function isAssociativeArray($array)
     {
         return (is_array($array) && 0 !== count(array_diff_key($array, array_keys(array_keys($array)))));
+    }
+
+    /**
+     * Convert certain values into objects
+     *
+     * @param mixed $data
+     */
+    protected function convertValues(&$data)
+    {
+        if (is_array($data)) {
+            foreach (array_keys($data) as $key) {
+                if (isset($data[$key])) {
+                    $this->convertValues($data[$key]);
+                }
+            }
+        }
+        else {
+            // TODO: Convert ISO8601 dates into MongoDate
+        }
     }
 }

@@ -6,8 +6,9 @@ services:
 
     vkc.datahub.resource.data:
         class: VKC\DataHub\ResourceBundle\Service\DataService
+        arguments: ['@logger']
         calls:
-          - [setDocumentManager, [@vkc.datahub.shared.documents]]
+          - [setDocumentManager, ["@vkc.datahub.shared.documents"]]
           - [setCollectionName, [%vkc_data_hub_resource.work_data_collection%]]
 
     vkc.datahub.resource.data_converters:
@@ -24,7 +25,7 @@ services:
         class: VKC\DataHub\ResourceBundle\Data\Converter\AbstractCatmanduDataConverter
         abstract: true
         calls:
-            - [setCatmandu, [@vkc.datahub.resource.catmandu]]
+            - [setCatmandu, ["@vkc.datahub.resource.catmandu"]]
         tags:
             - { name: vkc.datahub.resource.data.converter }
 

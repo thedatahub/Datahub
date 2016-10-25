@@ -12,6 +12,11 @@ use VKC\DataHub\SharedBundle\Service\DocumentsService;
 class DataService
 {
     /**
+     * @var Monolog\Logger
+     */
+    protected $logger;
+
+    /**
      * @var DocumentsService
      */
     protected $documentManager;
@@ -25,6 +30,36 @@ class DataService
      * @var string
      */
     protected $ownerId = null;
+
+    /**
+     * Constructor
+     *
+     * @param Monolog\Logger   $logger
+     * @param DocumentsService $documentManager
+     * @param string           $collectionName
+     */
+    public function __construct($logger, $documentManager = null, $collectioName = null)
+    {
+        $this->setLogger($logger);
+
+        if (isset($documentManager)) $this->setDocumentManager($documentManager);
+        if (isset($collectioName))$this->setCollectionName($collectionName);
+
+        $this->logger->debug('Initialized DataService');
+    }
+
+    /**
+     * Set logger service.
+     *
+     * @param  Monolog\Logger $logger
+     * @return LidoXmlDecoder
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
+
+        return $this;
+    }
 
     /**
      * Set documentManager.
@@ -95,18 +130,17 @@ class DataService
     /**
      * Get data.
      *
-     * @param  string      $id_path    Path of the identifier within the data document
      * @param  string      $id      Persistent identifier (PID) of the data.
-     * @param  string      $ownerId   Optional owner of the data. If left blank, the owner will be
+     * @param  string      $ownerId Optional owner of the data. If left blank, the owner will be
      *                              inferred from the authenticated user/client.
      * @return mixed                [description]
      */
-    public function getData($id_path, $id, $ownerId = null)
+    public function getData($id, $ownerId = null)
     {
         $ownerId = $this->getOwnerId($ownerId);
 
         $query = [
-            $id_path => $id
+            'data_pids' => $id
         ];
 
         $entity = $this->documentManager->findOne(
@@ -120,89 +154,88 @@ class DataService
     /**
      * Create data.
      *
-     * @param  mixed       $data    Data to create
-     * @param  string      $schema  Schema of the data.
-     * @param  string      $raw     Optional raw data in original format
-     * @param  string      $ownerId   Optional owner of the data. If ommited or left blank, the owner will be
-     *                              inferred from the authenticated user/client.
-     * @return mixed                Created data.
+     * @param  array       $dataPids   Array of Data PID's
+     * @param  array       $objectPids Array of Object PID's
+     * @param  string      $schema     Schema of the data.
+     * @param  mixed       $data       Data to create
+     * @param  string      $raw        Optional raw data in original format
+     * @param  string      $ownerId    Optional owner of the data. If ommited or left blank, the owner will be
+     *                                 inferred from the authenticated user/client.
+     * @return mixed                   Id of the created data if available, other true upon success
      */
-    public function createData($data, $schema, $raw = null, $ownerId = null)
+    public function createData($dataPids, $objectPids, $schema, $data, $raw = null, $ownerId = null)
     {
         $ownerId = $this->getOwnerID($ownerId);
 
         $data = [
-            'owner'   => $ownerId,
-            'created' => date('c'),
-            'schema'  => $schema,
-            'data'    => $data,
-            'raw'     => $raw,
+            'owner'       => $ownerId,
+            'created'     => date('c'),
+            'schema'      => $schema,
+            'data_pids'   => $dataPids,
+            'object_pids' => $objectPids,
+            'data'        => $data,
+            'raw'         => $raw,
         ];
 
-        $collection = $this->documentManager->getCollection($this->collectionName);
-        $collection->insert($data);
-
-        $entity = $data;
-
-        return $data;
+        return $this->documentManager->insert($this->collectionName, $data);
     }
 
     /**
      * Update data.
      *
-     * @param  string      $id_path    Path of the identifier within the data document
-     * @param  string      $id      Persistent identifier (PID) of the data.
-     * @param  mixed       $data    Actual data to use for the operation.
-     * @param  string      $schema  Schema of the data.
-     *
-     * @param  string      $raw     Optional raw data in original format
-     * @param  string      $ownerId   Optional owner of the data. If left blank, the owner will be
-     *                              inferred from the authenticated user/client.
-     * @return mixed                Updated data.
+     * @param  string      $id         Persistent identifier (PID) of the data to be updated
+     * @param  array       $dataPids   Array of Data PID's
+     * @param  array       $objectPids Array of Object PID's
+     * @param  string      $schema     Schema of the data.
+     * @param  mixed       $data       Actual data to use for the operation.
+     * @param  string      $raw        Optional raw data in original format
+     * @param  string      $ownerId    Optional owner of the data. If left blank, the owner will be
+     *                                 inferred from the authenticated user/client.
+     * @return mixed                   Updated data.
      */
-    public function updateData($id_path, $id, $data, $schema, $raw = null, $ownerId = null)
+    public function updateData($id, $dataPids, $objectPids, $schema, $data, $raw = null, $ownerId = null)
     {
         $ownerId = $this->getOwnerID($ownerId);
+
         $query = [
-            $id_path     => $id,
-            'owner'   => $ownerId,
+            'data_pids' => $id,
+            'owner'     => $ownerId,
         ];
 
         $changeset = [
-            'modified' => date('c'),
-            'schema'   => $schema,
-            'data'     => $data,
-            'raw'      => $raw,
+            '$set' => [
+                'modified'    => date('c'),
+                'schema'      => $schema,
+                'data_pids'   => $dataPids,
+                'object_pids' => $objectPids,
+                'data'        => $data,
+                'raw'         => $raw,
+            ],
         ];
 
-        $collection = $this->documentManager->getCollection($this->collectionName);
-        $collection->update($query, $changeset);
+        $this->documentManager->update($this->collectionName, $query, $changeset);
 
-        return $this->getData($id_path, $id, $ownerId);
+        return $this->getData($id, $ownerId);
     }
 
     /**
      * Delete data.
      *
-     * @param  string      $id_path    Path of the identifier within the data document
      * @param  string      $id      Primary identifier (PID) of the data.
-     * @param  string      $ownerId   Optional owner of the data. If left blank, the owner will be
+     * @param  string      $ownerId Optional owner of the data. If left blank, the owner will be
      *                              inferred from the authenticated user/client.
-     * @return boolean              Boolean indicating whether or not the operation
-     *                              succeeded.
+     *
+     * @return boolean              Boolean indicating whether or not the operation succeeded.
      */
-    public function deleteData($id_path, $id, $ownerId = null)
+    public function deleteData($id, $ownerId = null)
     {
         $ownerId = $this->getOwnerID($ownerId);
         $query = [
-            $id_path     => $id,
-            'owner'   => $ownerId,
+            'data_pids' => $id,
+            'owner'     => $ownerId,
         ];
 
-        $collection = $this->documentManager->getCollection($this->collectionName);
-        $result = $collection->remove($query);
-
-        return $result['n'] > 0;
+        return $this->documentManager->remove($query);
     }
 
     /**

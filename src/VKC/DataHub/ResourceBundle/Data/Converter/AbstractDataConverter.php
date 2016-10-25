@@ -46,7 +46,7 @@ abstract class AbstractDataConverter implements DataConverterInterface
      * @param  array $data
      * @return mixed
      */
-    abstract public function fromArray($data);
+    abstract public function fromArray(array $data);
 
     /**
      * Convert raw data to a PHP array.
@@ -55,4 +55,28 @@ abstract class AbstractDataConverter implements DataConverterInterface
      * @return array|null
      */
     abstract public function toArray($rawData);
+
+    /**
+     * Get different records in the data structure
+     *
+     * @param array $data       Decoded array of data.
+     * @param array             Array with different data records.
+     */
+    abstract public function getRecords(array $data);
+
+    /**
+     * Get array of data pids (persistent identifiers) for a single data record
+     *
+     * @param array $dataRecord Decoded array of a single data record.
+     * @param array             Array with identifiers.
+     */
+    abstract public function getRecordDataPids(array $dataRecord);
+
+    /**
+     * Get array of object pids (persistent identifiers) for a single data record
+     *
+     * @param array $dataRecord Decoded array of a single data record.
+     * @param array             Array with identifiers.
+     */
+    abstract public function getRecordObjectPids(array $dataRecord);
 }

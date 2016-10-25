@@ -1,16 +1,21 @@
 services:
+    # Following forn type is deprecatd and can be removed
     vkc.datahub.resource_api.form.type.data_form_type:
         class: VKC\DataHub\ResourceAPIBundle\Form\Type\DataFormType
         calls:
-            - [setDataConverters, [@vkc.datahub.resource.data_converters]]
+            - [setDataConverters, ["@vkc.datahub.resource.data_converters"]]
         tags:
             - { name: form.type }
+
+    # Following defines the lidoxml decoder service
     vkc.datahub.resource_api.decoder.lidoxml:
         class: VKC\DataHub\ResourceAPIBundle\Decoder\LidoXmlDecoder
+        arguments: ['@logger', '@vkc.datahub.resource.data_converters']
 
-    # This part makes .lidoxml output possible in rest service
+    # Following part registers lidoxml serialization
     vkc.datahub.resource_api.view_handler.lidoxml:
-        class: VKC\DataHub\ResourceAPIBundle\View\LidoXMLViewHandler
+        class: VKC\DataHub\ResourceAPIBundle\View\LidoXmlViewHandler
+        arguments: ['@logger', '@vkc.datahub.resource.data_converters']
 
     vkc.datahub.resource_api.view_handler:
         parent: fos_rest.view_handler.default

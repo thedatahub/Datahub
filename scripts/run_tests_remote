@@ -8,14 +8,17 @@ TOKEN=`curl -s "$BASE_URL/oauth/v2/token?grant_type=client_credentials&client_id
 
 echo "Token=$TOKEN"
 
-#echo "List data:"
-#curl -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data.json"
+echo ""
+echo "List data:"
+curl -s -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data.json"
 
+echo ""
 echo "POST data:"
-curl -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/lidoxml" -X "POST" --data @$LIDOFILE "$BASE_URL/api/v1/data"
+curl -s -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/lidoxml" -X "POST" --data @$LIDOFILE "$BASE_URL/api/v1/data?foo=bar"
 
+echo ""
 echo "GET data:"
-curl -i -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data/00154983"
+curl -s -i -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data/DE-Mb112%2Flido-obj00154983"
 
 echo ""
 

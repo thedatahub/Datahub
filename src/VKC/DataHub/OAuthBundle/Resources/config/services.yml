@@ -2,5 +2,5 @@ services:
     vkc.datahub.oauth.oauth:
         class: VKC\DataHub\OAuthBundle\Service\OAuthService
         calls:
-            - [setTokenStorage, [@security.token_storage]]
-            - [setDocumentManager, [@doctrine_mongodb.odm.document_manager]]
+            - [setTokenStorage, ["@security.token_storage"]]
+            - [setDocumentManager, ["@doctrine_mongodb.odm.document_manager"]]

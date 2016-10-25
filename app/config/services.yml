@@ -10,7 +10,7 @@ services:
         class: MongoClient
         arguments: ['%mongodb_server%']
     session.handler.mongo:
-        class: Symfony\Component\HttpFoundation\Session\Storage\Handler\MongoDbSessionHandler
+        class: "Symfony\\Component\\HttpFoundation\Session\\Storage\Handler\\MongoDbSessionHandler"
         arguments: ['@mongo_client', '%mongo.session.options%']
     twig.text_extension:
         class: Twig_Extensions_Extension_Text

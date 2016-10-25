@@ -53,12 +53,18 @@ class DataController extends Controller
      */
     public function cgetDatasAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
+        $logger = $this->get('logger');
+        $logger->info('cGET data');
+
+        // get parameters
         $offset = intval($paramFetcher->get('offset'));
         $limit = intval($paramFetcher->get('limit'));
 
+        // prepare data manager
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
         $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
 
+        // get data
         $data = $dataManager->cgetData($offset, $limit);
 
         return $data;
@@ -76,7 +82,7 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @Annotations\Get("/data/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
+     * @Annotations\Get("/data/{id}", requirements={"id" = ".+"})
      *
      * @Annotations\View(
      *     serializerGroups={"single"},
@@ -96,23 +102,18 @@ class DataController extends Controller
         $logger = $this->get('logger');
         $logger->info('GET data: ' . $id);
 
+        // prepare data manager
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
         $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
 
-        $entity = $dataManager->getData('data.administrativeMetadata.recordWrap.recordID._', $id);
+        // get data
+        $data = $dataManager->getData($id);
 
-        if (!$entity) {
+        if (!$data) {
             throw $this->createNotFoundException();
         }
 
-        // if everything is configured correctly there should be a matching converter for the provided content type
-        //$converter = $this->get('vkc.datahub.resource.data_converters')->getConverter('lidoxml');
-
-        //$data = $converter->fromArray($entity['data']);
-        //$data = $entity['raw'];
-
-        #return new Response($data, Response::HTTP_OK);
-        return $entity;
+        return $data;
     }
 
     /**
@@ -148,33 +149,46 @@ class DataController extends Controller
         $logger = $this->get('logger');
         $logger->debug('POST data');
 
+        // prepare data manager
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
         $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
 
+        // get decoded data
+        $data = $request->request->all();
+
         // if everything is configured correctly there should be a matching converter for the provided content type
+        // otherwise an internal error is thrown which is good in this case
         $converter = $this->get('vkc.datahub.resource.data_converters')->getConverter($request->getContentType());
 
-        // convert the content
-        try {
-            $data = $converter->toArray($request->getContent());
-        } catch (\InvalidArgumentException $e) {
-            throw new BadRequestHttpException(strtr('Invalid {format}: {error}', [
-                'format' => $request->getContentType(),
-                'error'  => $e->getMessage(),
-            ]));
+        // keep the pid that will be return in the location header
+        $pid = null;
+
+        // store each record separately
+        foreach($converter->getRecords($data) as $record) {
+            // get data and object PID's from the data record
+            $data_pids = $converter->getRecordDataPids($record);
+            $object_pids = $converter->getRecordObjectPids($record);
+
+            // validate the data pid naming convention
+            // TODO: validate the data pid naming convention -> <org>:<id> where <org> should match the code related to the OAuth client
+
+            // store the record
+            $logger->info('Create data: ' . $data_pids[0]);
+            try {
+                $result = $dataManager->createData($data_pids, $object_pids, $request->getFormat($request->getContentType()), $record, $request->getContent());
+            }
+            catch (\Exception $e) {
+                // TODO: catch a possible unique constraint violation of the data pids
+                throw $e;
+            }
+
+            // keep the first data pid of the first record to return in the location header afterwards
+            if (!isset($pid)) {
+                $pid = $data_pids[0];
+            }
         }
 
-        $entity = $dataManager->createData($data, $request->getFormat($request->getContentType()), $request->getContent());
-        $entity['_id'] = (string) $entity['_id'];
-        $pid = $data[0]['administrativeMetadata'][0]['recordWrap']['recordID'][0]['_'];
-
-        $logger->info('Created data:' . $pid);
-
-        $logger->debug($request->getRequestUri());
-        $logger->debug($request->getUri());
-        $logger->debug($request->getUriForPath('data/' . $pid));
-
-        return new Response('', Response::HTTP_CREATED, ['Location' => $request->getRequestUri() . '/' . $pid]);
+        return new Response('', Response::HTTP_CREATED, ['Location' => $request->getPathInfo() . '/' . urlencode($pid)]);
     }
 
     /**
@@ -197,7 +211,7 @@ class DataController extends Controller
      *     statusCode=204
      * )
      *
-     * @Annotations\Put("/data/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
+     * @Annotations\Put("/data/{id}", requirements={"id" = ".+"})
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
@@ -210,48 +224,47 @@ class DataController extends Controller
     public function putDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
         $logger = $this->get('logger');
-        $logger->debug('PUT data');
+        $logger->info('PUT data: ' . $id);
 
+        // prepare data manager
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
         $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
 
-        $id_path = 'data.administrativeMetadata.recordWrap.recordID._';
+        // get decoded data
+        $data = $request->request->all();
 
-        $entity = $dataManager->getData($id_path, $id);
+        // store each record separately
+        if (count($converter->getRecords($data)) > 1) {
+            throw new BadRequestHttpException('Only update one record per request');
+        }
 
-        if (!$entity) {
+        $record = array_shift($converter->getRecords());
+
+        $entity = $dataManager->getData($id);
+
+        if (!$dataManager->getData($id)) {
             throw $this->createNotFoundException();
         }
 
         // if everything is configured correctly there should be a matching converter for the provided content type
         $converter = $this->get('vkc.datahub.resource.data_converters')->getConverter($request->getContentType());
 
-        // convert the content
-        try {
-            $data = $converter->toArray($request->getContent());
-        } catch (\InvalidArgumentException $e) {
-            throw new BadRequestHttpException(strtr('Invalid {format}: {error}', [
-                'format' => $request->getContentType(),
-                'error'  => $e->getMessage(),
-            ]));
-        }
+        $result = $dataManager->updateData(
+            $id,
+            $converter->getRecordDataPids($record),
+            $converter->getRecordObjectPids($record),
+            $request->getFormat($request->getContentType()),
+            $record,
+            $request->getContent()
+        );
 
-        $entity = $dataManager->updateData($id_path, $id, $data, $request->getFormat($request->getContentType()), $request->getContent());
-        $entity['_id'] = (string) $entity['_id'];
-        $pid = $data[0]['administrativeMetadata'][0]['recordWrap']['recordID'][0]['_'];
-
-        $logger->info('Updated data:' . $pid);
-
-        if (!$entity) {
+        if (!$result) {
             throw new HttpException('The record could not be updated.');
         }
 
+        $logger->info('Updated data:' . $id);
 
-        $logger->debug($request->getRequestUri());
-        $logger->debug($request->getUri());
-        $logger->debug($request->getUriForPath('data/' . $pid));
-
-        return new Response('', Response::HTTP_CREATED, ['Location' => $request->getRequestUri() . '/' . $pid]);
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -268,7 +281,7 @@ class DataController extends Controller
      *
      * @Annotations\View(statusCode="204")
      *
-     * @Annotations\Delete("/data/{id}", requirements={"id" = "[a-zA-Z0-9-]+"})
+     * @Annotations\Delete("/data/{id}", requirements={"id" = ".+"})
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
@@ -283,19 +296,16 @@ class DataController extends Controller
         $oauthUtils = $this->get('vkc.datahub.oauth.oauth');
         $dataManager = $this->get('vkc.datahub.resource.data')->setOwnerId($oauthUtils->getClient()->getId());
 
-        $id_path = 'data.administrativeMetadata.recordWrap.recordID._';
+        $data = $dataManager->getData($id);
 
-        $entity = $dataManager->getData($id_path, $id);
-
-        if (!$entity) {
+        if (!$data) {
             throw $this->createNotFoundException();
         }
-
 
         $result = $dataManager->deleteData($id_path, $id);
 
         if (!$result) {
-            throw new HttpException('The record could not be deleted.');
+            throw new HttpException('Unable to delete the requested data');
         }
 
         return new Response('', Response::HTTP_NO_CONTENT);
