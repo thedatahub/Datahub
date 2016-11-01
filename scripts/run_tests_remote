@@ -16,7 +16,7 @@ curl -s -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data.json" 
 echo ""
 echo ""
 echo "POST data:"
-curl -s -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/lidoxml" -X "POST" --data @$LIDOFILE "$BASE_URL/api/v1/data?foo=bar" | head -c 500
+curl -s -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/lido+xml" -X "POST" --data @$LIDOFILE "$BASE_URL/api/v1/data?foo=bar" | head -c 500
 
 echo ""
 echo ""

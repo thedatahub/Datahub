@@ -33,7 +33,7 @@ framework:
     http_method_override: true
     request:
         formats:
-            lidoxml: "application/lidoxml"
+            lidoxml: "application/lido+xml"
 
 # Twig Configuration
 twig:
@@ -96,7 +96,7 @@ fos_rest:
     format_listener:
         rules:
             -
-                path: '^.*\.lidoxml$'
+                path: '^.*\.lido+xml$'
                 host: ~
                 prefer_extension: true
                 fallback_format: lidoxml
@@ -126,7 +126,7 @@ fos_rest:
             lidoxml: true
         mime_types:
             formats:
-                lidoxml: ['application/lidoxml']
+                lidoxml: ['application/lido+xml']
         view_response_listener: true
     exception:
         enabled: true
