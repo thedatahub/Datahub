@@ -1,0 +1,183 @@
+{% extends 'DataHubOAuthBundle:Default:layout.html.twig' %}
+
+{% set page_title = 'Tokens' | trans %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <i class="fa fa-cloud fa-fw"></i>
+                    {{ 'Connected applications' | trans }}
+                </h3>
+            </div>
+            <table class="table table-condensed table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>{{ 'Application' | trans }}</th>
+                        <th>{{ 'User' | trans }}</th>
+                        <th>{{ 'Actions' | trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                        <tr>
+                            <td>{{ client }}</td>
+                            <td>{{ client.getGuessedUser() | default('None' | trans) }}</td>
+                            <td>
+                                <a class="btn btn-xs btn-danger pull-right" href="{{ path('datahub_oauth_tokens_revoke', { type: 'client', id: client.getId() }) }}">
+                                    <i class="icon fa fa-trash"></i> {{ 'Revoke' | trans }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3">
+                                {{ 'No results found.' | trans }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <i class="fa fa-sign-in fa-fw"></i>
+                    {{ 'Authentication codes' | trans }}
+                </h3>
+            </div>
+            <table class="table table-condensed table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>{{ 'token' | trans | capitalize }}</th>
+                        <th>{{ 'Application' | trans }}</th>
+                        <th>{{ 'User' | trans }}</th>
+                        <th>{{ 'Expires' | trans }}</th>
+                        <th>{{ 'Scope' | trans }}</th>
+                        <th>{{ 'Actions' | trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for token in authCodes %}
+                        <tr>
+                            <td>{{ token.getToken() | truncate(6) }}</td>
+                            <td>{{ token.getClient() }}</td>
+                            <td>{{ token.getUser() }}</td>
+                            <td>{% include 'DataHubSharedBundle:Partials:datetime.relative.html.twig' with {value: token.getExpiresAt()} %}</td>
+                            <td>{{ token.getScope() }}</td>
+                            <td>
+                                <a class="btn btn-xs btn-danger pull-right" href="{{ path('datahub_oauth_tokens_revoke', { type: 'auth_code', id: token.getId() }) }}">
+                                    <i class="icon fa fa-trash"></i> {{ 'Revoke' | trans }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6">
+                                {{ 'No results found.' | trans }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <i class="fa fa-key fa-fw"></i>
+                    {{ 'Access tokens' | trans }}
+                </h3>
+            </div>
+            <table class="table table-condensed table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>{{ 'token' | trans | capitalize }}</th>
+                        <th>{{ 'Application' | trans }}</th>
+                        <th>{{ 'User' | trans }}</th>
+                        <th>{{ 'Expires' | trans }}</th>
+                        <th>{{ 'Scope' | trans }}</th>
+                        <th>{{ 'Actions' | trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for token in accessTokens %}
+                        <tr>
+                            <td>{{ token.getToken() | truncate(6) }}</td>
+                            <td>{{ token.getClient() }}</td>
+                            <td>{{ token.getUser() }}</td>
+                            <td>{% include 'DataHubSharedBundle:Partials:datetime.relative.html.twig' with {value: token.getExpiresAt()} %}</td>
+                            <td>{{ token.getScope() }}</td>
+                            <td>
+                                <a class="btn btn-xs btn-danger pull-right" href="{{ path('datahub_oauth_tokens_revoke', { type: 'access_token', id: token.getId() }) }}">
+                                    <i class="icon fa fa-trash"></i> {{ 'Revoke' | trans }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6">
+                                {{ 'No results found.' | trans }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <i class="fa fa-refresh fa-fw"></i>
+                    {{ 'Refresh tokens' | trans }}
+                </h3>
+            </div>
+            <table class="table table-condensed table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>{{ 'token' | trans | capitalize }}</th>
+                        <th>{{ 'Application' | trans }}</th>
+                        <th>{{ 'User' | trans }}</th>
+                        <th>{{ 'Expires' | trans }}</th>
+                        <th>{{ 'Scope' | trans }}</th>
+                        <th>{{ 'Actions' | trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for token in refreshTokens %}
+                        <tr>
+                            <td>{{ token.getToken() | truncate(6) }}</td>
+                            <td>{{ token.getClient() }}</td>
+                            <td>{{ token.getUser() | trans }}</td>
+                            <td>{% include 'DataHubSharedBundle:Partials:datetime.relative.html.twig' with {value: token.getExpiresAt()} %}</td>
+                            <td>{{ token.getScope() }}</td>
+                            <td>
+                                <a class="btn btn-xs btn-danger pull-right" href="{{ path('datahub_oauth_tokens_revoke', { type: 'refresh_token', id: token.getId() }) }}">
+                                    <i class="icon fa fa-trash"></i> {{ 'Revoke' | trans }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6">
+                                {{ 'No results found.' | trans }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

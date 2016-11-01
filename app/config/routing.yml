@@ -1,20 +1,20 @@
-vkc_datahub_resource_api:
-    resource: "@VKCDataHubResourceAPIBundle/Resources/config/routing.yml"
+datahub_resource_api:
+    resource: "@DataHubResourceAPIBundle/Resources/config/routing.yml"
     type:     rest
     prefix:   /api/v1/
 
-vkc_datahub_oauth:
-    resource: "@VKCDataHubOAuthBundle/Controller/"
+datahub_oauth:
+    resource: "@DataHubOAuthBundle/Controller/"
     type:     annotation
     prefix:   /oauth/
 
-vkc_datahub_users:
-    resource: "@VKCDataHubUserBundle/Controller/"
+datahub_users:
+    resource: "@DataHubUserBundle/Controller/"
     type:     annotation
     prefix:   /users/
 
-vkc_datahub_shared:
-    resource: "@VKCDataHubSharedBundle/Controller"
+datahub_shared:
+    resource: "@DataHubSharedBundle/Controller"
     type:     annotation
     prefix:   /
 

@@ -1,0 +1,6 @@
+services:
+    datahub.oauth.oauth:
+        class: DataHub\OAuthBundle\Service\OAuthService
+        calls:
+            - [setTokenStorage, ["@security.token_storage"]]
+            - [setDocumentManager, ["@doctrine_mongodb.odm.document_manager"]]

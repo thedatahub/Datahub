@@ -18,14 +18,14 @@ parameters:
     trusted_proxies:    []
 
     # Name of the application
-    service_name:       VKC DataHub
+    service_name:       DataHub
 
     # Email address of the application
-    service_address:    noreply@vkcdatahub.inuits.eu
+    service_address:    noreply@datahub.inuits.eu
 
     # MongoDB connection string & database
-    # mongodb_server:     mongodb://127.0.0.1:27017/vkcdatahub
-    mongodb_database:   vkcdatahub
+    # mongodb_server:     mongodb://127.0.0.1:27017/datahub
+    mongodb_database:   datahub
 
     # Catmandu CLI path
     # catmandu_cli_path:  /usr/local/bin/catmandu

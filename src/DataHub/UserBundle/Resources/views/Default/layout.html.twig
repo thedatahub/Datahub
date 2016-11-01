@@ -1,0 +1,24 @@
+{% extends 'DataHubSharedBundle:Default:base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        {{ 'Navigation' | trans }}
+                    </h3>
+                </div>
+                <div class="list-group">
+                    <a href="{{ path('datahub_user_users_index') }}" class="list-group-item">
+                        {{ 'Users' | trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-9">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

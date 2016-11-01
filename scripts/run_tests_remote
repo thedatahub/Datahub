@@ -2,9 +2,9 @@
 
 BASE_URL=http://192.168.33.10:8000
 
-LIDOFILE=`dirname $0`/../src/VKC/DataHub/ResourceAPIBundle/Tests/Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml
+LIDOFILE=`dirname $0`/../src/DataHub/ResourceAPIBundle/Tests/Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml
 
-TOKEN=`curl -s "$BASE_URL/oauth/v2/token?grant_type=password&username=admin&password=vkcdatahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase" | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["access_token"]'`
+TOKEN=`curl -s "$BASE_URL/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase" | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["access_token"]'`
 
 echo "Token=$TOKEN"
 

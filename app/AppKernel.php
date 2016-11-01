@@ -31,11 +31,11 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle(),
 
             // Own bundles
-            new VKC\DataHub\SharedBundle\VKCDataHubSharedBundle(),
-            new VKC\DataHub\UserBundle\VKCDataHubUserBundle(),
-            new VKC\DataHub\OAuthBundle\VKCDataHubOAuthBundle(),
-            new VKC\DataHub\ResourceAPIBundle\VKCDataHubResourceAPIBundle(),
-            new VKC\DataHub\ResourceBundle\VKCDataHubResourceBundle(),
+            new DataHub\SharedBundle\DataHubSharedBundle(),
+            new DataHub\UserBundle\DataHubUserBundle(),
+            new DataHub\OAuthBundle\DataHubOAuthBundle(),
+            new DataHub\ResourceAPIBundle\DataHubResourceAPIBundle(),
+            new DataHub\ResourceBundle\DataHubResourceBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

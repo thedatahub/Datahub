@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>{% if page_title is defined %}{{ page_title }} &middot; {% endif%}{% if section_title is defined %}{{ section_title }} &mdash; {% endif %}{{ service_name }}</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+{% block stylesheets %}
+{% stylesheets
+    '@DataHubSharedBundle/Resources/less/layout.less'
+    '%kernel.root_dir%/../vendor/braincrafted/bootstrap-bundle/Braincrafted/Bundle/BootstrapBundle/Resources/less/form.less'
+    'bundles/bmatznerfontawesome/less/font-awesome.less'
+    filter='cssrewrite,lessphp,?yui_css' %}
+    <link href="{{ asset_url }}" rel="stylesheet">
+{% endstylesheets %}
+{% endblock %}
+
+    {% include 'BraincraftedBootstrapBundle::ie8-support.html.twig' %}
+</head>
+<body>
+    {% if is_granted('ROLE_USER') and not (disable_nav | default(false)) %}
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">{{ 'Toggle navigation' | trans }}</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ path('datahub_shared_default_index') }}">
+                        {{ service_name }}
+                    </a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li>
+                                <a href="{{ path('datahub_oauth_default_index') }}">
+                                    {{ 'OAuth' | trans }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li>
+                                <a href="{{ path('datahub_user_default_index') }}">
+                                    {{ 'Users' | trans }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a href="{{ path('nelmio_api_doc_index') }}">
+                                {{ 'API' | trans }}
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="{{ path('fos_user_security_logout') }}">
+                                {{ 'Logout' | trans }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    {% endif %}
+
+    <div class="container-fluid">
+        {% include 'BraincraftedBootstrapBundle::flash.html.twig' with { 'close': true } %}
+
+        {% block body %}{% endblock %}
+    </div>
+<script>
+    app = {
+        base_path: '{{ app.request.getBaseURL() }}/',
+        asset_path: '{{ asset('') }}',
+    };
+</script>
+{% block javascripts %}
+{% javascripts
+    '%kernel.root_dir%/../vendor/components/jquery/jquery.min.js'
+    '%kernel.root_dir%/../vendor/twbs/bootstrap/dist/js/bootstrap.min.js'
+    '%kernel.root_dir%/../vendor/braincrafted/bootstrap-bundle/Braincrafted/Bundle/BootstrapBundle/Resources/js/bc-bootstrap-collection.js'
+    '%kernel.root_dir%/../vendor/grimmlink/selectize/dist/js/standalone/selectize.min.js'
+    '%kernel.root_dir%/../vendor/rmm5t/jquery-timeago/jquery.timeago.js'
+    '@DataHubSharedBundle/Resources/js/*.js'
+    filter="?yui_js" %}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+{% endblock %}
+{% block scripts %}{% endblock %}
+</body>
+</html>

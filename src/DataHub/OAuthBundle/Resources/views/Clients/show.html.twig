@@ -1,0 +1,64 @@
+{% extends 'DataHubOAuthBundle:Default:layout.html.twig' %}
+
+{% set page_title = 'Client: %entity%' | trans({ '%entity%': entity }) %}
+
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                {{ 'Client: %entity%' | trans({ '%entity%': entity }) }}
+            </h3>
+        </div>
+        <table class="table table-striped">
+            <tr>
+                <th>{{ 'ID' | trans }}</th>
+                <td>{{ entity.getId() }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'Label' | trans }}</th>
+                <td>{{ entity.getLabel() }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'Client Code' | trans }}</th>
+                <td>{{ entity.getClientCode() }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'Allowed grant types' | trans }}</th>
+                <td>{{ entity.getAllowedGrantTypes() | join('<br>') | raw }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'Redirect URIs' | trans }}</th>
+                <td>{{ entity.getRedirectUris() | join('<br>') | raw }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'Public ID' | trans }}</th>
+                <td>{{ entity.getPublicId() }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'Secret' | trans }}</th>
+                <td>{{ entity.getSecret() }}</td>
+            </tr>
+        </table>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-xs-8">
+                    <div class="btn-group">
+                        <a href="{{ path('datahub_oauth_clients_index') }}" class="btn btn-default">
+                            <i class="fa fa-angle-double-left"></i> {{ 'Back' | trans }}
+                        </a>
+                        <a href="{{ path('datahub_oauth_clients_edit', { id: entity.getId() }) }}" class="btn btn-default">
+                            <i class="fa fa-edit"></i> {{ 'Edit' | trans }}
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xs-4 text-right">
+                    <div class="btn-group">
+                        <a href="{{ path('datahub_oauth_clients_delete', { id: entity.getId() }) }}" class="btn btn-danger" onclick="return confirm('{{ 'Are you sure?' | trans }}')">
+                            <i class="fa fa-trash"></i> {{ 'Delete' | trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

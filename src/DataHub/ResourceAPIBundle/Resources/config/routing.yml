@@ -1,0 +1,11 @@
+data_converters:
+    resource: DataHub\ResourceAPIBundle\Controller\DataConvertersController
+    type:     rest
+
+data:
+    resource: DataHub\ResourceAPIBundle\Controller\DataController
+    type:     rest
+
+services:
+    resource: DataHub\ResourceAPIBundle\Controller\ServicesController
+    type:     rest

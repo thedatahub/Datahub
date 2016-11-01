@@ -1,4 +1,4 @@
-vkc-datahub
+datahub
 ===========
 
 A Symfony project created on September 28, 2016, 8:59 am.
@@ -60,7 +60,7 @@ default.
 ### Getting an access token
 
 ```
-curl 'http://localhost:8000/oauth/v2/token?grant_type=password&username=admin&password=vkcdatahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase'
+curl 'http://localhost:8000/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase'
 ```
 
 Example output:

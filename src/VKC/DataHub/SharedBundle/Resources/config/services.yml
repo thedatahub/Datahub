@@ -1,7 +1,0 @@
-services:
-    vkc.datahub.shared.documents:
-        class: VKC\DataHub\SharedBundle\Service\DocumentsService
-        arguments: ['@logger']
-        calls:
-            - [setConnection, ["@doctrine_mongodb.odm.default_connection"]]
-            - [setDatabaseName, [%vkc_data_hub_shared.database_name%]]

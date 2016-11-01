@@ -1,0 +1,7 @@
+services:
+    datahub.shared.documents:
+        class: DataHub\SharedBundle\Service\DocumentsService
+        arguments: ['@logger']
+        calls:
+            - [setConnection, ["@doctrine_mongodb.odm.default_connection"]]
+            - [setDatabaseName, [%data_hub_shared.database_name%]]
