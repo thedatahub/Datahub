@@ -1,65 +1,79 @@
-datahub
-===========
+# Datahub
 
-A Symfony project created on September 28, 2016, 8:59 am.
+[![Software License][ico-license]](LICENSE)
 
-## Setup
+The Datahub is a metadata aggregator. This applicaiton allows data providers to aggregate and publish metadata describing objects on the web through a RESTful API leveraging standardized exchange formats.
 
-You'll need composer first.
+The Datahub is build with the [Symfony framework](https://symfony.com), [MongoDB](https://www.mongodb.org) and [Catmandu](http://librecat.org/).
 
+## Features
+
+* A RESTful API which supports:
+  * Ingest and retrieval of individual metadata records.
+  * Validation of ingested records through Catmandu.
+  * Supports OAuth to restrict access to the API.
+* An OAI-PMH endpoint for harvesting metadata records.
+* Includes support for [LIDO XML](http://lido-schema.org/) but can be extended to include MARC XML, Dublin Core or other formats.
+
+## Requirements
+
+This project requires following dependencies:
+
+* PHP = 5.6.*
+  * With the php5-cli, php5-intl and php5-mcrypt extensions.
+  * The [PECL Mongo](https://pecl.php.net/package/mongo) extension.
+* MongoDB >= 3.2.10
+* Catmandu >= 1.0304 (Note: this dependency requires Perl)
+
+## Install
+
+Via Git:
+
+``` bash
+$ git clone https://github.com/thedatahub/Datahub.git datahub
+$ cd datahub
+$ composer install # Composer will ask you to fill in any missing parameters before it continues
+$ ./scripts/update_install
 ```
-./composer.phar install
-# Composer will ask you to fill in any missing parameters before it continues
-./scripts/update_install
+
+The configuration parameters will be stored in `app/config/parameters.yml`.  You'll need to run an initiial one-time setup script, which will scaffold the database structure, generate CSS assets and create the 'admin' user.
+Initial setup, which includes creating the 'admin' user:
+
+``` bash
+$ app/console app:setup
+$ app/console doctrine:mongodb:fixtures:load --append
 ```
 
-## Initial app setup & first user
+If you want to run the datahub for testing or development purposes, execute this command:
 
-Run the following commands:
-
-```
-app/console app:setup
-
-app/console doctrine:mongodb:fixtures:load --append
+``` bash
+$ app/console server:run
 ```
 
-## Documentation
+Use a browser and Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000). You should now see the welcome screen.
 
-The REST API generates documentation available at `/docs/api`.
-
-You can build static documentation by executing the following:
-
-```
-./scripts/build_docs
-```
-
-The script above will generate documentation which will be available at
-`./docs/build/api/` and `./docs/build/code/`.
+Refer to the [Symfony setup documentation](https://symfony.com/doc/current/setup/web_server_configuration.html) to complete your installation using a fully featured web server to make your installation operational in a production environment.
 
 ## Usage
 
-These examples assume your instance is running at `http://localhost:8000`.
+### The REST API
 
-### Running the development server
+The REST API is available at `api/v1/data`. Documentation about the available API methods can be found  at `/docs/api`.
 
-```
-app/console server:run
-```
+### OAuth support and security
 
-Example output:
+The datahub API can be set up to be either a public or a private API. The `public_api_method_access` parameter in `parameters.yml` allows you to configure which parts of the API are public or private:
 
-```
- [OK] Server running on http://127.0.0.1:8000
+`````YAML
+    # Setting this to some unknown value like [FOO] disables public api access
+    # Leaving this option empty [] means allowing all methods for anonymous access
+    # public_api_method_access: [FOO]
+    public_api_method_access: [GET]
+`````
 
- // Quit the server with CONTROL-C.
-```
+The datahub requires OAuth authentication to ingest or retrieve metadata records. The administrator has to issue a user account with a client_id and a client_secret to individual Users or client applications. Before clients can access the API, they have to request an access token:
 
-Your development server will be available at `http://localhost:8000` by
-default.
-
-### Getting an access token
-
-```
+```bash
 curl 'http://localhost:8000/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase'
 ```
 
@@ -75,9 +89,7 @@ Example output:
 }
 ```
 
-### Revoking a token
-
-This endpoint can be used to revoke both access and refresh tokens.
+The endpoint can also be used to revoke both access and refresh tokens.
 
 ```
 curl 'http://localhost:8000/oauth/v2/revoke?token=ZDIyMGFiZGZkZWUzY2FjMmY4YzNmYjU0ODZmYmQ2ZGM0NjZiZjBhM2Q0Y2ZjMGNiMjc0ZWIyMmYyODMzMGJjZg'
@@ -92,23 +104,53 @@ Example output:
 }
 ```
 
+## Change log
+
+Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+
 ## Testing
 
-Testing will require a MongoDB instance, as well as Catmandu installed.
-You can either take care of this yourself, or run the tests using the
-provided Docker container.
+Testing will require a MongoDB instance, as well as Catmandu installed. You can either take care of this yourself, or run the tests using the provided Docker container.
 
-Please ensure you've taken care of the initial setup described above before
-attempting to run the tests.
+Please ensure you've taken care of the initial setup described above before attempting to run the tests.
 
-### Running tests
+Running tests:
 
 ```
 ./scripts/run_tests
 ```
 
-### Running tests (Docker)
+Running tests using Docker:
 
 ```
 ./scripts/run_tests_docker
 ```
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Authors
+
+[All Contributors][link-contributors]
+
+## Copyright and license
+
+The Datahub is copyright (c) 2016 by Vlaamse Kunstcollectie vzw and PACKED vzw.
+
+This is free software; you can redistribute it and/or modify it under the terms of the The GPLv3 License (GPL). Please see [License File](LICENSE) for more information.
+
+[ico-version]: https://img.shields.io/packagist/v/:vendor/:package_name.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/:vendor/:package_name/master.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/:vendor/:package_name.svg?style=flat-square
+[ico-code-quality]: https://img.shields.io/scrutinizer/g/:vendor/:package_name.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/:vendor/:package_name.svg?style=flat-square
+
+[link-packagist]: https://packagist.org/packages/:vendor/:package_name
+[link-travis]: https://travis-ci.org/:vendor/:package_name
+[link-scrutinizer]: https://scrutinizer-ci.com/g/:vendor/:package_name/code-structure
+[link-code-quality]: https://scrutinizer-ci.com/g/:vendor/:package_name
+[link-downloads]: https://packagist.org/packages/:vendor/:package_name
+[link-author]: https://github.com/:author_username
+[link-contributors]: ../../contributors
