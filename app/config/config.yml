@@ -77,6 +77,7 @@ fos_oauth_server:
         user_provider: fos_user.user_manager
         options:
             supported_scopes: internal web external
+            access_token_lifetime: %access_token_lifetime%
 
 nelmio_api_doc:
     sandbox:
