@@ -279,7 +279,7 @@ class DataController extends Controller
             throw new BadRequestHttpException('Only update one record per request');
         }
 
-        $record = array_shift($converter->getRecords());
+        $record = array_shift($converter->getRecords($data));
 
         if (!$dataManager->getData($id)) {
             throw $this->createNotFoundException();
