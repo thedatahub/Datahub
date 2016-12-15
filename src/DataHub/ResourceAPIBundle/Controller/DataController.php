@@ -91,7 +91,7 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @Annotations\Get("/data/{id}", requirements={"id" = ".+"})
+     * @Annotations\Get("/data/{id}", requirements={"id" = ".+?"})
      *
      * @Annotations\View(
      *     serializerGroups={"single"},
@@ -241,7 +241,7 @@ class DataController extends Controller
      *     statusCode=204
      * )
      *
-     * @Annotations\Put("/data/{id}", requirements={"id" = ".+"})
+     * @Annotations\Put("/data/{id}", requirements={"id" = ".+?"})
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
@@ -317,7 +317,7 @@ class DataController extends Controller
      *
      * @Annotations\View(statusCode="204")
      *
-     * @Annotations\Delete("/data/{id}", requirements={"id" = ".+"})
+     * @Annotations\Delete("/data/{id}", requirements={"id" = ".+?"})
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object

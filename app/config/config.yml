@@ -97,7 +97,7 @@ fos_rest:
     format_listener:
         rules:
             -
-                path: '^.*\.lido+xml$'
+                path: '^.*?\.lidoxml$'
                 host: ~
                 prefer_extension: true
                 fallback_format: lidoxml
