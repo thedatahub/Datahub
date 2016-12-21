@@ -40,3 +40,6 @@ parameters:
 
     # Set to null to disable it
     public_api_user_id: Anonymous
+
+    # token should remain valid for 4 hours
+    access_token_lifetime: 14400
