@@ -9,6 +9,7 @@ before_install:
   - sudo cpanm YAML --notest
   - sudo cpanm Catmandu --notest
   - yes '' | sudo pecl install -f mongo
+  - echo 'extension = "mongo.so"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 install:
   - composer install
 before_script:
