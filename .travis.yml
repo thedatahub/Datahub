@@ -4,7 +4,14 @@ php:
 services: mongodb
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y php5-cli php5-intl php5-mcrypt
+  - sudo apt-get install -y php5-cli php5-intl php5-mcrypt cpanminus
 install:
-  - pecl install mongo
+  - cpanm install catmandu --notest
+  - yes '' | pecl install -f mongo
   - composer install
+before_script:
+  - ./scripts/update_install
+  - app/console app:setup
+  - app/console doctrine:mongodb:fixtures:load --append
+script:
+  - ./scripts/run_tests
