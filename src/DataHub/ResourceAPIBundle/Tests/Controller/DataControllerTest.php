@@ -26,27 +26,31 @@ class DataControllerTest extends OAuthTestCase
             }
 
             foreach ($testDataList[$dataConverterId] as $testData) {
-                list($crawler, $response, $data) = $this->apiRequest('POST', '/v1/data', [
-                    'format' => $dataConverterId,
-                    'data'   => $testData,
-                ]);
+                // Insert a document
+                list($crawler, $response, $data) = $this->apiRequest('POST', '/v1/data', array(), array(), array(), array(), ['CONTENT_TYPE' => 'application/lido+xml'], $testData);
                 $this->assertTrue($response->isSuccessful());
-                $this->assertArrayHasKey('_id', $data);
-                $dataId = $data['_id'];
 
+                // Get document PID from the response's location header
+                $dataId = urldecode(array_values(array_reverse(explode('/', $response->headers->get('location'))))[0]);
+
+                // Get all documents, must be > 0
                 list($crawler, $response, $data) = $this->apiRequest('GET', '/v1/data');
                 $this->assertTrue($response->isSuccessful());
                 $this->assertCRUDListContent($data);
                 $this->assertGreaterThan(0, $data['count']);
 
+                // Get inserted document by PID
                 list($crawler, $response, $data) = $this->apiRequest('GET', "/v1/data/{$dataId}");
                 $this->assertTrue($response->isSuccessful());
-                $this->assertArrayHasKey('_id', $data);
-                $this->assertEquals($data['_id'], $dataId);
+                $this->assertEquals($data['data_pids'][0], $dataId);
+                $this->assertEquals($data['raw'], $testData);
 
-                list($crawler, $response, $data) = $this->apiRequest('DELETE', "/v1/data/{$dataId}");
+                // Delete a document by PID
+                list($crawler, $response, $data) = $this->apiRequest('DELETE', "/v1/data/{$dataId}", array(), array(), array(), array(), ['CONTENT_TYPE' => 'application/lido+xml']);
                 $this->assertTrue($response->isSuccessful());
+                $this->assertEquals($response->getStatusCode(), 204);
 
+                // Check if document actually removed from storage
                 list($crawler, $response, $data) = $this->apiRequest('GET', "/v1/data/{$dataId}");
                 $this->assertFalse($response->isSuccessful());
             }
