@@ -274,12 +274,8 @@ class DataController extends Controller
         // if everything is configured correctly there should be a matching converter for the provided content type
         $converter = $this->get('datahub.resource.data_converters')->getConverter($request->getContentType());
 
-        // store each record separately
-        if (count($converter->getRecords($data)) > 1) {
-            throw new BadRequestHttpException('Only update one record per request');
-        }
-
-        $record = array_shift($converter->getRecords());
+        $records = $converter->getRecords($data);
+        $record = array_shift($records);
 
         if (!$dataManager->getData($id)) {
             throw $this->createNotFoundException();

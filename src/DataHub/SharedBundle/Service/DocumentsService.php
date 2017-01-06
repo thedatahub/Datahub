@@ -274,7 +274,7 @@ class DocumentsService
         $this->convertValues($query);
         $this->convertValues($changeset);
 
-        $result = $this->getCollection($this->collectionName)->update($query, $changeset);
+        $result = $this->getCollection($collectionName)->update($query, $changeset);
 
         return (is_array($result) && isset($result['upserted']))? $result['upserted'] : true;
     }

@@ -231,7 +231,7 @@ class DataService
             ],
         ];
 
-        $this->documentManager->update($this->collectionName, $query, $changeset);
+        $result = $this->documentManager->update($this->collectionName, $query, $changeset);
 
         return $this->getData($id, $ownerId);
     }
