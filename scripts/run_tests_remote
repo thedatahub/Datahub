@@ -30,6 +30,18 @@ curl -s -i -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data/DE-
 
 echo ""
 echo ""
+echo "PUT single data:"
+LIDOFILE2=`dirname $0`/../src/DataHub/ResourceAPIBundle/Tests/Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera-updated.xml
+curl -s -i -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/lido+xml" -X "PUT" --data @$LIDOFILE2 "$BASE_URL/api/v1/data/DE-Mb112%2Flido-obj00154983" | head -c 500
+
+echo ""
+echo ""
+echo "GET single updated data:"
+curl -s -i -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data/DE-Mb112%2Flido-obj00154983" | head -c 500
+
+
+echo ""
+echo ""
 echo "DELETE data:"
 curl -s -i -H "Authorization: Bearer $TOKEN" -X "DELETE" "$BASE_URL/api/v1/data/DE-Mb112%2Flido-obj00154983" | head -c 500
 
@@ -40,4 +52,3 @@ curl -s -i -H "Authorization: Bearer $TOKEN" -X "GET" "$BASE_URL/api/v1/data/DE-
 
 echo ""
 echo ""
-
