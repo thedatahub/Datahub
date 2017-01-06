@@ -292,7 +292,7 @@ class DocumentsService
         // Convert certain values into objects
         $this->convertValues($query);
 
-        $result = $this->getCollection($this->collectionName)->remove($query);
+        $result = $this->getCollection($collectionName)->remove($query);
 
         return $result['n'] > 0;
     }
