@@ -142,7 +142,7 @@ class DataController extends Controller
      *     input = "DataHub\ResourceAPIBundle\Form\Type\DataFormType",
      *     statusCodes = {
      *         201 = "Returned when successful",
-     *         400 = "Returned if the form could not be validated"
+     *         400 = "Returned if the form could not be validated, or record already exists",
      *     }
      * )
      *
@@ -185,6 +185,12 @@ class DataController extends Controller
         // otherwise an internal error is thrown which is good in this case
         $converter = $this->get('datahub.resource.data_converters')->getConverter($request->getContentType());
 
+        // Throw exception 500 if data could not be parsed and is empty
+        if (empty($converter->getRecords($data))) {
+            return new Response('', Response::HTTP_BAD_REQUEST, ['Message' => 'Could not parse data.']);
+            throw new \Exception('Could not parse data.');
+        }
+
         // keep the pid that will be return in the location header
         $pid = null;
 
@@ -193,6 +199,11 @@ class DataController extends Controller
             // get data and object PID's from the data record
             $data_pids = $converter->getRecordDataPids($record);
             $object_pids = $converter->getRecordObjectPids($record);
+
+            // Check whether record already exists
+            if ($dataManager->getData($data_pids[0])) {
+                return new Response('', Response::HTTP_BAD_REQUEST, ['Message' => 'Record with this ID already exists.']);
+            }
 
 
             // validate the data pid naming convention
@@ -209,7 +220,7 @@ class DataController extends Controller
             }
             catch (\Exception $e) {
                 // TODO: catch a possible unique constraint violation of the data pids
-                throw $e;
+                return new Response('', Response::HTTP_BAD_REQUEST);
             }
 
             // keep the first data pid of the first record to return in the location header afterwards

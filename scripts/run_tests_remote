@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_URL=http://192.168.33.10:8000
+BASE_URL=http://datahub_ubuntu:8000
 
 LIDOFILE=`dirname $0`/../src/DataHub/ResourceAPIBundle/Tests/Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml
 
