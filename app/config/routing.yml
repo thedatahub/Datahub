@@ -3,6 +3,11 @@ datahub_resource_api:
     type:     rest
     prefix:   /api/v1/
 
+datahub_oai:
+    resource: "@DataHubOAIBundle/Controller/"
+    type:     annotation
+    prefix:   /oai/
+
 datahub_oauth:
     resource: "@DataHubOAuthBundle/Controller/"
     type:     annotation

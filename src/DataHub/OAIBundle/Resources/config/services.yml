@@ -1,0 +1,4 @@
+services:
+    datahub.oai.repository:
+        class: DataHub\OAIBundle\Repository\Repository
+        arguments: ['@datahub.resource.data', '@datahub.resource.data_converters']

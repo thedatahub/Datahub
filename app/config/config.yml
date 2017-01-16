@@ -74,7 +74,7 @@ fos_oauth_server:
     refresh_token_class: "DataHub\\OAuthBundle\\Document\RefreshToken"
     auth_code_class:     "DataHub\\OAuthBundle\\Document\AuthCode"
     service:
-        user_provider: fos_user.user_manager
+        user_provider: fos_user.user_provider.username
         options:
             supported_scopes: internal web external
             access_token_lifetime: %access_token_lifetime%

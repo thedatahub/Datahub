@@ -31,6 +31,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle(),
 
             // Own bundles
+            new DataHub\OAIBundle\DataHubOAIBundle(),
             new DataHub\SharedBundle\DataHubSharedBundle(),
             new DataHub\UserBundle\DataHubUserBundle(),
             new DataHub\OAuthBundle\DataHubOAuthBundle(),
