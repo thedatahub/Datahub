@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# tests for Jenkins
+
 php app/console cache:clear --env=test
 php app/console doctrine:mongodb:fixtures:load --env=test
 bin/phpunit -c app --stop-on-failure
