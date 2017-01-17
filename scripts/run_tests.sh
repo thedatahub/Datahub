@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# tests for Jenkins
+# Test script for Jenkins.
 
-php app/console cache:clear --env=test
-php app/console doctrine:mongodb:fixtures:load --env=test
-bin/phpunit -c app --stop-on-failure
-# CORE_COUNT=$(getconf _NPROCESSORS_ONLN)
-# ./bin/parallel-phpunit --pu-threads $CORE_COUNT --pu-cmd 'phpunit -c app/' ./src/
+# TODO include env setup
+
+# php app/console cache:clear --env=test
+# php app/console doctrine:mongodb:fixtures:load --env=test
+# bin/phpunit -c app --stop-on-failure
