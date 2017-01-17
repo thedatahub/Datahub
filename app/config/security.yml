@@ -33,6 +33,12 @@ security:
             stateless:  true
             anonymous:  ~
 
+        oai:
+            pattern:    '^/oai/.+'
+            fos_oauth:  false
+            anonymous:  ~
+            security: false
+
         main:
             pattern: ^/
             form_login:
@@ -53,5 +59,5 @@ security:
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
         - { path: ^/api, methods: %public_api_method_access%, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
+        - { path: ^/oai, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
         - { path: ^/, role: IS_AUTHENTICATED_REMEMBERED, requires_channel: %security_requires_channel% }
-        - { path: ^/oai, methods: %public_api_method_access%, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }

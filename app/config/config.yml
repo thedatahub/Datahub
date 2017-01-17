@@ -68,7 +68,7 @@ braincrafted_bootstrap:
         assetic: false
 
 fos_oauth_server:
-    db_driver: mongodb       # Driver availables: orm, mongodb, or propel
+    db_driver: mongodb       # Drivers available: orm, mongodb, or propel
     client_class:        "DataHub\\OAuthBundle\\Document\Client"
     access_token_class:  "DataHub\\OAuthBundle\\Document\AccessToken"
     refresh_token_class: "DataHub\\OAuthBundle\\Document\RefreshToken"
