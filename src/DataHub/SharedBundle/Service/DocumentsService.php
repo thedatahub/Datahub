@@ -4,6 +4,7 @@ namespace DataHub\SharedBundle\Service;
 
 use Doctrine\MongoDB\Connection;
 use DataHub\SharedBundle\Helper\SerializationHelper;
+use DataHub\SharedBundle\Document\Traits;
 
 /**
  * A simple service containing some helpers for dealing
@@ -16,10 +17,7 @@ class DocumentsService
     const OPTION_COUNT_RESULTS = 4;
     const OPTION_DEFAULTS = 5;
 
-    /**
-     * @var Monolog\Logger
-     */
-    protected $logger;
+    use Traits\LoggableTrait;
 
     /**
      * @var Connection
@@ -44,19 +42,6 @@ class DocumentsService
         if (isset($databaseName)) $this->setDatabaseName($databaseName);
 
         $this->logger->debug('Initialized DocumentsService');
-    }
-
-    /**
-     * Set logger service.
-     *
-     * @param  Monolog\Logger $logger
-     * @return DocumentsService
-     */
-    public function setLogger($logger)
-    {
-        $this->logger = $logger;
-
-        return $this;
     }
 
     /**

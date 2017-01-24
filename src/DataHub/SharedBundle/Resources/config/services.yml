@@ -5,3 +5,4 @@ services:
         calls:
             - [setConnection, ["@doctrine_mongodb.odm.default_connection"]]
             - [setDatabaseName, [%data_hub_shared.database_name%]]
+            - [setLogger, ["@logger"]]

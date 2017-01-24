@@ -10,6 +10,8 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use FOS\OAuthServerBundle\Model\ClientInterface;
 use FOS\OAuthServerBundle\Model\AccessTokenInterface;
 
+use DataHub\SharedBundle\Document\Traits;
+
 /**
  * The OAuthService contains some helpers for grabbing
  * the Client, various Tokens and User that are currently
@@ -19,6 +21,8 @@ use FOS\OAuthServerBundle\Model\AccessTokenInterface;
  */
 class OAuthService
 {
+    use Traits\LoggableTrait;
+
     /**
      * @var TokenStorageInterface
      */

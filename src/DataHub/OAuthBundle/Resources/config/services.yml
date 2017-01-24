@@ -4,3 +4,4 @@ services:
         calls:
             - [setTokenStorage, ["@security.token_storage"]]
             - [setDocumentManager, ["@doctrine_mongodb.odm.document_manager"]]
+            - [setLogger, ["@logger"]]
