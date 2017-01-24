@@ -20,8 +20,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * OAI Endpoint controller for Data.
- *
- * @author  Kalman Olah <kalman@inuits.eu>
  * @package DataHub\ResourceAPIBundle
  */
 class ProviderController extends Controller
@@ -30,7 +28,7 @@ class ProviderController extends Controller
 		 * @Route("/")
 		 */
 		public function indexAction(ServerRequestInterface $psrRequest) {
-			  $request = $this->getRequest();
+				$request = $this->getRequest();
 
 				$repository =  $this->get('datahub.oai.repository');
 				$provider = new Provider($repository);
