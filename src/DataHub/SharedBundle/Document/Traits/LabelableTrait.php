@@ -14,7 +14,7 @@ trait LabelableTrait
     /**
      * @var string $label
      *
-     * @ODM\String
+     * @ODM\Field(type="string")
      *
      * @Serializer\Expose
      * @Serializer\Groups({"global", "list", "single"})
