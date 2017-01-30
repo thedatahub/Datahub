@@ -1,0 +1,64 @@
+#!/bin/bash
+
+DOCKER_COMPOSE_FILE='./scripts/docker/docker-compose.yml'
+PROJECT_NAME='vkc_datahub'
+SUCCESSFUL=1
+
+print_info () {
+    echo -e "\033[34m$1\033[0m"
+}
+
+print_success () {
+    echo -e "\033[32m$1\033[0m"
+}
+
+print_error () {
+    echo -e "\033[31m$1\033[0m"
+}
+
+log_info () {
+    print_info "[INFO]    $1"
+}
+
+log_success () {
+    print_success "[SUCCESS] $1"
+}
+
+log_error () {
+    print_error "[ERROR]   $1"
+}
+
+check_output () {
+    echo ">> $@"
+    $@
+
+    if [ $? == 0 ]; then
+        echo -n '>> '
+        print_success 'OK'
+    else
+        SUCCESSFUL=0
+        echo -n '>> '
+        print_error 'ERROR'
+    fi
+    echo ''
+}
+
+start_container () {
+    log_info "Launching container '$2' from file '$1'"
+    check_output docker-compose -f "$1" -p "${PROJECT_NAME}" run "$2"
+}
+
+stop_container () {
+    log_info "Stopping containers from file '$1'"
+    check_output docker-compose -f "$1" down -v
+}
+
+start_container "$DOCKER_COMPOSE_FILE" 'webapp'
+stop_container "$DOCKER_COMPOSE_FILE"
+
+if [ "${SUCCESSFUL}" == 1 ]; then
+    log_success 'All tests ran successfully'
+else
+    log_error 'Some errors were encountered'
+    exit 1
+fi

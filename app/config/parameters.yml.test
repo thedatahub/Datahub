@@ -40,3 +40,4 @@ parameters:
 
     # Set to null to disable it
     public_api_user_id: Anonymous
+    access_token_lifetime: 14400

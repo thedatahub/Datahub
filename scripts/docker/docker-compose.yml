@@ -1,0 +1,28 @@
+version: '2'
+services:
+  # Mongo
+  mongodb:
+    image: mongo
+
+  # Webapp
+  webapp:
+    build:
+      context:    .
+      dockerfile: Dockerfile
+
+    links:
+      - mongodb
+
+    volumes:
+      - ./../../:/var/www
+      - ./../../app/config/parameters.yml.test:/var/www/app/config/parameters.yml
+
+    tmpfs:
+      - /var/www/app/cache
+      - /var/www/app/logs
+
+    environment:
+      MONGODB_PORT_27017_TCP_ADDR: mongodb
+      MONGODB_PORT_27017_TCP_PORT: 27017
+
+    command: ./scripts/run_tests
