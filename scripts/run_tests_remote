@@ -1,6 +1,12 @@
 #!/bin/bash
 
-BASE_URL=http://datahub_ubuntu:8000
+if [ -z "$1" ]
+  then
+    echo "Usage: please supply the URL of the Datahub instance you want to test as an argument"
+    exit 0
+fi
+
+BASE_URL=$1
 
 LIDOFILE=`dirname $0`/../src/DataHub/ResourceAPIBundle/Tests/Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml
 
