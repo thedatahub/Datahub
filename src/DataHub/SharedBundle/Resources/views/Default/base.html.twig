@@ -9,16 +9,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
-{% block stylesheets %}
-{% stylesheets
-    '@DataHubSharedBundle/Resources/less/layout.less'
-    '%kernel.root_dir%/../vendor/braincrafted/bootstrap-bundle/Braincrafted/Bundle/BootstrapBundle/Resources/less/form.less'
-    'bundles/bmatznerfontawesome/less/font-awesome.less'
-    filter='cssrewrite,lessphp,?yui_css' %}
-    <link href="{{ asset_url }}" rel="stylesheet">
-{% endstylesheets %}
-{% endblock %}
-
+    <link href="/css/main.css" rel="stylesheet">
     {% include 'BraincraftedBootstrapBundle::ie8-support.html.twig' %}
 </head>
 <body>
@@ -82,17 +73,10 @@
     };
 </script>
 {% block javascripts %}
-{% javascripts
-    '%kernel.root_dir%/../vendor/components/jquery/jquery.min.js'
-    '%kernel.root_dir%/../vendor/twbs/bootstrap/dist/js/bootstrap.min.js'
-    '%kernel.root_dir%/../vendor/braincrafted/bootstrap-bundle/Braincrafted/Bundle/BootstrapBundle/Resources/js/bc-bootstrap-collection.js'
-    '%kernel.root_dir%/../vendor/grimmlink/selectize/dist/js/standalone/selectize.min.js'
-    '%kernel.root_dir%/../vendor/rmm5t/jquery-timeago/jquery.timeago.js'
-    '@DataHubSharedBundle/Resources/js/*.js'
-    filter="?yui_js" %}
-<script src="{{ asset_url }}"></script>
+{% javascripts %}
 {% endjavascripts %}
 {% endblock %}
 {% block scripts %}{% endblock %}
+<script src="/js/main.js"></script>
 </body>
 </html>

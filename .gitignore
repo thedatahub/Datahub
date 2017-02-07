@@ -13,11 +13,10 @@
 /vendor/
 /bin/
 /composer.phar
-/web/css/
-/web/js/
 /web/media/
 .fresh_deployed
 .idea/
 *.php~
 docs/build/
 docs/cache/
+scripts/coverage
