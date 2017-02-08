@@ -30,7 +30,7 @@ class Repository implements InterfaceRepository
 
     private $dataConverter;
 
-    const PAGINATION_OFFSET = 10;
+    const PAGINATION_OFFSET = 5;
 
     public function __construct(DataService $dataService, DataConvertersService $dataConvertersService) {
         $this->dataService = $dataService;
@@ -52,6 +52,7 @@ class Repository implements InterfaceRepository
      */
     public function identify()
     {
+        // $repositoryName, earliestDatestamp, $deletedRecord, $adminEmails, $granularity
         return new ImplementationIdentity('Datahub', (new \DateTime()), 'no', ['nassia@inuits.eu'], 'YYYY-MM-DDThh:mm:ssZ');
     }
 
@@ -61,7 +62,7 @@ class Repository implements InterfaceRepository
     public function listSets()
     {
         $items = [];
-        $items[] = new Set('my:spec', 'Title of spec');
+        $items[] = new Set('set:all', 'All records');
         return new SetList($items);
     }
 
@@ -126,7 +127,6 @@ class Repository implements InterfaceRepository
         if ($completeListSize > $offset+Repository::PAGINATION_OFFSET) {
             // Include token only if more records exist than shown
             $token = $this->encodeResumptionToken($offset + Repository::PAGINATION_OFFSET, $from, $until, $metadataFormat, $set);
-            dump('hoi');die;
         }
 
         foreach ($data['results'] as $record) {
@@ -273,7 +273,7 @@ class Repository implements InterfaceRepository
      *
      * @return DateTime
      */
-    private function getEarliestDateStamp()
+    public function getEarliestDateStamp()
     {
         // Fetch earliest timestamp
         return new DateTime();
@@ -281,5 +281,16 @@ class Repository implements InterfaceRepository
 
     public function getGranularity() {
    	    return "YYYY-MM-DDThh:mm:ssZ";
+    }
+
+    /**
+     * Gets pagination size
+     *
+     * @return int
+     */
+    private function getPaginationSize()
+    {
+        // Fetch earliest timestamp
+        return $this->PAGINATION_OFFSET;
     }
 }

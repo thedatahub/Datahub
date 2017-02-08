@@ -48,7 +48,7 @@ class DataService
         $this->setLogger($logger);
 
         if (isset($documentManager)) $this->setDocumentManager($documentManager);
-        if (isset($collectioName))$this->setCollectionName($collectionName);
+        if (isset($collectionName))$this->setCollectionName($collectionName);
 
         $this->logger->debug('Initialized DataService');
     }
