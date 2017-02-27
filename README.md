@@ -19,8 +19,8 @@ The Datahub is build with the [Symfony framework](https://symfony.com), [MongoDB
 
 This project requires following dependencies:
 
-* PHP = 5.6.*
-  * With the php5-cli, php5-intl and php5-mcrypt extensions.
+* PHP = 5.6.* or 7.0.*
+  * With the php-cli, php-intl and php-mcrypt extensions.
   * The [PECL Mongo](https://pecl.php.net/package/mongo) extension.
 * MongoDB >= 3.2.10
 * Catmandu >= 1.0304 (Note: this dependency requires Perl)
