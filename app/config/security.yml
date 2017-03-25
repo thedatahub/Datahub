@@ -36,24 +36,26 @@ security:
         oai:
             pattern:    '^/oai/.+'
             fos_oauth:  false
+            stateless:  true
             anonymous:  ~
-            security: false
 
-        main:
-            pattern: ^/
+        admin:
+            pattern: ^/admin
             form_login:
                 provider: fos_userbundle
-
-            logout:       true
+                login_path: fos_user_security_login
+                check_path: fos_user_security_check
+                default_target_path: /admin
+            logout:
+                path: fos_user_security_logout
             anonymous:    true
-
             remember_me:
                 key:      "%secret%"
                 lifetime: 2592000 # 1 month in seconds
                 path:     /
 
     access_control:
-        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
+        - { path: ^/admin/login$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
         - { path: ^/register/$, role: ROLE_SUPER_ADMIN, requires_channel: %security_requires_channel% }
         # - { path: ^/api_docs.html$, role:ROLE_SUPER_ADMIN, requires_channel: %security_requires_channel% }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }

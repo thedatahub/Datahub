@@ -13,7 +13,7 @@
     {% include 'BraincraftedBootstrapBundle::ie8-support.html.twig' %}
 </head>
 <body>
-    {% if is_granted('ROLE_USER') and not (disable_nav | default(false)) %}
+    {% if not (disable_nav | default(false)) %}
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -23,20 +23,26 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
+                    {% if is_granted('ROLE_USER') and is_granted('ROLE_ADMIN') %}
+                    <a class="navbar-brand" href="{{ path('datahub_shared_default_admin') }}">
+                        {{ service_name }}
+                    </a>
+                    {% else %}
                     <a class="navbar-brand" href="{{ path('datahub_shared_default_index') }}">
                         {{ service_name }}
                     </a>
+                    {% endif %}
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        {% if is_granted('ROLE_ADMIN') %}
+                        {% if is_granted('ROLE_USER') and is_granted('ROLE_ADMIN') %}
                             <li>
                                 <a href="{{ path('datahub_oauth_default_index') }}">
                                     {{ 'OAuth' | trans }}
                                 </a>
                             </li>
                         {% endif %}
-                        {% if is_granted('ROLE_ADMIN') %}
+                        {% if is_granted('ROLE_USER') and is_granted('ROLE_ADMIN') %}
                             <li>
                                 <a href="{{ path('datahub_user_default_index') }}">
                                     {{ 'Users' | trans }}
@@ -45,16 +51,30 @@
                         {% endif %}
                         <li>
                             <a href="{{ path('nelmio_api_doc_index') }}">
-                                {{ 'API' | trans }}
+                                {{ 'REST API' | trans }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('nelmio_api_doc_index') }}">
+                                {{ 'OAI-PMH' | trans }}
                             </a>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
+                    {% if is_granted('ROLE_USER') and is_granted('ROLE_ADMIN') %}
                         <li>
                             <a href="{{ path('fos_user_security_logout') }}">
                                 {{ 'Logout' | trans }}
                             </a>
                         </li>
+                    {% else %}
+                        <li>
+                            <a href="{{ path('fos_user_security_login') }}">
+                                {{ 'Login' | trans }}
+                            </a>
+                        </li>
+                    {% endif %}
+
                     </ul>
                 </div>
             </div>

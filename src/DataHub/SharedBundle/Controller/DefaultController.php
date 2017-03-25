@@ -10,6 +10,7 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/")
+     * @Route("/admin", name="datahub_shared_default_admin")
      * @Template()
      */
     public function indexAction()
