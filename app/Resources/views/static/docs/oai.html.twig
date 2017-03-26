@@ -1,0 +1,66 @@
+{% extends 'static/docs/layout.html.twig' %}
+
+{% block content %}
+
+<h2>OAI PMH</h2>
+
+<h3>What is this service?</h3>
+
+<p>The Datahub OAI-PMH Service allows you to harvest metadata using the
+Open Archives Initiative Protocol for Metadata Harvesting (OAI-PMH v2) so that
+it can be integrated into other services or applications.</p>
+
+<h3>Who can use this service?</h3>
+
+<p>This service is meant to be accessed by OAI-PMH compliant harvesters or any
+application that issues OAI-PMH requests. The service base address is <code>{{ url('datahub_oai_provider_index') }}</code> and
+the service identifier is available
+<a href="{{ url('datahub_oai_provider_index') }}?verb=Identify">here</a>.
+
+<h3>What is OAI-PMH?</h3>
+
+<p>In brief, OAI-PMH provides a set of services that enables exposure and
+harvesting of repository metadata. The protocol is comprised of six verbs that
+specify the service being invoked, they are:</p>
+
+<ul>
+    <li>Identify - used to retrieve information about the repository.</li>
+    <li>ListIdentifiers - used to retrieve record headers from the
+        repository.</li>
+    <li>ListRecords - used to harvest full records from the repository.</li>
+    <li>ListSets - used to retrieve the set structure of the repository.</li>
+    <li>ListMetadataFormats - lists available metadata formats that the
+        repository can disseminate.</li>
+    <li>GetRecord - used to retrieve an individual record from the
+        repository.</li>
+</ul>
+
+<p>Selective harvesting can be performed by the use of accompanying parameters.
+Available parameters are:</p>
+
+<ul>
+    <li>identifier - specifies a specific record identifier.</li>
+    <li>metadataPrefix - specifies the metadata format that the records will be
+        returned in.</li>
+    <li>set - specifies the set that returned records must belong to.</li>
+    <li>from - specifies that records returned must have been created/update/
+        deleted on or after this date.</li>
+    <li>until - specifies that records returned must have been created/update/
+        deleted on or before this date.</li>
+    <li>resumptionToken - a token previously provided by the server to resume a
+        request where it last left off.</li>
+</ul>
+
+<p>The verbs and parameters can be combined to issue requests to the service
+such as:</p>
+
+<ul>
+    <li><code>{{ url('datahub_oai_provider_index') }}?verb=Identify</code></li>
+    <li><code>{{ url('datahub_oai_provider_index') }}?verb=ListIdentifiers&metadataPrefix=oai_dc</code></li>
+    <li><code>{{ url('datahub_oai_provider_index') }}?verb=ListRecords&from=2011-06-01T00:00:00Z&metadataPrefix=oai_dc</code></li>
+</ul>
+
+<p>For more details on the protocol, its implementation, and uses please visit
+the OAI-PMH web site.</p>
+
+{% endblock %}

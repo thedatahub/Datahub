@@ -8,6 +8,12 @@ datahub_oai:
     type:     annotation
     prefix:   /oai/
 
+datahub_static_docs_oai:
+    path: /docs/oai
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    static/docs/oai.html.twig
+
 datahub_oauth:
     resource: "@DataHubOAuthBundle/Controller/"
     type:     annotation
