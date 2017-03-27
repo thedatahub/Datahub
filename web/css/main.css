@@ -4,6 +4,16 @@ body {
 	padding-top: 0;
 }
 
+a,
+.btn-link {
+  color: #e47168;
+}
+
+a:hover,
+.btn-link:hover {
+  color: #9D271E;
+}
+
 /* Navigation bar */
 
 .navbar {
@@ -23,10 +33,18 @@ body {
   color: black;
 }
 
+.navbar-default .navbar-nav > li > a.active {
+  color: white;
+}
+
 .navbar-default .navbar-brand {
 	width: 158px;
   height: 50px;
   background: url(../assets/datahub.png);
+}
+
+.main-nav {
+	margin-left: 30px;
 }
 
 .hide-text {
@@ -46,6 +64,17 @@ body {
 	border-color: #e47168;
 }
 
+/* Form */
+
+.btn-primary {
+  background: #e47168;
+  border-color: #e47168;
+}
+
+.btn-primary:hover {
+  background: #9D271E;
+  border-color: #9D271E;
+}
 
 /* Sticky footer */
 
