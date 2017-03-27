@@ -31,17 +31,25 @@
                     </a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
+                    <ul class="nav navbar-nav main-nav">
+                        <li>
+                            <a href="{{ path('datahub_shared_default_index') }}"
+                                {% if app.request.attributes.get('_route') == 'datahub_shared_default_index' %} class="active"{% endif %}>
+                                {{ 'Dashboard' | trans }}
+                            </a>
+                        </li>
                         {% if is_granted('ROLE_USER') and is_granted('ROLE_ADMIN') %}
                             <li>
-                                <a href="{{ path('datahub_oauth_default_index') }}">
+                                <a href="{{ path('datahub_oauth_default_index') }}"
+                                {% if app.request.attributes.get('_route') == 'datahub_oauth_default_index' %} class="active"{% endif %}>
                                     {{ 'OAuth' | trans }}
                                 </a>
                             </li>
                         {% endif %}
                         {% if is_granted('ROLE_USER') and is_granted('ROLE_ADMIN') %}
                             <li>
-                                <a href="{{ path('datahub_user_default_index') }}">
+                                <a href="{{ path('datahub_user_default_index') }}"
+                                {% if app.request.attributes.get('_route') == 'datahub_user_default_index' %} class="active"{% endif %}>
                                     {{ 'Users' | trans }}
                                 </a>
                             </li>
@@ -52,7 +60,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ path('datahub_static_docs_oai') }}">
+                            <a href="{{ path('datahub_static_docs_oai') }}"
+                                {% if app.request.attributes.get('_route') == 'datahub_static_docs_oai' %} class="active"{% endif %}>
                                 {{ 'OAI-PMH' | trans }}
                             </a>
                         </li>
