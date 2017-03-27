@@ -9,12 +9,15 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
-    <link href="/css/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/boilerplate.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}" />
+
     {% include 'BraincraftedBootstrapBundle::ie8-support.html.twig' %}
 </head>
 <body>
+  <div id="wrap">
     {% if not (disable_nav | default(false)) %}
-        <nav class="navbar navbar-default navbar-fixed-top">
+        <nav class="navbar navbar-default navbar-static-top">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -23,7 +26,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{{ path('datahub_shared_default_index') }}">
+                    <a class="navbar-brand hide-text" href="{{ path('datahub_shared_default_index') }}">
                         {{ service_name }}
                     </a>
                 </div>
@@ -76,10 +79,28 @@
     {% endif %}
 
     <div class="container-fluid">
-        {% include 'BraincraftedBootstrapBundle::flash.html.twig' with { 'close': true } %}
+      <div class="row">
+          <div class="col-md-12">
+          {% include 'BraincraftedBootstrapBundle::flash.html.twig' with { 'close': true } %}
 
-        {% block body %}{% endblock %}
+          {% block body %}{% endblock %}
+          </div>
+      </div>
     </div>
+
+    <div id="push"></div>
+
+  </div>
+
+  <div id="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <p>Powered by <a href="https://github.com/thedatahub/datahub">The Datahub</a></p>
+          </div>
+        </div>
+      </div>
+  </div>
 <script>
     app = {
         base_path: '{{ app.request.getBaseURL() }}/',
