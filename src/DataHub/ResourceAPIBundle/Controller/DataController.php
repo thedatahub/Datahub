@@ -76,6 +76,10 @@ class DataController extends Controller
         // get data
         $data = $dataManager->cgetData($offset, $limit);
 
+        foreach($data['results'] as &$result) {
+            unset($result['raw']);
+        }
+
         return $data;
     }
 
@@ -125,6 +129,8 @@ class DataController extends Controller
 
         // get data
         $data = $dataManager->getData($id);
+
+        unset($data['raw']);
 
         if (!$data) {
             throw $this->createNotFoundException();
