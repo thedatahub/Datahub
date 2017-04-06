@@ -2,6 +2,8 @@
 # Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
 # http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
+
+    # Mailer
     mailer_transport:  smtp
     mailer_host:       127.0.0.1
     mailer_user:       ~
@@ -9,9 +11,6 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
-
-    # Used by YUI compressor
-    java_path:         /usr/bin/java
 
     # IP addresses of reverse proxies infront of this application,
     # in order to correctly parse X-Forwarded-For headers and such
@@ -43,3 +42,5 @@ parameters:
 
     # token should remain valid for 4 hours
     access_token_lifetime: 14400
+
+    datahub_oai_url: http://datahub_ubuntu:8000/oai
