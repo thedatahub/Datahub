@@ -18,11 +18,16 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('datahub_oai');
+        $rootNode = $treeBuilder->root('data_hub_oai');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+            ->children()
+            ->scalarNode('datahub_oai_base_url')->defaultValue('http://example.com/oai')->end()
+            ->scalarNode('datahub_oai_repo_name')->defaultValue('Datahub')->end()
+            ->scalarNode('datahub_oai_contact_email')->defaultValue('example@example.com')->end()
+            ->scalarNode('datahub_oai_pagination_num_records')->defaultValue(25)->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }

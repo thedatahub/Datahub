@@ -2,3 +2,8 @@ services:
     datahub.oai.repository:
         class: DataHub\OAIBundle\Repository\Repository
         arguments: ['@datahub.resource.data', '@datahub.resource.data_converters']
+        calls:
+            - [setBaseUrl, [%data_hub_oai.datahub_oai_base_url%]]
+            - [setRepositoryName, [%data_hub_oai.datahub_oai_repo_name%]]
+            - [setContactEmail, [%data_hub_oai.datahub_oai_contact_email%]]
+            - [setPaginationSize, [%data_hub_oai.datahub_oai_pagination_num_records%]]

@@ -4,7 +4,7 @@ namespace DataHub\OAIBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 use Symfony\Component\DependencyInjection\Loader;
 
 /**
@@ -12,15 +12,21 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
-class DataHubOAIExtension extends Extension
+class DataHubOAIExtension extends ConfigurableExtension
 {
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function loadInternal(array $mergedConfig, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        foreach (array(
+            'datahub_oai_base_url',
+            'datahub_oai_repo_name',
+            'datahub_oai_contact_email',
+            'datahub_oai_pagination_num_records'
+        ) as $cfgKey) {
+            $container->setParameter("data_hub_oai.{$cfgKey}", $mergedConfig[$cfgKey]);
+        }
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

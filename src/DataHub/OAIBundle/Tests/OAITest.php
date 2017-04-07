@@ -33,6 +33,7 @@ class OAITestCase extends WebTestCase {
 
     protected function setUp() {
         $this->client = static::createClient();
+        $this->paginationSize = 5;
     }
 
     public function testIdentify() {
@@ -89,7 +90,6 @@ class OAITestCase extends WebTestCase {
     }
 
     public function testListIdentifiers() {
-        $this->paginationSize = Repository::PAGINATION_OFFSET;
         $this->numTestRecords = $this->paginationSize * 2; // make sure resumptionToken is tested
 
         $this->loadTestDataIntoMongo($this->numTestRecords);
@@ -118,7 +118,6 @@ class OAITestCase extends WebTestCase {
     }
 
     public function testListRecords() {
-        $this->paginationSize = Repository::PAGINATION_OFFSET;
         $this->numTestRecords = $this->paginationSize * 2; // make sure resumptionToken is tested
 
         $verb = 'ListRecords';
