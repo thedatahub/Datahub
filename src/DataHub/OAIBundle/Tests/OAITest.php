@@ -109,7 +109,6 @@ class OAITestCase extends WebTestCase {
 
         $this->client->request('GET', '/oai/?verb='.$verb.'&resumptionToken='.$resumptionToken);
         $response = $this->client->getResponse()->getContent();
-        $response = $this->client->getResponse()->getContent();
         $xmlResponse = $response;
         $response = json_decode(json_encode(simplexml_load_string($response)), TRUE);
         $response = $response[$verb];
