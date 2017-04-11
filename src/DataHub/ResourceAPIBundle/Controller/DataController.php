@@ -140,7 +140,7 @@ class DataController extends Controller
     }
 
     /**
-     * Create a data.
+     * Create a record.
      *
      * @ApiDoc(
      *     section = "DataHub",
