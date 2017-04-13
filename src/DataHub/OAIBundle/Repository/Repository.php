@@ -108,12 +108,9 @@ class Repository implements InterfaceRepository
             throw new IdDoesNotExistException('No matching identifier ' . $identifier);
         }
 
-        // Serialize
-        try {
-            $data = $this->dataConverter->fromArray($record['data']);
-        } catch (\Exception $e) {
-            //pass
-        }
+        // speed up OAI calls by not serializing and using raw data
+        // $data = $this->dataConverter->fromArray($record['data']);
+        $data = $record['raw'];
 
         $recordMetadata = new \DOMDocument();
         $recordMetadata->loadXML($data);
@@ -143,12 +140,9 @@ class Repository implements InterfaceRepository
         }
 
         foreach ($data['results'] as $record) {
-            // serialize single result
-            try {
-                $data = $this->dataConverter->fromArray($record['data']);
-            } catch (\Exception $e) {
-                //pass
-            }
+            // speed up OAI calls by not serializing and using raw data
+            // $data = $this->dataConverter->fromArray($record['data']);
+            $data = $record['raw'];
 
             $recordMetadata = new \DOMDocument();
             $recordMetadata->loadXML($data);
