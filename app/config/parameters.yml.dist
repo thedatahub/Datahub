@@ -43,7 +43,8 @@ parameters:
     # token should remain valid for 4 hours
     access_token_lifetime: 14400
 
-    datahub_oai_base_url: 'http://datahub_ubuntu:8000/oai'
-    datahub_oai_repo_name: 'Datahub'
-    datahub_oai_contact_email: 'nassia@inuits.eu','noreply@datahub.inuits.eu'
-    datahub_oai_pagination_num_records: 25
+    # OAI endpoint config
+    datahub_oai_base_url: 'http://datahub_ubuntu:8000/oai' # base URL for the OAI endpoint
+    datahub_oai_repo_name: 'Datahub' # name of the OAI endpoint
+    datahub_oai_contact_email: 'noreply@datahub.inuits.eu' # comma separated 'email1', 'email2'
+    datahub_oai_pagination_num_records: 25 # number of records per page
