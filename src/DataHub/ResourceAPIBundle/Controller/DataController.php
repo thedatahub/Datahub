@@ -26,7 +26,7 @@ use DataHub\ResourceAPIBundle\Form\Type\DataFormType;
 class DataController extends Controller
 {
     /**
-     * List data.
+     * List records.
      *
      * @ApiDoc(
      *     section = "DataHub",
@@ -84,7 +84,7 @@ class DataController extends Controller
     }
 
     /**
-     * Get a single data.
+     * Get a single record.
      *
      * @ApiDoc(
      *     section = "DataHub",
@@ -239,7 +239,7 @@ class DataController extends Controller
     }
 
     /**
-     * Update a data (replaces the entire resource).
+     * Update a record (replaces the entire resource).
      *
      * @ApiDoc(
      *     section = "DataHub",
@@ -317,7 +317,7 @@ class DataController extends Controller
     }
 
     /**
-     * Delete a data.
+     * Delete a record.
      *
      * @ApiDoc(
      *     section = "DataHub",
