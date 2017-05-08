@@ -34,7 +34,7 @@ security:
             anonymous:  ~
 
         oai:
-            pattern:    '^/oai/.+'
+            pattern:    '^/oai'
             fos_oauth:  true
             stateless:  true
             anonymous:  ~
@@ -60,6 +60,8 @@ security:
         # - { path: ^/api_docs.html$, role:ROLE_SUPER_ADMIN, requires_channel: %security_requires_channel% }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
-        - { path: ^/api, methods: %public_api_method_access%, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
-        - { path: ^/oai, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
+        - { path: ^/api,  role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel%, methods: %public_api_method_access% }
+        - { path: ^/api,  role: IS_AUTHENTICATED_FULLY, requires_channel: %security_requires_channel% }
+        - { path: ^/oai,  role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel%, methods: %public_api_method_access% }
+        - { path: ^/oai, role: IS_AUTHENTICATED_FULLY, requires_channel: %security_requires_channel% }
         - { path: ^/, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: %security_requires_channel% }
