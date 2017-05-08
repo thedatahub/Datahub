@@ -146,6 +146,18 @@ class DataService
     }
 
     /**
+     * Get the total number of records.
+     *
+     * @return integer $count The number of records in the database.
+     */
+    public function countData() {
+        $count = $this->documentManager->count(
+            $this->collectionName
+        );
+        return $count;
+    }
+
+    /**
      * Get data.
      *
      * @param  string      $id      Persistent identifier (PID) of the data.

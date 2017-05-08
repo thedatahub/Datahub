@@ -97,6 +97,17 @@ class DocumentsService
     }
 
     /**
+     * Get the total number of documents contained in a collection.
+     *
+     * @param  string $collectionName
+     * @return integer $count The number of records in the database.
+     */
+    public function count($collectionName) {
+        $count = $this->getCollection($collectionName)->count();
+        return $count;
+    }
+
+    /**
      * Find results, fetching fields (if specified) based on a query.
      * Optionally limits based on offset and limit.
      * Optionally prepares data for serialization by converting MongoId and MongoDate objects to strings.

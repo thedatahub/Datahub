@@ -19,6 +19,12 @@ parameters:
     # Name of the application
     service_name:       DataHub
 
+    # Name of the organisation managing the application
+    service_organisation: Vlaamse Kunstcollectie vzw
+
+    # Website of the organisation managing the application
+    service_organisation_website: http://www.vlaamsekunstcollectie.be
+
     # Email address of the application
     service_address:    noreply@datahub.inuits.eu
 

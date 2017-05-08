@@ -41,6 +41,9 @@ twig:
     strict_variables: "%kernel.debug%"
     globals:
         service_name: '%service_name%'
+        service_organisation_website: '%service_organisation_website%'
+        service_organisation: '%service_organisation%'
+        service_address: '%service_address%'
 
 # Swiftmailer Configuration
 swiftmailer:
