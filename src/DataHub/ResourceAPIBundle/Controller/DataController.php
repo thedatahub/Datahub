@@ -246,9 +246,9 @@ class DataController extends Controller
      *     resource = true,
      *     input = "DataHub\ResourceAPIBundle\Form\Type\DataFormType",
      *     statusCodes = {
-     *         204 = "Returned when successful",
-     *         400 = "Returned if the form could not be validated",
-     *         404 = "Returned if the resource was not found"
+     *         201 = "Returned when a record was succesfully created",
+     *         204 = "Returned when an existing recurd was succesfully updated",
+     *         400 = "Returned if the record could not be stored or parsed",
      *     }
      * )
      *
@@ -285,35 +285,66 @@ class DataController extends Controller
             // pass
         }
 
-        // get decoded data
-        $data = $request->request->all();
-
         // if everything is configured correctly there should be a matching converter for the provided content type
         $converter = $this->get('datahub.resource.data_converters')->getConverter($request->getContentType());
 
+        // Get a decoded record
+        $data = $request->request->all();
         $records = $converter->getRecords($data);
+        if (empty($records)) {
+            return new Response('', Response::HTTP_BAD_REQUEST, ['Message' => 'Could not parse data.']);
+        }
         $record = array_shift($records);
 
+        $data_pids = $converter->getRecordDataPids($record);
+        $object_pids = $converter->getRecordObjectPids($record);
+
+        // If the record does not exist, create it, if it does exist, update the existing record.
+        // The ID of a particular resource is not generated server side, but determined client side.
+        // The ID is the resource URI to which the PUT request was made.
+        //
+        //   See: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6
+        //
         if (!$dataManager->getData($id)) {
-            throw $this->createNotFoundException();
+            $result = $dataManager->createData(
+                $data_pids,
+                $object_pids,
+                $request->getFormat($request->getContentType()),
+                $record,
+                $request->getContent()
+            );
+
+            if (!$result) {
+                $logger->info('Could not store new record:' . $id);
+                $response = HTTP_BAD_REQUEST;
+                $headers = ['Message' => 'Could not store new record'];
+            } else {
+                $logger->info('Created record:' . $id);
+                $response = Response::HTTP_CREATED;
+                $headers = [];
+            }
+        } else {
+            $result = $dataManager->updateData(
+                $id,
+                $data_pids,
+                $object_pids,
+                $request->getFormat($request->getContentType()),
+                $record,
+                $request->getContent()
+            );
+
+            if (!$result) {
+                $logger->info('Could not store updated data:' . $id);
+                $response = HTTP_BAD_REQUEST;
+                $headers = ['Message' => 'Could not store updated data'];
+            } else {
+                $logger->info('Updated record:' . $id);
+                $response = Response::HTTP_NO_CONTENT;
+                $headers = [];
+            }
         }
 
-        $result = $dataManager->updateData(
-            $id,
-            $converter->getRecordDataPids($record),
-            $converter->getRecordObjectPids($record),
-            $request->getFormat($request->getContentType()),
-            $record,
-            $request->getContent()
-        );
-
-        if (!$result) {
-            throw new HttpException('The record could not be updated.');
-        }
-
-        $logger->info('Updated data:' . $id);
-
-        return new Response('', Response::HTTP_NO_CONTENT);
+        return new Response('', $response, $headers);
     }
 
     /**
