@@ -4,7 +4,7 @@
 <br>
 <div class="jumbotron">
     <h1>{{ service_name }}</h1>
-    <p>This datahub currently contains {{ documentCount }} records. These records are made available  through a <a href="{{ path('nelmio_api_doc_index') }}">{{ 'REST API endpoint' | trans }}</a> and an <a href="{{ path('datahub_static_docs_oai') }}">{{ 'OAI-PMH endpoint' | trans }}</a>.</p>
+    <p>This datahub currently contains {{ documentCount }} records. These records are published through a <a href="{{ path('nelmio_api_doc_index') }}">{{ 'REST API endpoint' | trans }}</a> and an <a href="{{ path('datahub_static_docs_oai') }}">{{ 'OAI-PMH endpoint' | trans }}</a>.</p>
     <p>This datahub is managed by <a href="{{ service_organisation_website }}">{{ service_organisation }}</a>. Reach out via e-mail at <a href="mailto:{{ service_address }}">{{ service_address }}</a>.</p>
 </div>
 {% endblock %}
