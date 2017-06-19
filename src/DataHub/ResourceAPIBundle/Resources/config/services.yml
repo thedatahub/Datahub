@@ -3,30 +3,30 @@ services:
         class: DataHub\ResourceAPIBundle\View\ConverterViewHandler
         arguments: ['@logger', '@datahub.resource.service.builder.converter.factory']
 
-    datahub.resource_api.view_handler:
-        parent: fos_rest.view_handler.default
-        calls:
-          - ['registerHandler', ['converter', ['@datahub.resource_api.view_handler.converter', 'createResponse']]
-
-    # Following forn type is deprecatd and can be removed
-    # datahub.resource_api.form.type.data_form_type:
-    #    class: DataHub\ResourceAPIBundle\Form\Type\DataFormType
-    #    calls:
-    #        - [setDataConverters, ["@datahub.resource.data_converters"]]
-    #    tags:
-    #        - { name: form.type }
-
-    # Following defines the lidoxml decoder service
-    # datahub.resource_api.decoder.lidoxml:
-    #    class: DataHub\ResourceAPIBundle\Decoder\LidoXmlDecoder
-    #    arguments: ['@logger', '@datahub.resource.data_converters']
-
-    # Following part registers lidoxml serialization
-    # datahub.resource_api.view_handler.lidoxml:
-    #    class: DataHub\ResourceAPIBundle\View\LidoXmlViewHandler
-    #    arguments: ['@logger', '@datahub.resource.data_converters']
-
     # datahub.resource_api.view_handler:
     #    parent: fos_rest.view_handler.default
     #    calls:
-    #        - ['registerHandler', ['lidoxml', [@datahub.resource_api.view_handler.lidoxml, 'createResponse'] ] ]
+    #      - ['registerHandler', ['converter', ['@datahub.resource_api.view_handler.converter', 'createResponse']]]
+
+    # Following forn type is deprecatd and can be removed
+    datahub.resource_api.form.type.data_form_type:
+       class: DataHub\ResourceAPIBundle\Form\Type\DataFormType
+       calls:
+           - [setDataConverters, ["@datahub.resource.data_converters"]]
+       tags:
+           - { name: form.type }
+
+    # Following defines the lidoxml decoder service
+    datahub.resource_api.decoder.lidoxml:
+       class: DataHub\ResourceAPIBundle\Decoder\LidoXmlDecoder
+       arguments: ['@logger', '@datahub.resource.data_converters']
+
+    # Following part registers lidoxml serialization
+    datahub.resource_api.view_handler.lidoxml:
+       class: DataHub\ResourceAPIBundle\View\LidoXmlViewHandler
+       arguments: ['@logger', '@datahub.resource.data_converters']
+
+    datahub.resource_api.view_handler:
+       parent: fos_rest.view_handler.default
+       calls:
+           - ['registerHandler', ['lidoxml', [@datahub.resource_api.view_handler.lidoxml, 'createResponse'] ] ]
