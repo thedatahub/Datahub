@@ -49,12 +49,10 @@ class XmlDecoder implements DecoderInterface
         try {
             $result = $this->converter->read($data);
 
-            $this->convertClarkToCatmandu($result);
+            $build = [];
+            $this->convertClarkToCatmandu($result, $build);
 
-            var_dump($result);
-            die();
-
-            return $result;
+            return array($build);
         } catch (\Exception $e) {
             throw new BadRequestHttpException('Invalid XML: ' . $e->getMessage());
         }
@@ -70,13 +68,24 @@ class XmlDecoder implements DecoderInterface
      *   This is legacy code. Needs to be moved to a proper class and injected
      *   via the container based on an configuration option. Or we could use an
      *   event listener.
+     *
+     * @param $raw array The raw input array in Clark Notation.
+     * @param $build array An empty build array which will be constructed as the
+     *     function traverses through the $raw array.
+     *
+     * @return void
      */
-    public function convertClarkToCatmandu(&$result) {
-        foreach ($result as $key => &$item) {
+    public function convertClarkToCatmandu(&$raw, &$build) {
+        foreach ($raw as $key => &$item) {
             if (isset($item['name'])) {
+                // Remove namespace from the element name
+                $item['name'] = preg_replace('/{.*}(.*)/', '$1', $item['name']);
+
+                $build[$item['name']] = [];
+
                 // Re-arrange the 'value' key/pair of the current node
                 if (is_array($item['value']) && !is_null($item['value'])) {
-                    $this->convertClarkToCatmandu($item['value']);
+                    $this->convertClarkToCatmandu($item['value'], $build[$item['name']]);
                     $contents = $item['value'];
                 } else {
                     $contents = ['_' => $item['value'] ];
@@ -90,11 +99,10 @@ class XmlDecoder implements DecoderInterface
                 );
                 $contents = array_merge($contents, $item['attributes']);
 
-                // Remove namespace from the element name
-                $item['name'] = preg_replace('/{.*}(.*)/', '$1', $item['name']);
-
                 // Put it all back together, use the element name as the key for
                 // the current node
+
+                $build[$item['name']] = $contents;
                 $item = [ $item['name'] => $contents ];
             }
         }
