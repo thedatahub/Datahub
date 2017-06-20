@@ -335,7 +335,7 @@ class DataController extends Controller
 
             if (!$result) {
                 $logger->info('Could not store updated data:' . $id);
-                $response = HTTP_BAD_REQUEST;
+                $response = Response::HTTP_BAD_REQUEST;
                 $headers = ['Message' => 'Could not store updated data'];
             } else {
                 $logger->info('Updated record:' . $id);
