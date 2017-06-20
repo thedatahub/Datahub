@@ -96,7 +96,7 @@ fos_rest:
         enabled: true
         throw_exception_on_unsupported_content_type: true
         decoders:
-            lidoxml: datahub.resource_api.decoder.lidoxml
+            lidoxml: datahub.resource_api.decoder.xml
     format_listener:
         rules:
             -

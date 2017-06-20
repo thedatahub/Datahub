@@ -2,6 +2,15 @@
 
 namespace DataHub\ResourceBundle\Service\DataType;
 
+/**
+ * DataType LIDO class
+ *
+ * A concrete implementation of the LIDO XML Datatype.
+ * @see http://lido-schema.org
+ *
+ * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
+ * @package DataHub\ResourceBundle
+ */
 class DataTypeLido implements DataTypeInterface {
     protected $namespaceMap;
 

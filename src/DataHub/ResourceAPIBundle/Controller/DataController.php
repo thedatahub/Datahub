@@ -290,6 +290,7 @@ class DataController extends Controller
 
         // Get a decoded record
         $data = $request->request->all();
+
         $records = $converter->getRecords($data);
         if (empty($records)) {
             return new Response('', Response::HTTP_BAD_REQUEST, ['Message' => 'Could not parse data.']);

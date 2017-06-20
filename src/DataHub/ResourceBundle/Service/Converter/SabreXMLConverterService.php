@@ -2,6 +2,17 @@
 
 namespace DataHub\ResourceBundle\Service\Converter;
 
+use DataHub\ResourceBundle\Service\DataType\DataTypeInterface;
+use Sabre\Xml\Service;
+
+/**
+ * Converter service class.
+ *
+ * This converter wraps the Sabre XML library to (de)serialize objects.
+ *
+ * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
+ * @package DataHub\ResourceBundle
+ */
 class SabreXMLConverterService implements ConverterServiceinterface {
 
     protected $service;
@@ -12,11 +23,11 @@ class SabreXMLConverterService implements ConverterServiceinterface {
         $this->service->namespaceMap = $dataType->getNamespaceMap();
     }
 
-    public function validate($serialzedData) {
+    public function validate($serializedData) {
     }
 
     public function read($serializedData) {
-        $object = $this->service->parse($data);
+        $object = $this->service->parse($serializedData);
         return $object;
     }
 

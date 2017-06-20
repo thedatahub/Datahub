@@ -2,9 +2,18 @@
 
 namespace DataHub\ResourceBundle\Service\Builder;
 
-use Datahub\ResourceBundle\Service\DataType\DataTypeRegisterInterface;
-use Datahub\ResourceBundle\Service\Converter\SabreXMLConverterService;
+use DataHub\ResourceBundle\Service\DataType\DataTypeRegisterInterface;
+use DataHub\ResourceBundle\Service\Converter\SabreXMLConverterService;
 
+/**
+ * Factory class.
+ *
+ * Create a new instance of SabreXMLConverterService, set the DataType to the
+ * relevant XML schema.
+ *
+ * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
+ * @package DataHub\ResourceBundle
+ */
 class ConverterFactory implements ConverterFactoryInterface {
 
     protected $dataTypeRegister;
@@ -26,7 +35,7 @@ class ConverterFactory implements ConverterFactoryInterface {
         return true;
     }
 
-    public function getConverter($dataType) {
+    public function getConverter() {
         return $this->converter;
     }
 
