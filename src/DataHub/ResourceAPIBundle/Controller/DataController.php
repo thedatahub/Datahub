@@ -77,6 +77,7 @@ class DataController extends Controller
         $data = $dataManager->cgetData($offset, $limit);
 
         foreach($data['results'] as &$result) {
+            $result['data'] = json_decode($result['data'], true);
             unset($result['raw']);
         }
 
@@ -130,6 +131,7 @@ class DataController extends Controller
         // get data
         $data = $dataManager->getData($id);
 
+        $data['data'] = json_decode($data['data'], true);
         unset($data['raw']);
 
         if (!$data) {
@@ -296,6 +298,10 @@ class DataController extends Controller
         $data_pids = $dataType->getRecordId($record);
         $object_pids = $dataType->getObjectId($record);
 
+        // Get the JSON & XML Raw variants of the record
+        $variantJSON = json_encode($record);
+        $variantXML = $request->getContent();
+
         // If the record does not exist, create it, if it does exist, update the existing record.
         // The ID of a particular resource is not generated server side, but determined client side.
         // The ID is the resource URI to which the PUT request was made.
@@ -307,8 +313,8 @@ class DataController extends Controller
                 $data_pids,
                 $object_pids,
                 $request->getFormat($request->getContentType()),
-                $record,
-                $request->getContent()
+                $variantJSON,
+                $variantXML
             );
 
             if (!$result) {
@@ -326,8 +332,8 @@ class DataController extends Controller
                 $data_pids,
                 $object_pids,
                 $request->getFormat($request->getContentType()),
-                $record,
-                $request->getContent()
+                $variantJSON,
+                $variantXML
             );
 
             if (!$result) {
