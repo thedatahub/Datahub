@@ -43,11 +43,8 @@ class Repository implements InterfaceRepository
      * @param DataService           $dataService
      * @param DataConvertersService $dataConvertersService
      */
-    public function __construct(DataService $dataService, DataConvertersService $dataConvertersService) {
+    public function __construct(DataService $dataService) {
         $this->dataService = $dataService;
-        $this->dataConvertersService = $dataConvertersService;
-
-        $this->dataConverter = $this->dataConvertersService->getConverter('lidoxml');
     }
 
     /**
@@ -108,8 +105,6 @@ class Repository implements InterfaceRepository
             throw new IdDoesNotExistException('No matching identifier ' . $identifier);
         }
 
-        // speed up OAI calls by not serializing and using raw data
-        // $data = $this->dataConverter->fromArray($record['data']);
         $data = $record['raw'];
 
         $recordMetadata = new \DOMDocument();
@@ -141,7 +136,6 @@ class Repository implements InterfaceRepository
 
         foreach ($data['results'] as $record) {
             // speed up OAI calls by not serializing and using raw data
-            // $data = $this->dataConverter->fromArray($record['data']);
             $data = $record['raw'];
 
             $recordMetadata = new \DOMDocument();
