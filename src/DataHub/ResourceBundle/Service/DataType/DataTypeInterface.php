@@ -11,4 +11,6 @@ namespace DataHub\ResourceBundle\Service\DataType;
 interface DataTypeInterface {
     public function getNamespaceMap();
     public function getRootElement();
+    public function getObjectId($record);
+    public function getRecordId($record);
 }

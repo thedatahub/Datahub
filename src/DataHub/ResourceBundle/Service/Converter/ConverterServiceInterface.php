@@ -15,4 +15,5 @@ interface ConverterServiceinterface {
     public function validate($serialzedData);
     public function read($serializedData);
     public function write($object);
+    public function getDataType();
 }

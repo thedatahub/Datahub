@@ -27,13 +27,15 @@ class SabreXMLConverterService implements ConverterServiceinterface {
     }
 
     public function read($serializedData) {
-        $object = $this->service->parse($serializedData);
-        return $object;
+        return $this->service->parse($serializedData);
     }
 
     public function write($object) {
         $rootElement = $this->dataType->getRootElement();
-        $serialisedData = $this->service->write($rootElement, $object);
-        return $serialisedData;
+        return $this->service->write($rootElement, $object);
+    }
+
+    public function getDataType() {
+        return $this->dataType;
     }
 }

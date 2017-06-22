@@ -36,4 +36,40 @@ class DataTypeLido implements DataTypeInterface {
     public function getRootElement() {
         return $this->rootElement;
     }
+
+    public function getObjectId($record) {
+        $result = [];
+        $iterator = new \ArrayIterator($record);
+
+        $ids = new \CallbackFilterIterator($iterator, function($current, $key, $iterator) {
+            if ($current['name'] == '{http://www.lido-schema.org}objectPublishedID') {
+                return TRUE;
+            }
+            return FALSE;
+        });
+
+        foreach (new \IteratorIterator($ids) as $id) {
+            array_push($result, $id['value']);
+        }
+
+        return $result;
+    }
+
+    public function getRecordId($record) {
+        $result = [];
+        $iterator = new \ArrayIterator($record);
+
+        $ids = new \CallbackFilterIterator($iterator, function($current, $key, $iterator) {
+            if ($current['name'] == '{http://www.lido-schema.org}lidoRecID') {
+                return TRUE;
+            }
+            return FALSE;
+        });
+
+        foreach (new \IteratorIterator($ids) as $id) {
+            array_push($result, $id['value']);
+        }
+
+        return $result;
+    }
 }

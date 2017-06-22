@@ -285,20 +285,16 @@ class DataController extends Controller
             // pass
         }
 
-        // if everything is configured correctly there should be a matching converter for the provided content type
-        $converter = $this->get('datahub.resource.data_converters')->getConverter($request->getContentType());
-
         // Get a decoded record
-        $data = $request->request->all();
+        $record = $request->request->all();
 
-        $records = $converter->getRecords($data);
-        if (empty($records)) {
-            return new Response('', Response::HTTP_BAD_REQUEST, ['Message' => 'Could not parse data.']);
-        }
-        $record = array_shift($records);
+        // Fetch the datatype from the converter
+        $factory = $this->get('datahub.resource.service.builder.converter.factory');
+        $dataType = $factory->getConverter()->getDataType();
 
-        $data_pids = $converter->getRecordDataPids($record);
-        $object_pids = $converter->getRecordObjectPids($record);
+        // Get the (p)id's
+        $data_pids = $dataType->getRecordId($record);
+        $object_pids = $dataType->getObjectId($record);
 
         // If the record does not exist, create it, if it does exist, update the existing record.
         // The ID of a particular resource is not generated server side, but determined client side.
