@@ -186,6 +186,7 @@ class DataController extends Controller
         // prepare data manager
         $oauthUtils = $this->get('datahub.oauth.oauth');
         $dataManager = $this->get('datahub.resource.data');
+
         $clientCode = null;
         try {
             if ($oauthUtils->getClient() !== null) {
@@ -197,58 +198,51 @@ class DataController extends Controller
             // pass
         }
 
-        // get decoded data
-        $data = $request->request->all();
+        $record = $request->request->all();
 
-        // if everything is configured correctly there should be a matching converter for the provided content type
-        // otherwise an internal error is thrown which is good in this case
-        $converter = $this->get('datahub.resource.data_converters')->getConverter($request->getContentType());
+        // Fetch the datatype from the converter
+        $factory = $this->get('datahub.resource.service.builder.converter.factory');
+        $dataType = $factory->getConverter()->getDataType();
 
-        // Throw exception 500 if data could not be parsed and is empty
-        if (empty($converter->getRecords($data))) {
-            return new Response('', Response::HTTP_BAD_REQUEST, ['Message' => 'Could not parse data.']);
-            throw new \Exception('Could not parse data.');
+        // Get the (p)id's
+        $dataPids = $dataType->getRecordId($record);
+        $objectPids = $dataType->getObjectId($record);
+
+        // Get the JSON & XML Raw variants of the record
+        $variantJSON = json_encode($record);
+        $variantXML = $request->getContent();
+
+        // Fetch a dataPid. This will be the ID used in the database for this
+        // record.
+        // @todo Differentiate between 'preferred' and 'alternate' dataPids
+        $dataPid = $dataPids[0];
+
+        // Check whether record already exists
+        if ($dataManager->getData($dataPid)) {
+            return new Response('', Response::HTTP_BAD_REQUEST, ['Message' => 'Record with this ID already exists.']);
         }
 
-        // keep the pid that will be return in the location header
-        $pid = null;
+        $result = $dataManager->createData(
+            $dataPids,
+            $objectPids,
+            $request->getFormat($request->getContentType()),
+            $variantJSON,
+            $variantXML
+        );
 
-        // store each record separately
-        foreach($converter->getRecords($data) as $record) {
-            // get data and object PID's from the data record
-            $data_pids = $converter->getRecordDataPids($record);
-            $object_pids = $converter->getRecordObjectPids($record);
-
-            // Check whether record already exists
-            if ($dataManager->getData($data_pids[0])) {
-                return new Response('', Response::HTTP_BAD_REQUEST, ['Message' => 'Record with this ID already exists.']);
-            }
-
-
-            // validate the data pid naming convention
-            // TODO: validate the data pid naming convention -> <org>:<id> where <org> should match the code related to the OAuth client
-            if ($clientCode !== null) {
-
-            }
-
-            // store the record
-            $logger->info('Data pids: ' . print_r($data_pids, true));
-            $logger->info('Object pids: ' . print_r($object_pids, true));
-            try {
-                $result = $dataManager->createData($data_pids, $object_pids, $request->getFormat($request->getContentType()), $record, $request->getContent());
-            }
-            catch (\Exception $e) {
-                // TODO: catch a possible unique constraint violation of the data pids
-                return new Response('', Response::HTTP_BAD_REQUEST);
-            }
-
-            // keep the first data pid of the first record to return in the location header afterwards
-            if (!isset($pid)) {
-                $pid = $data_pids[0];
-            }
+        if (!$result) {
+            $logger->info('Could not store new record:' . $dataPid);
+            $response = HTTP_BAD_REQUEST;
+            $headers = ['Message' => 'Could not store new record'];
+        } else {
+            $logger->info('Created record:' . $dataPid);
+            $response = Response::HTTP_CREATED;
+            $headers = [
+                'Location' => $request->getPathInfo() . '/' . urlencode($dataPid)
+            ];
         }
 
-        return new Response('', Response::HTTP_CREATED, ['Location' => $request->getPathInfo() . '/' . urlencode($pid)]);
+        return new Response('', $response, $headers);
     }
 
     /**
