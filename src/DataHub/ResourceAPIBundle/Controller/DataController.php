@@ -21,6 +21,17 @@ use DataHub\ResourceAPIBundle\Form\Type\DataFormType;
  * REST controller for Data.
  *
  * @author  Kalman Olah <kalman@inuits.eu>
+ * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
+ *
+ * @todo This class needs heavy refactoring. There are several things to be done:
+ *  - Full Doctrine ODM support to manage the I/O with mongo instead of acustom
+ *    service class.
+ *  - Use ParamConverters to convert the incoming XML to JSON encoded string and
+ *    inject both representations into a simple Document Model.
+ *  - Use a proper view handler to switch between JSON and XML variant.
+ *  - Add validation for the incoming XML object.
+ *  - Wire in OAuth support properly.
+ *
  * @package DataHub\ResourceAPIBundle
  */
 class DataController extends Controller
