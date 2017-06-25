@@ -238,7 +238,7 @@ class DataController extends Controller
 
         if (!$result) {
             $logger->info('Could not store new record:' . $dataPid);
-            $response = HTTP_BAD_REQUEST;
+            $response = Response::HTTP_BAD_REQUEST;
             $headers = ['Message' => 'Could not store new record'];
         } else {
             $logger->info('Created record:' . $dataPid);
