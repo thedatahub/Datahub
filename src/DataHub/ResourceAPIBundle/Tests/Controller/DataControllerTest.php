@@ -2,113 +2,261 @@
 
 namespace DataHub\ResourceAPIBundle\Tests\Controller;
 
-use DataHub\OAuthBundle\Tests\OAuthTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class DataControllerTest extends OAuthTestCase
+class DataControllerTest extends WebTestCase
 {
 
-    public function testDataCrudAction()
-    {
-        $testDataList = [
-            'lidoxml' => [
-                file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml'),
-                file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj20344012-Fontana_del_Moro.xml'),
-            ],
-        ];
+    private $client;
 
-        list($crawler, $response, $data) = $this->apiRequest('GET', '/v1/data/converters');
+    private $record;
+
+    private $dataPid;
+
+    protected function setUp() {
+        $this->client = static::createClient();
+        $this->validRecord = file_get_contents(__DIR__.'/../Fixtures/LIDO-Example_FMobj00154983-LaPrimavera.xml');
+        $this->invalidRecord = file_get_contents(__DIR__.'/../Fixtures/LIDO-Example_FMobj00154983-LaPrimavera-invalid-lido.xml');
+        $this->jsonRecord = file_get_contents(__DIR__.'/../Fixtures/LIDO-Example_FMobj00154983-LaPrimavera.json');
+        $this->emptyRecord = '';
+        $this->dataPid = 'DE-Mb112/lido-obj00154983';
+    }
+
+    protected function getAccessToken() {
+        $this->client->request('GET', '/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
+        $response = $this->client->getResponse();
+        $data = json_decode($response->getContent(), true);
+        return $data['access_token'];
+    }
+
+    protected function get($id = null) {
+        $accessToken = $this->getAccessToken();
+        $action = (!is_null($id)) ? sprintf("/api/v1/data/%s", urlencode($id)) : "/api/v1/data";
+        $action = sprintf('%s?access_token=%s', $action, $accessToken);
+
+        $this->client->request('GET', $action);
+
+        return $this->client->getResponse();
+    }
+
+    protected function post($record) {
+        $accessToken = $this->getAccessToken();
+        $action = sprintf('/api/v1/data?access_token=%s', $accessToken);
+
+        $this->client->request('POST', $action, [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $record);
+
+        return $this->client->getResponse();
+    }
+
+    protected function put($id, $record) {
+        $accessToken = $this->getAccessToken();
+        $action = sprintf('/api/v1/data/%s?access_token=%s', $id, $accessToken);
+
+        $this->client->request('PUT', $action, [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $record);
+
+        return $this->client->getResponse();
+    }
+
+    protected function delete($id) {
+        $accessToken = $this->getAccessToken();
+        $action = sprintf("/api/v1/data/%s?access_token=%s", $id, $accessToken);
+
+        $this->client->request('DELETE', $action);
+
+        return $this->client->getResponse();
+    }
+
+    public function testGetRecordJSONAction() {
+        $response = $this->post($this->validRecord);
+
+        $response = $this->get($this->dataPid);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(200, $statusCode);
+        $this->assertNotEmpty($content);
+        // $this->assertJsonStringEqualsJsonString($this->jsonRecord, $content);
+
+        $this->delete($this->dataPid);
+    }
+
+    public function testGetRecordXMLAction() {
+        $response = $this->post($this->validRecord);
+
+        $response = $this->get($this->dataPid);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(200, $statusCode);
+        $this->assertNotEmpty($content);
+        // $this->assertXMLStringEqualsXMLString($this->validRecord, $content);
+
+        $this->delete($this->dataPid);
+    }
+
+    public function testGetRecordsAction() {
+        $this->post($this->validRecord);
+
+        $response = $this->get();
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        // $this->assertJsonStringEqualsJsonString($this->jsonRecord, $content);
+
+        $this->delete($this->dataPid);
+
+        // Check if actual matches expected content
+
+        // GET with valid pagination
+
+        // GET with invalid pagination
+
+        // Test with offset beyond available range
+    }
+
+    public function testPostValidRecordAction() {
+        $response = $this->post($this->validRecord);
+        $statusCode = $response->getStatusCode();
+        $location = $response->headers->get('location');
+        $dataPid = urldecode(preg_replace('/\/api\/v1\/data\/(.*)$/', '$1', $location));
+
         $this->assertTrue($response->isSuccessful());
-        $this->assertCRUDListContent($data);
-        $dataConverterIds = $data['results'];
+        $this->assertEquals(201, $statusCode);
+        $this->assertEquals($this->dataPid, $dataPid);
 
-        foreach ($dataConverterIds as $dataConverterId) {
-            if (!isset($testDataList[$dataConverterId])) {
-                continue;
-            }
-
-            foreach ($testDataList[$dataConverterId] as $testData) {
-                // Insert a document
-                list($crawler, $response, $data) = $this->apiRequest('POST', '/v1/data', [], [], [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $testData);
-                $this->assertTrue($response->isSuccessful());
-                $this->assertEquals(201, $response->getStatusCode());
-
-                // Get document PID from the response's location header
-                $dataId = urldecode(array_values(array_reverse(explode('/', $response->headers->get('location'))))[0]);
-
-                // Get all documents, must be > 0
-                list($crawler, $response, $data) = $this->apiRequest('GET', '/v1/data');
-                $this->assertTrue($response->isSuccessful());
-                $this->assertEquals(200, $response->getStatusCode());
-                $this->assertCRUDListContent($data);
-                $this->assertGreaterThan(0, $data['count']);
-
-                // Get inserted document by PID
-                list($crawler, $response, $data) = $this->apiRequest('GET', "/v1/data/{$dataId}");
-                $this->assertTrue($response->isSuccessful());
-                $this->assertEquals(200, $response->getStatusCode());
-                $this->assertEquals($dataId, $data['data_pids'][0]);
-                $this->assertEquals($testData, $data['raw']);
-
-                // Update a document with given PID
-                $testData2 = str_replace('Man-Made Object', 'test update', $testData);
-                list($crawler, $response, $data) = $this->apiRequest('PUT', "/v1/data/{$dataId}", [], [], [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $testData2);
-                $this->assertTrue($response->isSuccessful());
-                $this->assertEquals(204, $response->getStatusCode());
-
-                // Retrieve updated document, check against var
-                list($crawler, $response, $data) = $this->apiRequest('GET', "/v1/data/{$dataId}");
-                $this->assertTrue($response->isSuccessful());
-                $this->assertEquals(200, $response->getStatusCode());
-                $this->assertEquals($dataId, $data['data_pids'][0]);
-                $this->assertNotEquals($testData, $data['raw']);
-                $this->assertEquals($testData2, $data['raw']);
-
-                // Delete a document by PID
-                list($crawler, $response, $data) = $this->apiRequest('DELETE', "/v1/data/{$dataId}", [], [], [], [], ['CONTENT_TYPE' => 'application/lido+xml']);
-                $this->assertTrue($response->isSuccessful());
-                $this->assertEquals(204, $response->getStatusCode());
-
-                // Check if document actually removed from storage
-                list($crawler, $response, $data) = $this->apiRequest('GET', "/v1/data/{$dataId}");
-                $this->assertFalse($response->isSuccessful());
-                $this->assertEquals(404, $response->getStatusCode());
-            }
-        }
+        $this->delete($this->dataPid);
     }
 
-    /**
-     * Tests passing non LIDO XML data with that content type header.
-     * Tests passing an unsupported format.
-     */
-    public function testNonLidoXMLInput() {
-        $testData = "this is not XML data!";
-        list($crawler, $response, $data) = $this->apiRequest('POST', '/v1/data', [], [], [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $testData);
-        $this->assertFalse($response->isSuccessful());
-        $this->assertEquals(400, $response->getStatusCode());
+    public function testPostDuplicateRecordAction() {
+        $this->post($this->validRecord);
 
-        $testData = file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera-invalid-lido.xml'); // file misses required tags
-        list($crawler, $response, $data) = $this->apiRequest('POST', '/v1/data', [], [], [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $testData);
-        $this->assertFalse($response->isSuccessful());
-        $this->assertEquals(400, $response->getStatusCode());
+        $response = $this->post($this->validRecord);
+        $statusCode = $response->getStatusCode();
+        $message = $response->headers->get('message');
 
-        $testData = "{\"this is\": \"not an accepted input format\"}";
-        list($crawler, $response, $data) = $this->apiRequest('POST', '/v1/data', [], [], [], [], ['CONTENT_TYPE' => 'application/json'], $testData);
-        $this->assertFalse($response->isSuccessful());
-        $this->assertEquals(415, $response->getStatusCode()); // Unsupported media type
+        $this->assertTrue($response->isClientError());
+        $this->assertEquals(409, $statusCode);
+        $this->assertEquals("Record with this ID already exists.", $message);
+
+        $this->delete($this->dataPid);
     }
 
-    /**
-     * Tests inserting the same file twice.
-     */
-    public function testDuplicateInput() {
-        $testData = file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml');
-        list($crawler, $response, $data) = $this->apiRequest('POST', '/v1/data', [], [], [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $testData);
-        $this->assertTrue($response->isSuccessful());
-        $this->assertEquals(201, $response->getStatusCode());
+    public function testPostInvalidRecordAction() {
+        $response = $this->post($this->invalidRecord);
+        $statusCode = $response->getStatusCode();
 
-        list($crawler, $response, $data) = $this->apiRequest('POST', '/v1/data', [], [], [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $testData);
-        $this->assertFalse($response->isSuccessful());
-        $this->assertEquals(400, $response->getStatusCode());
+        // Test for 403 response
+        // Test for "The provided XML record is invalid."
+
+        $this->delete($this->dataPid);
     }
 
+    public function testPostEmptyRecordAction() {
+        $response = $this->post($this->emptyRecord);
+        $statusCode = $response->getStatusCode();
+        $message = $response->headers->get('message');
+
+        $this->assertEquals(422, $statusCode);
+        $this->assertEquals("No record was provided.", $message);
+
+        $this->delete($this->dataPid);
+    }
+
+    public function testPutCreateValidRecordAction() {
+        $response = $this->put($this->dataPid, $this->validRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(201, $statusCode);
+        $this->assertEmpty($content);
+
+        $this->delete($this->dataPid);
+    }
+
+    public function testPutUpdateValidRecordAction() {
+        $response = $this->put($this->dataPid, $this->validRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(201, $statusCode);
+        $this->assertEmpty($content);
+
+        $response = $this->put($this->dataPid, $this->validRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(204, $statusCode);
+        $this->assertEmpty($content);
+
+        $this->delete($this->dataPid);
+    }
+
+    public function testPutCreateInvalidRecordAction() {
+        $response = $this->put($this->dataPid, $this->validRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        // Test for 403 response
+        // Test for "The provided XML record is invalid."
+
+        $this->delete($this->dataPid);
+    }
+    public function testPutUpdateInvalidRecordAction() {
+        $this->post($this->validRecord);
+
+        $response = $this->put($this->dataPid, $this->validRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        // Test for 403 response
+        // Test for "The provided XML record is invalid."
+
+        $this->delete($this->dataPid);
+    }
+
+    public function testPutCreateEmptyRecordAction() {
+        $response = $this->put($this->dataPid, $this->emptyRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        // Test for 403 response
+        // Test for "The provided XML record is invalid."
+
+        $this->delete($this->dataPid);
+    }
+
+    public function testPutUpdateEmptyRecordAction() {
+        $this->post($this->validRecord);
+
+        $response = $this->put($this->dataPid, $this->emptyRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        // Test for 403 response
+        // Test for "The provided XML record is invalid."
+
+        $this->delete($this->dataPid);
+    }
+
+    public function testDeleteExistingRecordAction() {
+        $this->post($this->validRecord);
+
+        $response = $this->delete($this->dataPid);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(204, $statusCode);
+        $this->assertEmpty($content);
+    }
+
+    public function testDeleteNonExistingRecordAction() {
+        $this->delete($this->dataPid);
+
+        $response = $this->delete($this->dataPid);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(404, $statusCode);
+        // $this->assertEmpty($content);
+    }
 }

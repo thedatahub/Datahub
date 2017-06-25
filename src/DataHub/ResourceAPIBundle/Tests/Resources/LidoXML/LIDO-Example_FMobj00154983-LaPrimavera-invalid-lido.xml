@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lido:lido xmlns:lido="http://www.lido-schema.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.lido-schema.org http://www.lido-schema.org/schema/v1.0/lido-v1.0.xsd">
-      <lido:lidoRecID lido:source="Deutsches Dokumentationszentrum für Kunstgeschichte - Bildarchiv Foto Marburg" lido:type="local">DE-Mb112/lido-obj00154983</lido:lidoRecID>
       <lido:category>
          <lido:conceptID lido:type="URI">http://www.cidoc-crm.org/crm-concepts/E22</lido:conceptID>
          <lido:term xml:lang="en">Man-Made Object</lido:term>
@@ -673,4 +672,120 @@
             <lido:relatedWorksWrap/>
          </lido:objectRelationWrap>
       </lido:descriptiveMetadata>
+      <lido:administrativeMetadata xml:lang="en">
+         <lido:rightsWorkWrap/>
+         <lido:recordWrap>
+            <lido:recordID lido:type="local">00154983</lido:recordID>
+            <lido:recordType><lido:term>single object</lido:term></lido:recordType>
+            <lido:recordSource>
+               <lido:legalBodyID lido:type="URI" lido:source="ISIL (ISO 15511)">info:isil/DE-Mb112</lido:legalBodyID>
+               <lido:legalBodyName>
+                  <lido:appellationValue>Deutsches Dokumentationszentrum für Kunstgeschichte - Bildarchiv Foto Marburg</lido:appellationValue>
+               </lido:legalBodyName>
+               <lido:legalBodyWeblink>http://www.fotomarburg.de</lido:legalBodyWeblink>
+            </lido:recordSource>
+            <lido:recordRights>
+               <lido:rightsHolder>
+                  <lido:legalBodyID lido:type="URI" lido:source="ISIL (ISO 15511)">info:isil/DE-Mb112</lido:legalBodyID>
+                  <lido:legalBodyName>
+                     <lido:appellationValue>Deutsches Dokumentationszentrum für Kunstgeschichte - Bildarchiv Foto Marburg</lido:appellationValue>
+                  </lido:legalBodyName>
+                  <lido:legalBodyWeblink>http://www.fotomarburg.de</lido:legalBodyWeblink>
+               </lido:rightsHolder>
+            </lido:recordRights>
+            <lido:recordInfoSet>
+               <lido:recordInfoLink lido:formatResource="html">http://www.bildindex.de/dokumente/html/obj00154983</lido:recordInfoLink>
+            </lido:recordInfoSet>
+            <lido:recordInfoSet>
+               <lido:recordInfoID lido:type="oai">oai:bildindex.de:lidoWrap::DE-Mb112/lido-obj00154983</lido:recordInfoID>
+            </lido:recordInfoSet>
+         </lido:recordWrap>
+         <lido:resourceWrap>
+            <lido:resourceSet>
+               <lido:resourceID lido:type="local">C 654.591</lido:resourceID>
+               <lido:resourceRepresentation lido:type="image_thumb">
+				   <lido:linkResource lido:formatResource="jpg">http://www.bildindex.de/bilder/t/fmc654591</lido:linkResource>
+				   <lido:resourceMeasurementsSet>
+						<lido:measurementType>width</lido:measurementType>
+						<lido:measurementUnit>pixel</lido:measurementUnit>
+						<lido:measurementValue>120</lido:measurementValue>
+					</lido:resourceMeasurementsSet>
+				</lido:resourceRepresentation>
+               <lido:resourceType>
+                  <lido:term>digital image</lido:term>
+               </lido:resourceType>
+               <lido:resourceDescription>overall view</lido:resourceDescription>
+               <lido:resourceDateTaken><lido:displayDate>1949</lido:displayDate></lido:resourceDateTaken>
+               <lido:resourceSource lido:type="holder of image">
+				   <lido:legalBodyName>
+						<lido:appellationValue>Deutsches Dokumentationszentrum für Kunstgeschichte - Bildarchiv Foto Marburg</lido:appellationValue>
+					</lido:legalBodyName>
+               </lido:resourceSource>
+               <lido:rightsResource>
+                  <lido:rightsHolder>
+                     <lido:legalBodyID lido:type="URI" lido:source="ISIL (ISO 15511)">info:isil/DE-Mb112</lido:legalBodyID>
+                     <lido:legalBodyName>
+                        <lido:appellationValue>Deutsches Dokumentationszentrum für Kunstgeschichte - Bildarchiv Foto Marburg</lido:appellationValue>
+                     </lido:legalBodyName>
+                  </lido:rightsHolder>
+               </lido:rightsResource>
+            </lido:resourceSet>
+            <lido:resourceSet>
+               <lido:resourceID lido:type="local"></lido:resourceID>
+               <lido:resourceRepresentation lido:type="image_thumb">
+				   <lido:linkResource lido:formatResource="jpg">http://www.bildindex.de/bilder/t/it00148d04</lido:linkResource>
+				   <lido:resourceMeasurementsSet>
+						<lido:measurementType>width</lido:measurementType>
+						<lido:measurementUnit>pixel</lido:measurementUnit>
+						<lido:measurementValue>120</lido:measurementValue>
+					</lido:resourceMeasurementsSet>
+				</lido:resourceRepresentation>
+               <lido:resourceType>
+                  <lido:term>digital image (digitized from analog source)</lido:term>
+               </lido:resourceType>
+               <lido:resourceDescription>overall view</lido:resourceDescription>
+               <lido:resourceDateTaken><lido:displayDate>1932</lido:displayDate></lido:resourceDateTaken>
+               <lido:resourceSource lido:type="holder of image">
+				   <lido:legalBodyName>
+						<lido:appellationValue>Deutsches Dokumentationszentrum für Kunstgeschichte - Bildarchiv Foto Marburg</lido:appellationValue>
+					</lido:legalBodyName>
+               </lido:resourceSource>
+               <lido:rightsResource>
+                  <lido:rightsHolder>
+                     <lido:legalBodyID lido:type="URI" lido:source="ISIL (ISO 15511)">info:isil/DE-Mb112</lido:legalBodyID>
+                     <lido:legalBodyName>
+                        <lido:appellationValue>Deutsches Dokumentationszentrum für Kunstgeschichte - Bildarchiv Foto Marburg</lido:appellationValue>
+                     </lido:legalBodyName>
+                  </lido:rightsHolder>
+               </lido:rightsResource>
+            </lido:resourceSet>
+            <lido:resourceSet>
+               <lido:resourceID lido:type="local">1.005.045</lido:resourceID>
+               <lido:resourceRepresentation lido:type="image_thumb">
+				   <lido:linkResource lido:formatResource="jpg">http://www.bildindex.de/bilder/t/it00148d03</lido:linkResource>
+				   <lido:resourceMeasurementsSet>
+						<lido:measurementType>width</lido:measurementType>
+						<lido:measurementUnit>pixel</lido:measurementUnit>
+						<lido:measurementValue>120</lido:measurementValue>
+					</lido:resourceMeasurementsSet>
+				</lido:resourceRepresentation>
+               <lido:resourceType>
+                  <lido:term>digital image (digitized from analog source)</lido:term>
+               </lido:resourceType>
+               <lido:resourceSource lido:type="holder of image">
+				   <lido:legalBodyName>
+						<lido:appellationValue>Deutsches Dokumentationszentrum für Kunstgeschichte - Bildarchiv Foto Marburg</lido:appellationValue>
+					</lido:legalBodyName>
+               </lido:resourceSource>
+               <lido:rightsResource>
+                  <lido:rightsHolder>
+                     <lido:legalBodyID lido:type="URI" lido:source="ISIL (ISO 15511)">info:isil/DE-Mb112</lido:legalBodyID>
+                     <lido:legalBodyName>
+                        <lido:appellationValue>Deutsches Dokumentationszentrum für Kunstgeschichte - Bildarchiv Foto Marburg</lido:appellationValue>
+                     </lido:legalBodyName>
+                  </lido:rightsHolder>
+               </lido:rightsResource>
+            </lido:resourceSet>
+         </lido:resourceWrap>
+      </lido:administrativeMetadata>
    </lido:lido>
