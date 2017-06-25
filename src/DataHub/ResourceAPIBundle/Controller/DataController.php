@@ -200,6 +200,12 @@ class DataController extends Controller
 
         $record = $request->request->all();
 
+        if (empty($record)) {
+            $response = Response::HTTP_UNPROCESSABLE_ENTITY;
+            $headers = ['Message' => 'No record was provided.'];
+            return new Response('', $response, $headers);
+        }
+
         // Fetch the datatype from the converter
         $factory = $this->get('datahub.resource.service.builder.converter.factory');
         $dataType = $factory->getConverter()->getDataType();
@@ -294,6 +300,12 @@ class DataController extends Controller
 
         // Get a decoded record
         $record = $request->request->all();
+
+        if (empty($record)) {
+            $response = Response::HTTP_UNPROCESSABLE_ENTITY;
+            $headers = ['Message' => 'No record was provided.'];
+            return new Response('', $response, $headers);
+        }
 
         // Fetch the datatype from the converter
         $factory = $this->get('datahub.resource.service.builder.converter.factory');
