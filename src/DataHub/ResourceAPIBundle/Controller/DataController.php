@@ -225,7 +225,7 @@ class DataController extends Controller
 
         // Check whether record already exists
         if ($dataManager->getData($dataPid)) {
-            return new Response('', Response::HTTP_BAD_REQUEST, ['Message' => 'Record with this ID already exists.']);
+            return new Response('', Response::HTTP_CONFLICT, ['Message' => 'Record with this ID already exists.']);
         }
 
         $result = $dataManager->createData(
