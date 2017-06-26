@@ -13,6 +13,9 @@ class DataControllerTest extends WebTestCase
 
     private $dataPid;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp() {
         $this->client = static::createClient();
         $this->validRecord = file_get_contents(__DIR__.'/../Fixtures/LIDO-Example_FMobj00154983-LaPrimavera.xml');
@@ -22,6 +25,11 @@ class DataControllerTest extends WebTestCase
         $this->dataPid = 'DE-Mb112/lido-obj00154983';
     }
 
+    /**
+     * Gets an OAuth access token
+     *
+     * @return string A valid OAuth access token.
+     */
     protected function getAccessToken() {
         $this->client->request('GET', '/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
         $response = $this->client->getResponse();
@@ -29,6 +37,14 @@ class DataControllerTest extends WebTestCase
         return $data['access_token'];
     }
 
+    /**
+     * Implements a GET client call.
+     *
+     * @param string $id Optional identifier for a record. If not specified, all
+     *        all records will be retrieved.
+     *
+     * @param Symfony\Component\HttpFoundation\Response Response object
+     */
     protected function get($id = null) {
         $accessToken = $this->getAccessToken();
         $action = (!is_null($id)) ? sprintf("/api/v1/data/%s", urlencode($id)) : "/api/v1/data";
@@ -39,6 +55,13 @@ class DataControllerTest extends WebTestCase
         return $this->client->getResponse();
     }
 
+    /**
+     * Implements a POST client call.
+     *
+     * @param string $record Required valid record string.
+     *
+     * @param Symfony\Component\HttpFoundation\Response Response object
+     */
     protected function post($record) {
         $accessToken = $this->getAccessToken();
         $action = sprintf('/api/v1/data?access_token=%s', $accessToken);
@@ -48,6 +71,14 @@ class DataControllerTest extends WebTestCase
         return $this->client->getResponse();
     }
 
+    /**
+     * Implements a PUT client call.
+     *
+     * @param string $id     The identifier of the record to be updated or created.
+     * @param string $record Required valid record string.
+     *
+     * @param Symfony\Component\HttpFoundation\Response Response object
+     */
     protected function put($id, $record) {
         $accessToken = $this->getAccessToken();
         $action = sprintf('/api/v1/data/%s?access_token=%s', $id, $accessToken);
@@ -57,6 +88,14 @@ class DataControllerTest extends WebTestCase
         return $this->client->getResponse();
     }
 
+    /**
+     * Implements a DELETE client call.
+     *
+     * @param string $id     The identifier of the record to be deleted.
+     * @param string $record Required valid record string.
+     *
+     * @param Symfony\Component\HttpFoundation\Response Response object
+     */
     protected function delete($id) {
         $accessToken = $this->getAccessToken();
         $action = sprintf("/api/v1/data/%s?access_token=%s", $id, $accessToken);
