@@ -100,11 +100,11 @@ fos_rest:
     format_listener:
         rules:
             -
-                path: '^.*?\.lidoxml$'
+                path: '^/api/.*?\.xml$'
                 host: ~
                 prefer_extension: true
-                fallback_format: lidoxml
-                priorities: [lidoxml, json]
+                fallback_format: xml
+                priorities: [xml, json]
             -
                 path: '^/api'
                 host: ~
@@ -127,7 +127,7 @@ fos_rest:
         formats:
             json: true
             xml: true
-            lidoxml: true
+#            lidoxml: true
         mime_types:
             formats:
                 lidoxml: ['application/lido+xml']
@@ -143,8 +143,8 @@ fos_rest:
         lidoxml: true
     routing_loader:
         default_format: json
-    service:
-        view_handler: datahub.resource_api.view_handler
+#    service:
+#        view_handler: datahub.resource_api.view_handler
 
 nelmio_cors:
     defaults:
