@@ -132,11 +132,12 @@ class DataControllerTest extends WebTestCase
 
         $response = $this->post($this->validRecord);
         $statusCode = $response->getStatusCode();
-        $message = $response->headers->get('message');
+        $content = $response->getContent();
+        $content = json_decode($content, true);
 
         $this->assertTrue($response->isClientError());
         $this->assertEquals(409, $statusCode);
-        $this->assertEquals("Record with this ID already exists.", $message);
+        $this->assertEquals("Record with this ID already exists.", $content['message']);
 
         $this->delete($this->dataPid);
     }
@@ -154,10 +155,12 @@ class DataControllerTest extends WebTestCase
     public function testPostEmptyRecordAction() {
         $response = $this->post($this->emptyRecord);
         $statusCode = $response->getStatusCode();
-        $message = $response->headers->get('message');
+        $content = $response->getContent();
+        $content = json_decode($content, true);
+
 
         $this->assertEquals(422, $statusCode);
-        $this->assertEquals("No record was provided.", $message);
+        $this->assertEquals("No record was provided.", $content['message']);
 
         $this->delete($this->dataPid);
     }

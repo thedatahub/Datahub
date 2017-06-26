@@ -2,7 +2,13 @@
 
 namespace DataHub\ResourceAPIBundle\Controller;
 
-use FOS\RestBundle\Controller\Annotations;
+use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Put;
+use FOS\RestBundle\Controller\Annotations\Delete;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
+use FOS\RestBundle\Controller\Annotations\View;
+
 use FOS\RestBundle\Request\ParamFetcherInterface;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -12,9 +18,13 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+
 use DataHub\ResourceAPIBundle\Form\Type\DataFormType;
 
 /**
@@ -47,13 +57,13 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @Annotations\Get("/data")
+     * @Get("/data")
      *
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing entries.")
-     * @Annotations\QueryParam(name="limit", requirements="\d{1,2}", default="5", description="How many entries to return.")
-     * @Annotations\QueryParam(name="sort", requirements="[a-zA-Z\.]+,(asc|desc|ASC|DESC)", nullable=true, description="Sorting field and direction.")
+     * @QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing entries.")
+     * @QueryParam(name="limit", requirements="\d{1,2}", default="5", description="How many entries to return.")
+     * @QueryParam(name="sort", requirements="[a-zA-Z\.]+,(asc|desc|ASC|DESC)", nullable=true, description="Sorting field and direction.")
      *
-     * @Annotations\View(
+     * @View(
      *     serializerGroups={"list"},
      *     serializerEnableMaxDepthChecks=true
      * )
@@ -107,9 +117,9 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @Annotations\Get("/data/{id}", requirements={"id" = ".+?"})
+     * @Get("/data/{id}", requirements={"id" = ".+?"})
      *
-     * @Annotations\View(
+     * @View(
      *     serializerGroups={"single"},
      *     serializerEnableMaxDepthChecks=true
      * )
@@ -139,17 +149,19 @@ class DataController extends Controller
             // pass
         }
 
-        // get data
         $data = $dataManager->getData($id);
 
-        $data['data'] = json_decode($data['data'], true);
-        unset($data['raw']);
-
         if (!$data) {
-            throw $this->createNotFoundException();
+            throw new NotFoundHttpException('Record could not be found');
         }
 
-        return $data;
+        // Circumventing the XML serializer here, since we already have the
+        // raw XML input from the store.
+        if ($request->getRequestFormat() == 'xml') {
+            return new Response($data['raw']);
+        }
+
+        return json_decode($data['data'], true);
     }
 
     /**
@@ -165,13 +177,13 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @Annotations\View(
+     * @View(
      *     serializerGroups={"single"},
      *     serializerEnableMaxDepthChecks=true,
      *     statusCode=201
      * )
      *
-     * @Annotations\Post("/data")
+     * @Post("/data")
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
@@ -201,9 +213,7 @@ class DataController extends Controller
         $record = $request->request->all();
 
         if (empty($record)) {
-            $response = Response::HTTP_UNPROCESSABLE_ENTITY;
-            $headers = ['Message' => 'No record was provided.'];
-            return new Response('', $response, $headers);
+            throw new UnprocessableEntityHttpException('No record was provided.');
         }
 
         // Fetch the datatype from the converter
@@ -225,7 +235,7 @@ class DataController extends Controller
 
         // Check whether record already exists
         if ($dataManager->getData($dataPid)) {
-            return new Response('', Response::HTTP_CONFLICT, ['Message' => 'Record with this ID already exists.']);
+            throw new ConflictHttpException('Record with this ID already exists.');
         }
 
         $result = $dataManager->createData(
@@ -237,9 +247,7 @@ class DataController extends Controller
         );
 
         if (!$result) {
-            $logger->info('Could not store new record:' . $dataPid);
-            $response = Response::HTTP_BAD_REQUEST;
-            $headers = ['Message' => 'Could not store new record'];
+            throw new BadRequestHttpException('Could not store new record.');
         } else {
             $logger->info('Created record:' . $dataPid);
             $response = Response::HTTP_CREATED;
@@ -265,13 +273,12 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @Annotations\View(
+     * @View(
      *     serializerGroups={"single"},
-     *     serializerEnableMaxDepthChecks=true,
-     *     statusCode=204
+     *     serializerEnableMaxDepthChecks=true
      * )
      *
-     * @Annotations\Put("/data/{id}", requirements={"id" = ".+?"})
+     * @Put("/data/{id}", requirements={"id" = ".+?"})
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
@@ -302,9 +309,7 @@ class DataController extends Controller
         $record = $request->request->all();
 
         if (empty($record)) {
-            $response = Response::HTTP_UNPROCESSABLE_ENTITY;
-            $headers = ['Message' => 'No record was provided.'];
-            return new Response('', $response, $headers);
+            throw new UnprocessableEntityHttpException('No record was provided.');
         }
 
         // Fetch the datatype from the converter
@@ -335,9 +340,7 @@ class DataController extends Controller
             );
 
             if (!$result) {
-                $logger->info('Could not store new record:' . $id);
-                $response = HTTP_BAD_REQUEST;
-                $headers = ['Message' => 'Could not store new record'];
+                throw new BadRequestHttpException('Could not store new record.');
             } else {
                 $logger->info('Created record:' . $id);
                 $response = Response::HTTP_CREATED;
@@ -354,9 +357,7 @@ class DataController extends Controller
             );
 
             if (!$result) {
-                $logger->info('Could not store updated data:' . $id);
-                $response = Response::HTTP_BAD_REQUEST;
-                $headers = ['Message' => 'Could not store updated data'];
+                throw new BadRequestHttpException('Could not store updated record.');
             } else {
                 $logger->info('Updated record:' . $id);
                 $response = Response::HTTP_NO_CONTENT;
@@ -379,9 +380,9 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @Annotations\View(statusCode="204")
+     * @View(statusCode="204")
      *
-     * @Annotations\Delete("/data/{id}", requirements={"id" = ".+?"})
+     * @Delete("/data/{id}", requirements={"id" = ".+?"})
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
@@ -416,6 +417,6 @@ class DataController extends Controller
             throw new HttpException('Unable to delete the requested data');
         }
 
-        return new Response('', Response::HTTP_NO_CONTENT);
+        // return new Response('', Response::HTTP_NO_CONTENT);
     }
 }
