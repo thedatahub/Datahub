@@ -78,10 +78,6 @@ class DataController extends Controller
         $logger = $this->get('logger');
         $logger->info('cGET data');
 
-        // get parameters
-        $offset = intval($paramFetcher->get('offset'));
-        $limit = intval($paramFetcher->get('limit'));
-
         // prepare data manager
         $oauthUtils = $this->get('datahub.oauth.oauth');
         $dataManager = $this->get('datahub.resource.data');
@@ -93,6 +89,12 @@ class DataController extends Controller
             // TODO:
             // pass
         }
+
+        // get parameters
+        $offset = intval($paramFetcher->get('offset'));
+        $limit = intval($paramFetcher->get('limit'));
+        // @todo
+        //   Implement sorting
 
         // get data
         $data = $dataManager->cgetData($offset, $limit);
