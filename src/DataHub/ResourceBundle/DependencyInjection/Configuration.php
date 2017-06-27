@@ -23,7 +23,6 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('work_data_collection')->defaultValue('WorkData')->end()
-                ->scalarNode('catmandu_cli_path')->defaultValue('/usr/bin/catmandu')->end()
             ->end()
         ;
 

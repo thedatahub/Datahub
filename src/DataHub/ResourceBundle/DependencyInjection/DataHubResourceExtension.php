@@ -19,7 +19,7 @@ class DataHubResourceExtension extends ConfigurableExtension
      */
     public function loadInternal(array $mergedConfig, ContainerBuilder $container)
     {
-        foreach (array('work_data_collection', 'catmandu_cli_path') as $cfgKey) {
+        foreach (array('work_data_collection') as $cfgKey) {
             $container->setParameter("data_hub_resource.{$cfgKey}", $mergedConfig[$cfgKey]);
         }
 

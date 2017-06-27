@@ -1,9 +1,4 @@
 services:
-    datahub.resource.catmandu:
-        class: DataHub\ResourceBundle\Service\CatmanduService
-        calls:
-          - [setCliPath, [%data_hub_resource.catmandu_cli_path%]]
-
     datahub.resource.data:
         class: DataHub\ResourceBundle\Service\DataService
         arguments: ['@logger']
@@ -11,30 +6,6 @@ services:
           - [setDocumentManager, ["@datahub.shared.documents"]]
           - [setCollectionName, [%data_hub_resource.work_data_collection%]]
           - [setAnonymousUser, [%public_api_user_id%]]
-
-    datahub.resource.data_converters:
-        class: DataHub\ResourceBundle\Service\DataConvertersService
-
-    datahub.resource.data.converter.abstract_data_converter:
-        class: DataHub\ResourceBundle\Data\Converter\AbstractDataConverter
-        abstract: true
-        tags:
-          - { name: datahub.resource.data.converter }
-
-    datahub.resource.data.converter.abstract_catmandu_data_converter:
-        parent: datahub.resource.data.converter.abstract_data_converter
-        class: DataHub\ResourceBundle\Data\Converter\AbstractCatmanduDataConverter
-        abstract: true
-        calls:
-          - [setCatmandu, ["@datahub.resource.catmandu"]]
-        tags:
-          - { name: datahub.resource.data.converter }
-
-    datahub.resource.data.converter.catmandu_lidoxml_data_converter:
-        parent: datahub.resource.data.converter.abstract_catmandu_data_converter
-        class: DataHub\ResourceBundle\Data\Converter\CatmanduLidoXMLDataConverter
-        tags:
-          - { name: datahub.resource.data.converter }
 
     datahub.resource.service.datatype.datatypeRegister:
         class: DataHub\ResourceBundle\Service\DataType\DataTypeRegister

@@ -179,7 +179,6 @@ data_hub_shared:
 
 data_hub_resource:
     # work_data_collection: WorkData
-    catmandu_cli_path:    %catmandu_cli_path%
 
 # OAI endpoint config, see parameters.yml
 data_hub_oai:
