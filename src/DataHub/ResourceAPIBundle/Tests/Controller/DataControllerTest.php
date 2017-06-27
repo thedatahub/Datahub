@@ -114,7 +114,7 @@ class DataControllerTest extends WebTestCase
 
         $this->assertEquals(200, $statusCode);
         $this->assertNotEmpty($content);
-        // $this->assertJsonStringEqualsJsonString($this->jsonRecord, $content);
+        $this->assertJsonStringEqualsJsonString($this->jsonRecord, $content);
 
         $this->delete($this->dataPid);
     }
@@ -296,9 +296,11 @@ class DataControllerTest extends WebTestCase
 
         $response = $this->delete($this->dataPid);
         $statusCode = $response->getStatusCode();
+        $statusCode = $response->getStatusCode();
         $content = $response->getContent();
+        $content = json_decode($content, true);
 
         $this->assertEquals(404, $statusCode);
-        // $this->assertEmpty($content);
+        $this->assertEquals("Record could not be found.", $content['message']);
     }
 }
