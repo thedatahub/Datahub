@@ -12,6 +12,7 @@ namespace DataHub\ResourceBundle\DataType;
  * @package DataHub\ResourceBundle
  */
 class DataTypeLido implements DataTypeInterface {
+
     protected $namespaceMap;
 
     protected $rootElement;
@@ -27,6 +28,23 @@ class DataTypeLido implements DataTypeInterface {
         ];
 
         $this->rootElement = '{http://www.lido-schema.org}lido';
+
+        $this->catalog = [
+            'http://schemas.opengis.net/gml/3.1.1/smil/smil20.xsd' => '/smil/2.0/smil20.xsd',
+            'http://www.w3.org/1999/xlink.xsd' => '/xlink/1999/xlink.xsd',
+            'http://www.w3.org/2001/xml.xsd' => '/xml/2001/xml.xsd',
+            'http://schemas.opengis.net/gml/3.1.1/base/feature.xsd' => '/opengis/3.1.1/base/gml.xsd',
+        ];
+
+        $this->schema = '/lido/1.0/lido-v1.0.xsd';
+    }
+
+    public function getCatalog() {
+        return $this->catalog;
+    }
+
+    public function getSchema() {
+        return $this->schema;
     }
 
     public function getNamespaceMap() {
