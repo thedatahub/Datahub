@@ -1,6 +1,6 @@
 <?php
 
-namespace DataHub\ResourceBundle\Service\DataType;
+namespace DataHub\ResourceBundle\DataType;
 
 /**
  * Datatype Register class.
@@ -19,7 +19,7 @@ class DataTypeRegister implements DataTypeRegisterInterface {
 
     public function __construct() {
         $this->dataTypes = [
-            'lido' => 'DataHub\ResourceBundle\Service\DataType\DataTypeLido',
+            'lido' => 'DataHub\ResourceBundle\DataType\DataTypeLido',
             // 'marcxml' => 'DataHub\ResourceBundle\Service\DataType\DataTypeMARCXml',
             // 'dc' => 'DataHub\ResourceBundle\Service\DataType\DataTypeDublinCore',
         ];

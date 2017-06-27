@@ -7,11 +7,11 @@ services:
           - [setCollectionName, [%data_hub_resource.work_data_collection%]]
           - [setAnonymousUser, [%public_api_user_id%]]
 
-    datahub.resource.service.datatype.datatypeRegister:
-        class: DataHub\ResourceBundle\Service\DataType\DataTypeRegister
+    datahub.resource.datatype.datatypeRegister:
+        class: DataHub\ResourceBundle\DataType\DataTypeRegister
 
-    datahub.resource.service.builder.converter.factory:
-        class: DataHub\ResourceBundle\Service\Builder\ConverterFactory
-        arguments: ["@datahub.resource.service.datatype.datatypeRegister"]
+    datahub.resource.builder.converter.factory:
+        class: DataHub\ResourceBundle\Builder\ConverterFactory
+        arguments: ["@datahub.resource.datatype.datatypeRegister"]
         calls:
           - ['setConverter', ['lido']]

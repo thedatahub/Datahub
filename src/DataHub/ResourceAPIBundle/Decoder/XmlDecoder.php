@@ -3,7 +3,7 @@ namespace DataHub\ResourceAPIBundle\Decoder;
 
 use FOS\RestBundle\Decoder\DecoderInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Datahub\ResourceBundle\Service\Builder\ConverterFactoryInterface;
+use Datahub\ResourceBundle\Builder\ConverterFactoryInterface;
 
 /**
  * Decodes XML data.

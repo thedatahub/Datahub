@@ -1,6 +1,6 @@
 <?php
 
-namespace DataHub\ResourceBundle\Service\DataType;
+namespace DataHub\ResourceBundle\DataType;
 
 /**
  * DataType LIDO class

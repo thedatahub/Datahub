@@ -1,8 +1,8 @@
 <?php
 
-namespace DataHub\ResourceBundle\Service\Converter;
+namespace DataHub\ResourceBundle\Converter;
 
-use DataHub\ResourceBundle\Service\DataType\DataTypeInterface;
+use DataHub\ResourceBundle\DataType\DataTypeInterface;
 
 /**
  * Converter Service interface

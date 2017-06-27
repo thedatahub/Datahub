@@ -219,7 +219,7 @@ class DataController extends Controller
         }
 
         // Fetch the datatype from the converter
-        $factory = $this->get('datahub.resource.service.builder.converter.factory');
+        $factory = $this->get('datahub.resource.builder.converter.factory');
         $dataType = $factory->getConverter()->getDataType();
 
         // Get the (p)id's
@@ -315,7 +315,7 @@ class DataController extends Controller
         }
 
         // Fetch the datatype from the converter
-        $factory = $this->get('datahub.resource.service.builder.converter.factory');
+        $factory = $this->get('datahub.resource.builder.converter.factory');
         $dataType = $factory->getConverter()->getDataType();
 
         // Get the (p)id's

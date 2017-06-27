@@ -1,9 +1,9 @@
 <?php
 
-namespace DataHub\ResourceBundle\Service\Builder;
+namespace DataHub\ResourceBundle\Builder;
 
-use DataHub\ResourceBundle\Service\DataType\DataTypeRegisterInterface;
-use DataHub\ResourceBundle\Service\Converter\SabreXMLConverterService;
+use DataHub\ResourceBundle\DataType\DataTypeRegisterInterface;
+use DataHub\ResourceBundle\Converter\SabreXMLConverterService;
 
 /**
  * Factory class.

@@ -2,4 +2,4 @@ services:
     # XML decoder
     datahub.resource_api.decoder.xml:
         class: DataHub\ResourceAPIBundle\Decoder\XmlDecoder
-        arguments: ['@logger', '@datahub.resource.service.builder.converter.factory']
+        arguments: ['@logger', '@datahub.resource.builder.converter.factory']

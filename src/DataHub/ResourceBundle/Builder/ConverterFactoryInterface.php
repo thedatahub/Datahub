@@ -1,6 +1,6 @@
 <?php
 
-namespace DataHub\ResourceBundle\Service\Builder;
+namespace DataHub\ResourceBundle\Builder;
 
 /**
  * Factory interface
