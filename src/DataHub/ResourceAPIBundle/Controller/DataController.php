@@ -410,15 +410,9 @@ class DataController extends Controller
         $data = $dataManager->getData($id);
 
         if (!$data) {
-            throw $this->createNotFoundException();
+            throw new NotFoundHttpException('Record could not be found.');
         }
 
-        $result = $dataManager->deleteData($id);
-
-        if (!$result) {
-            throw new HttpException('Unable to delete the requested data');
-        }
-
-        // return new Response('', Response::HTTP_NO_CONTENT);
+        $dataManager->deleteData($id);
     }
 }
