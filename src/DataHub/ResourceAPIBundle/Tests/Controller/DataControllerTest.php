@@ -45,9 +45,10 @@ class DataControllerTest extends WebTestCase
      *
      * @param Symfony\Component\HttpFoundation\Response Response object
      */
-    protected function get($id = null) {
+    protected function get($id = null, $format = 'json') {
+        $format = ($format == 'json') ? '' : '.xml';
         $accessToken = $this->getAccessToken();
-        $action = (!is_null($id)) ? sprintf("/api/v1/data/%s", urlencode($id)) : "/api/v1/data";
+        $action = (!is_null($id)) ? sprintf("/api/v1/data/%s%s", urlencode($id), $format) : "/api/v1/data";
         $action = sprintf('%s?access_token=%s', $action, $accessToken);
 
         $this->client->request('GET', $action);
@@ -122,13 +123,13 @@ class DataControllerTest extends WebTestCase
     public function testGetRecordXMLAction() {
         $response = $this->post($this->validRecord);
 
-        $response = $this->get($this->dataPid);
+        $response = $this->get($this->dataPid, 'xml');
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
 
         $this->assertEquals(200, $statusCode);
         $this->assertNotEmpty($content);
-        // $this->assertXMLStringEqualsXMLString($this->validRecord, $content);
+        $this->assertXMLStringEqualsXMLString($this->validRecord, $content);
 
         $this->delete($this->dataPid);
     }
@@ -140,7 +141,7 @@ class DataControllerTest extends WebTestCase
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
 
-        // $this->assertJsonStringEqualsJsonString($this->jsonRecord, $content);
+        //$this->assertJsonStringEqualsJsonString($this->jsonRecord, $content);
 
         $this->delete($this->dataPid);
 
@@ -263,9 +264,10 @@ class DataControllerTest extends WebTestCase
         $response = $this->put($this->dataPid, $this->emptyRecord);
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
+        $content = json_decode($content, true);
 
-        // Test for 403 response
-        // Test for "The provided XML record is invalid."
+        $this->assertEquals(422, $statusCode);
+        $this->assertEquals("No record was provided.", $content['message']);
 
         $this->delete($this->dataPid);
     }
@@ -276,9 +278,10 @@ class DataControllerTest extends WebTestCase
         $response = $this->put($this->dataPid, $this->emptyRecord);
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
+        $content = json_decode($content, true);
 
-        // Test for 403 response
-        // Test for "The provided XML record is invalid."
+        $this->assertEquals(422, $statusCode);
+        $this->assertEquals("No record was provided.", $content['message']);
 
         $this->delete($this->dataPid);
     }
