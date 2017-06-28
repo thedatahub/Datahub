@@ -18,9 +18,9 @@ class DataControllerTest extends WebTestCase
      */
     protected function setUp() {
         $this->client = static::createClient();
-        $this->validRecord = file_get_contents(__DIR__.'/../Fixtures/LIDO-Example_FMobj00154983-LaPrimavera.xml');
-        $this->invalidRecord = file_get_contents(__DIR__.'/../Fixtures/LIDO-Example_FMobj00154983-LaPrimavera-invalid-lido.xml');
-        $this->jsonRecord = file_get_contents(__DIR__.'/../Fixtures/LIDO-Example_FMobj00154983-LaPrimavera.json');
+        $this->validRecord = file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml');
+        $this->invalidRecord = file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera-invalid-lido.xml');
+        $this->jsonRecord = file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.json');
         $this->emptyRecord = '';
         $this->dataPid = 'DE-Mb112/lido-obj00154983';
     }
