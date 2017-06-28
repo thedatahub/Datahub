@@ -79,16 +79,7 @@ class DataController extends Controller
         $logger->info('cGET data');
 
         // prepare data manager
-        $oauthUtils = $this->get('datahub.oauth.oauth');
         $dataManager = $this->get('datahub.resource.data');
-
-        try {
-            if ($oauthUtils->getClient() !== null)
-                $dataManager->setOwnerId($oauthUtils->getClient()->getId());
-        } catch (\Exception $e) {
-            // TODO:
-            // pass
-        }
 
         // get parameters
         $offset = intval($paramFetcher->get('offset'));
@@ -139,17 +130,7 @@ class DataController extends Controller
         $logger = $this->get('logger');
         $logger->info('GET data: ' . $id);
 
-        // prepare data manager
-        $oauthUtils = $this->get('datahub.oauth.oauth');
         $dataManager = $this->get('datahub.resource.data');
-
-        try {
-            if ($oauthUtils->getClient() !== null)
-                $dataManager->setOwnerId($oauthUtils->getClient()->getId());
-        } catch (\Exception $e) {
-            // TODO:
-            // pass
-        }
 
         $data = $dataManager->getData($id);
 
@@ -198,19 +179,7 @@ class DataController extends Controller
         $logger->debug('POST data');
 
         // prepare data manager
-        $oauthUtils = $this->get('datahub.oauth.oauth');
         $dataManager = $this->get('datahub.resource.data');
-
-        $clientCode = null;
-        try {
-            if ($oauthUtils->getClient() !== null) {
-                $dataManager->setOwnerId($oauthUtils->getClient()->getId());
-                $clientCode = $oauthUtils->getClient()->getClientCode();
-            }
-        } catch (\Exception $e) {
-            // TODO:
-            // pass
-        }
 
         $record = $request->request->all();
 
@@ -296,16 +265,7 @@ class DataController extends Controller
         $logger->info('PUT data: ' . $id);
 
         // prepare data manager
-        $oauthUtils = $this->get('datahub.oauth.oauth');
         $dataManager = $this->get('datahub.resource.data');
-
-        try {
-            if ($oauthUtils->getClient() !== null)
-                $dataManager->setOwnerId($oauthUtils->getClient()->getId());
-        } catch (\Exception $e) {
-            // TODO:
-            // pass
-        }
 
         // Get a decoded record
         $record = $request->request->all();
@@ -396,16 +356,7 @@ class DataController extends Controller
      */
     public function deleteDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
-        $oauthUtils = $this->get('datahub.oauth.oauth');
         $dataManager = $this->get('datahub.resource.data');
-
-        try {
-            if ($oauthUtils->getClient() !== null)
-                $dataManager->setOwnerId($oauthUtils->getClient()->getId());
-        } catch (\Exception $e) {
-            // TODO:
-            // pass
-        }
 
         $data = $dataManager->getData($id);
 
