@@ -184,9 +184,11 @@ class DataControllerTest extends WebTestCase
     public function testPostInvalidRecordAction() {
         $response = $this->post($this->invalidRecord);
         $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+        $content = json_decode($content, true);
 
-        // Test for 403 response
-        // Test for "The provided XML record is invalid."
+        $this->assertEquals(400, $statusCode);
+        $this->assertEquals("Invalid XML: Element '{http://www.lido-schema.org}category': This element is not expected. Expected is ( {http://www.lido-schema.org}lidoRecID ).\n on line 3, column 0", $content['message']);
 
         $this->delete($this->dataPid);
     }
@@ -196,7 +198,6 @@ class DataControllerTest extends WebTestCase
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
         $content = json_decode($content, true);
-
 
         $this->assertEquals(422, $statusCode);
         $this->assertEquals("No record was provided.", $content['message']);
@@ -234,24 +235,26 @@ class DataControllerTest extends WebTestCase
     }
 
     public function testPutCreateInvalidRecordAction() {
-        $response = $this->put($this->dataPid, $this->validRecord);
+        $response = $this->put($this->dataPid, $this->invalidRecord);
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
+        $content = json_decode($content, true);
 
-        // Test for 403 response
-        // Test for "The provided XML record is invalid."
+        $this->assertEquals(400, $statusCode);
+        $this->assertEquals("Invalid XML: Element '{http://www.lido-schema.org}category': This element is not expected. Expected is ( {http://www.lido-schema.org}lidoRecID ).\n on line 3, column 0", $content['message']);
 
         $this->delete($this->dataPid);
     }
     public function testPutUpdateInvalidRecordAction() {
         $this->post($this->validRecord);
 
-        $response = $this->put($this->dataPid, $this->validRecord);
+        $response = $this->put($this->dataPid, $this->invalidRecord);
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
+        $content = json_decode($content, true);
 
-        // Test for 403 response
-        // Test for "The provided XML record is invalid."
+        $this->assertEquals(400, $statusCode);
+        $this->assertEquals("Invalid XML: Element '{http://www.lido-schema.org}category': This element is not expected. Expected is ( {http://www.lido-schema.org}lidoRecID ).\n on line 3, column 0", $content['message']);
 
         $this->delete($this->dataPid);
     }
