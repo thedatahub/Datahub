@@ -39,8 +39,6 @@ use DataHub\ResourceAPIBundle\Form\Type\DataFormType;
  *  - Use ParamConverters to convert the incoming XML to JSON encoded string and
  *    inject both representations into a simple Document Model.
  *  - Use a proper view handler to switch between JSON and XML variant.
- *  - Add validation for the incoming XML object.
- *  - Wire in OAuth support properly.
  *
  * @package DataHub\ResourceAPIBundle
  */
@@ -75,9 +73,6 @@ class DataController extends Controller
      */
     public function cgetDatasAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
-        $logger = $this->get('logger');
-        $logger->info('cGET data');
-
         // prepare data manager
         $dataManager = $this->get('datahub.resource.data');
 
@@ -127,9 +122,6 @@ class DataController extends Controller
      */
     public function getDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
-        $logger = $this->get('logger');
-        $logger->info('GET data: ' . $id);
-
         $dataManager = $this->get('datahub.resource.data');
 
         $data = $dataManager->getData($id);
@@ -175,9 +167,6 @@ class DataController extends Controller
      */
     public function postDataAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
-        $logger = $this->get('logger');
-        $logger->debug('POST data');
-
         // prepare data manager
         $dataManager = $this->get('datahub.resource.data');
 
@@ -220,7 +209,6 @@ class DataController extends Controller
         if (!$result) {
             throw new BadRequestHttpException('Could not store new record.');
         } else {
-            $logger->info('Created record:' . $dataPid);
             $response = Response::HTTP_CREATED;
             $headers = [
                 'Location' => $request->getPathInfo() . '/' . urlencode($dataPid)
@@ -261,9 +249,6 @@ class DataController extends Controller
      */
     public function putDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
-        $logger = $this->get('logger');
-        $logger->info('PUT data: ' . $id);
-
         // prepare data manager
         $dataManager = $this->get('datahub.resource.data');
 
@@ -304,7 +289,6 @@ class DataController extends Controller
             if (!$result) {
                 throw new BadRequestHttpException('Could not store new record.');
             } else {
-                $logger->info('Created record:' . $id);
                 $response = Response::HTTP_CREATED;
                 $headers = [];
             }
@@ -321,7 +305,6 @@ class DataController extends Controller
             if (!$result) {
                 throw new BadRequestHttpException('Could not store updated record.');
             } else {
-                $logger->info('Updated record:' . $id);
                 $response = Response::HTTP_NO_CONTENT;
                 $headers = [];
             }
