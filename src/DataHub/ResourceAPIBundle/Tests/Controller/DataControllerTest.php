@@ -57,6 +57,29 @@ class DataControllerTest extends WebTestCase
     }
 
     /**
+     * Implements a GET client call.
+     *
+     * @param string $limit
+     * @param string $offset
+     *
+     * @param Symfony\Component\HttpFoundation\Response Response object
+     */
+    protected function getAll($limit = null, $offset = null) {
+        $accessToken = $this->getAccessToken();
+        if (!is_null($limit) && !is_null($offset)) {
+            $action = sprintf("/api/v1/data?offset=%s&limit=%s", $offset, $limit);
+        } else {
+            $action = '/api/v1/data';
+        }
+
+        $action = sprintf('%s?access_token=%s', $action, $accessToken);
+
+        $this->client->request('GET', $action);
+
+        return $this->client->getResponse();
+    }
+
+    /**
      * Implements a POST client call.
      *
      * @param string $record Required valid record string.
@@ -135,23 +158,53 @@ class DataControllerTest extends WebTestCase
     }
 
     public function testGetRecordsAction() {
-        $this->post($this->validRecord);
 
-        $response = $this->get();
+        $doc = new \DOMDocument();
+        $doc->formatOutput = true;
+        $doc->loadXML($this->validRecord);
+
+        foreach (range(1, 15) as $number) {
+            $doc->getElementsByTagName("lidoRecID")->item(0)->nodeValue = sprintf('identifier-%s', $number);
+            $record = $doc->saveXML();
+            $this->post($record);
+        }
+
+        $response = $this->getAll();
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
+        $content = json_decode($content, true);
 
-        //$this->assertJsonStringEqualsJsonString($this->jsonRecord, $content);
+        $this->assertEquals(0, $content['offset']);
+        $this->assertEquals(5, $content['limit']);
+        $this->assertEquals(14, $content['total']);
+        $this->assertEquals($content['_links'], [
+            'self' => [ 'href' => '/api/v1/data?limit=5'],
+            'first' => [ 'href' => '/api/v1/data?limit=5'],
+            'last' => [ 'href' => '/api/v1/data?offset=10&limit=5' ],
+            'next' => [ 'href' => '/api/v1/data?offset=5&limit=5' ]
+        ]);
 
-        $this->delete($this->dataPid);
+        $response = $this->getAll(5, 5);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+        $content = json_decode($content, true);
 
-        // Check if actual matches expected content
+        $this->assertEquals(5, $content['offset']);
+        $this->assertEquals(5, $content['limit']);
+        $this->assertEquals(14, $content['total']);
+        $this->assertEquals($content['_links'], [
+            'self' => [ 'href' => '/api/v1/data?offset=5&limit=5'],
+            'first' => [ 'href' => '/api/v1/data?limit=5'],
+            'last' => [ 'href' => '/api/v1/data?offset=10&limit=5' ],
+            'next' => [ 'href' => '/api/v1/data?offset=10&limit=5' ],
+            'previous' => [ 'href' => '/api/v1/data?limit=5' ]
+        ]);
 
-        // GET with valid pagination
+        foreach (range(1, 15) as $number) {
+            $id = sprintf('identifier-%s', $number);
+            $this->delete($id);
+        }
 
-        // GET with invalid pagination
-
-        // Test with offset beyond available range
     }
 
     public function testPostValidRecordAction() {
