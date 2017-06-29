@@ -105,21 +105,19 @@ class DataController extends Controller
      * )
      *
      * @FOS\Get("/data/{id}", requirements={"id" = ".+?"})
-     *
      * @FOS\View(
      *     serializerGroups={"single"},
      *     serializerEnableMaxDepthChecks=true
      * )
      *
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
-     * @param string $id Data ID of entry to return
+     * @param string $id the internal id of the record
      *
      * @return mixed
      *
      * @throws NotFoundHttpException if the resource was not found
      */
-    public function getDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
+    public function getDataAction(Request $request, $id)
     {
         $recordRepository = $this->get('datahub.resource_api.repository.default');
         $record = $recordRepository->findOneByProperty('recordIds', $id);
