@@ -4,19 +4,27 @@ namespace DataHub\ResourceAPIBundle\Repository;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
 
+/**
+ * ODM Record document repository class
+ *
+ * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
+ * @package DataHub\ResourceAPIBundle
+ */
 class RecordRepository extends DocumentRepository
 {
     /**
+     * Find one record by field and value
+     *
      * @param string $field
-     * @param string $data
+     * @param string $value
      *
      * @return array|null|object
      */
-    public function findOneByProperty($field, $data)
+    public function findOneByProperty($field, $value)
     {
         return
             $this->createQueryBuilder('Record')
-                ->field($field)->equals($data)
+                ->field($field)->equals($value)
                 ->getQuery()
                 ->getSingleResult();
     }
@@ -39,7 +47,9 @@ class RecordRepository extends DocumentRepository
     }
 
     /**
+     * Return the number of stored records.
      *
+     * @return int
      */
     public function count() {
         return

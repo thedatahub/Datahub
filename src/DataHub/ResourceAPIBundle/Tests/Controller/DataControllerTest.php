@@ -4,6 +4,12 @@ namespace DataHub\ResourceAPIBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * Functional testing for DataController
+ *
+ * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
+ * @package DataHub\ResourceAPIBundle
+ */
 class DataControllerTest extends WebTestCase
 {
 

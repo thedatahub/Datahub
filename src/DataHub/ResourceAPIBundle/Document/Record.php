@@ -8,6 +8,11 @@ use JMS\Serializer\Annotation as Serializer;
 use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
+ * ODM Record document repository class
+ *
+ * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
+ * @package DataHub\ResourceAPIBundle
+ *
  * @ODM\Document(collection="WorkData", repositoryClass="DataHub\ResourceAPIBundle\Repository\RecordRepository")
  * @ODM\HasLifecycleCallbacks
  * @Serializer\XmlRoot("record")
