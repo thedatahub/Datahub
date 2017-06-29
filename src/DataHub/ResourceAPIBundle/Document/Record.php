@@ -13,7 +13,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
  * @package DataHub\ResourceAPIBundle
  *
- * @ODM\Document(collection="WorkData", repositoryClass="DataHub\ResourceAPIBundle\Repository\RecordRepository")
+ * @ODM\Document(collection="Records", repositoryClass="DataHub\ResourceAPIBundle\Repository\RecordRepository")
  * @ODM\HasLifecycleCallbacks
  * @Serializer\XmlRoot("record")
  * @Hateoas\Relation("self",

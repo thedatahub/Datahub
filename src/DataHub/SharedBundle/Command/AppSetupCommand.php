@@ -45,11 +45,10 @@ class AppSetupCommand extends ContainerAwareCommand
         $this->runCommand('cache:clear');
         $this->runCommand('assetic:dump');
 
-        // Create indexes on owner, data_pids (unique) and object_pids
+        // Create indexes on owner, recordIds (unique) and objectIds
         $documents = $this->getContainer()->get('datahub.shared.documents');
-        $documents->getCollection('WorkData')->ensureIndex(['owner' => 1]);
-        $documents->getCollection('WorkData')->ensureIndex(['data_pids' => 1], ['unique' => true]);
-        $documents->getCollection('WorkData')->ensureIndex(['object_pids' => 1]);
+        $documents->getCollection('Records')->ensureIndex(['recordIds' => 1], ['unique' => true]);
+        $documents->getCollection('Records')->ensureIndex(['objectIds' => 1]);
 
         $this->runCommand('doctrine:mongodb:schema:update');
     }
