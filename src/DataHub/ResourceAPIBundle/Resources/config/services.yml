@@ -3,3 +3,8 @@ services:
     datahub.resource_api.decoder.xml:
         class: DataHub\ResourceAPIBundle\Decoder\XmlDecoder
         arguments: ['@logger', '@datahub.resource.builder.converter.factory']
+
+    datahub.resource_api.repository.default:
+        class: DataHub\ResourceAPIBundle\Repository\RecordRepository
+        factory: [@doctrine_mongodb, getRepository]
+        arguments: [DataHub\ResourceAPIBundle\Document\Record]

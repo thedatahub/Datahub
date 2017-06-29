@@ -13,8 +13,6 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Doctrine\ORM\Tools\Pagination\Paginator;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +23,14 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
-use DataHub\ResourceAPIBundle\Form\Type\DataFormType;
+use DataHub\ResourceAPIBundle\Document\Record;
+use DataHub\ResourceAPIBundle\Repository\RecordRepository;
+
+use Hateoas\HateoasBuilder;
+use Hateoas\Representation\CollectionRepresentation;
+use Hateoas\Representation\OffsetRepresentation;
+
+use JMS\Serializer\SerializationContext;
 
 /**
  * REST controller for Data.
@@ -73,24 +78,31 @@ class DataController extends Controller
      */
     public function cgetDatasAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
-        // prepare data manager
-        $dataManager = $this->get('datahub.resource.data');
-
         // get parameters
         $offset = intval($paramFetcher->get('offset'));
         $limit = intval($paramFetcher->get('limit'));
         // @todo
-        //   Implement sorting
+        //   Remove sorting, not relevant here
 
-        // get data
-        $data = $dataManager->cgetData($offset, $limit);
+        $recordRepository = $this->get('datahub.resource_api.repository.default');
+        $records = $recordRepository->findBy(array(), null, $limit, $offset);
+        $total = $recordRepository->count();
 
-        foreach($data['results'] as &$result) {
-            $result['data'] = json_decode($result['data'], true);
-            unset($result['raw']);
-        }
+        $offsetCollection = new OffsetRepresentation(
+            new CollectionRepresentation(
+                $records, 'records', 'records'
+            ),
+            'get_datas',
+            array(),
+            $offset,
+            $limit,
+            $total
+        );
 
-        return $data;
+        $context = SerializationContext::create()->setGroups(array('Default','json'));
+        $json = $this->get('serializer')->serialize($offsetCollection, 'json', $context);
+
+        return new Response($json, Response::HTTP_OK, array('Content-Type' => 'application/hal+json'));
     }
 
     /**
@@ -122,21 +134,24 @@ class DataController extends Controller
      */
     public function getDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
-        $dataManager = $this->get('datahub.resource.data');
+        $recordRepository = $this->get('datahub.resource_api.repository.default');
+        $record = $recordRepository->findOneByProperty('recordIds', $id);
 
-        $data = $dataManager->getData($id);
-
-        if (!$data) {
+        if (!$record) {
             throw new NotFoundHttpException('Record could not be found');
         }
 
         // Circumventing the XML serializer here, since we already have the
         // raw XML input from the store.
         if ($request->getRequestFormat() == 'xml') {
-            return new Response($data['raw']);
+            return new Response($record->getRaw(), Response::HTTP_OK, array('Content-Type' => 'application/xml'));
         }
 
-        return json_decode($data['data'], true);
+        $hateoas = HateoasBuilder::create()->build();
+        $context = SerializationContext::create()->setGroups(array('json'));
+        $json = $hateoas->serialize($record, 'json', $context);
+
+        return new Response($json, Response::HTTP_OK, array('Content-Type' => 'application/hal+json'));
     }
 
     /**
@@ -145,7 +160,6 @@ class DataController extends Controller
      * @ApiDoc(
      *     section = "DataHub",
      *     resource = true,
-     *     input = "DataHub\ResourceAPIBundle\Form\Type\DataFormType",
      *     statusCodes = {
      *         201 = "Returned when successful",
      *         400 = "Returned if the form could not be validated, or record already exists",
@@ -167,12 +181,9 @@ class DataController extends Controller
      */
     public function postDataAction(ParamFetcherInterface $paramFetcher, Request $request)
     {
-        // prepare data manager
-        $dataManager = $this->get('datahub.resource.data');
+        $data = $request->request->all();
 
-        $record = $request->request->all();
-
-        if (empty($record)) {
+        if (empty($data)) {
             throw new UnprocessableEntityHttpException('No record was provided.');
         }
 
@@ -181,11 +192,11 @@ class DataController extends Controller
         $dataType = $factory->getConverter()->getDataType();
 
         // Get the (p)id's
-        $dataPids = $dataType->getRecordId($record);
-        $objectPids = $dataType->getObjectId($record);
+        $dataPids = $dataType->getRecordId($data);
+        $objectPids = $dataType->getObjectId($data);
 
         // Get the JSON & XML Raw variants of the record
-        $variantJSON = json_encode($record);
+        $variantJSON = json_encode($data);
         $variantXML = $request->getContent();
 
         // Fetch a dataPid. This will be the ID used in the database for this
@@ -194,19 +205,26 @@ class DataController extends Controller
         $dataPid = $dataPids[0];
 
         // Check whether record already exists
-        if ($dataManager->getData($dataPid)) {
+        $recordRepository = $this->get('datahub.resource_api.repository.default');
+        $record = $recordRepository->findOneByProperty('recordIds', $dataPid);
+        if ($record instanceof Record) {
             throw new ConflictHttpException('Record with this ID already exists.');
         }
 
-        $result = $dataManager->createData(
-            $dataPids,
-            $objectPids,
-            $request->getFormat($request->getContentType()),
-            $variantJSON,
-            $variantXML
-        );
+        $documentManager = $this->get('doctrine_mongodb')->getManager();
 
-        if (!$result) {
+        $record = new Record();
+        $record->setRecordIds($dataPids);
+        $record->setObjectIds($objectPids);
+        $record->setRaw($variantXML);
+        $record->setJson($variantJSON);
+
+        $documentManager->persist($record);
+        $documentManager->flush();
+
+        $id = $record->getId();
+
+        if (!$id) {
             throw new BadRequestHttpException('Could not store new record.');
         } else {
             $response = Response::HTTP_CREATED;
@@ -249,9 +267,6 @@ class DataController extends Controller
      */
     public function putDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
-        // prepare data manager
-        $dataManager = $this->get('datahub.resource.data');
-
         // Get a decoded record
         $record = $request->request->all();
 
@@ -264,12 +279,16 @@ class DataController extends Controller
         $dataType = $factory->getConverter()->getDataType();
 
         // Get the (p)id's
-        $data_pids = $dataType->getRecordId($record);
-        $object_pids = $dataType->getObjectId($record);
+        $recordIds = $dataType->getRecordId($record);
+        $objectIds = $dataType->getObjectId($record);
 
         // Get the JSON & XML Raw variants of the record
         $variantJSON = json_encode($record);
         $variantXML = $request->getContent();
+
+        $documentManager = $this->get('doctrine_mongodb')->getManager();
+        $recordRepository = $this->get('datahub.resource_api.repository.default');
+        $record = $recordRepository->findOneByProperty('recordIds', $id);
 
         // If the record does not exist, create it, if it does exist, update the existing record.
         // The ID of a particular resource is not generated server side, but determined client side.
@@ -277,32 +296,35 @@ class DataController extends Controller
         //
         //   See: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6
         //
-        if (!$dataManager->getData($id)) {
-            $result = $dataManager->createData(
-                $data_pids,
-                $object_pids,
-                $request->getFormat($request->getContentType()),
-                $variantJSON,
-                $variantXML
-            );
+        if (!$record instanceof Record) {
+            $record = new Record();
+            $record->setRecordIds($recordIds);
+            $record->setObjectIds($objectIds);
+            $record->setRaw($variantXML);
+            $record->setJson($variantJSON);
 
-            if (!$result) {
+            $documentManager->persist($record);
+            $documentManager->flush();
+
+            $id = $record->getId();
+
+            if (!$id) {
                 throw new BadRequestHttpException('Could not store new record.');
             } else {
                 $response = Response::HTTP_CREATED;
                 $headers = [];
             }
         } else {
-            $result = $dataManager->updateData(
-                $id,
-                $data_pids,
-                $object_pids,
-                $request->getFormat($request->getContentType()),
-                $variantJSON,
-                $variantXML
-            );
+            $record->setRecordIds($recordIds);
+            $record->setObjectIds($objectIds);
+            $record->setRaw($variantXML);
+            $record->setJson($variantJSON);
 
-            if (!$result) {
+            $documentManager->flush();
+
+            $id = $record->getId();
+
+            if (!$id) {
                 throw new BadRequestHttpException('Could not store updated record.');
             } else {
                 $response = Response::HTTP_NO_CONTENT;
@@ -339,14 +361,17 @@ class DataController extends Controller
      */
     public function deleteDataAction(ParamFetcherInterface $paramFetcher, Request $request, $id)
     {
-        $dataManager = $this->get('datahub.resource.data');
+        // Check whether record already exists
+        $recordRepository = $this->get('datahub.resource_api.repository.default');
+        $record = $recordRepository->findOneByProperty('recordIds', $id);
 
-        $data = $dataManager->getData($id);
-
-        if (!$data) {
+        if (!$record instanceof Record) {
             throw new NotFoundHttpException('Record could not be found.');
         }
 
-        $dataManager->deleteData($id);
+        $documentManager = $this->get('doctrine_mongodb')->getManager();
+
+        $documentManager->remove($record);
+        $documentManager->flush();
     }
 }
