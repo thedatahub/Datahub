@@ -2,35 +2,23 @@
 
 namespace DataHub\ResourceAPIBundle\Controller;
 
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\Post;
-use FOS\RestBundle\Controller\Annotations\Put;
-use FOS\RestBundle\Controller\Annotations\Delete;
-use FOS\RestBundle\Controller\Annotations\QueryParam;
-use FOS\RestBundle\Controller\Annotations\View;
-
+use DataHub\ResourceAPIBundle\Document\Record;
+use DataHub\ResourceAPIBundle\Repository\RecordRepository;
+use FOS\RestBundle\Controller\Annotations as FOS;
 use FOS\RestBundle\Request\ParamFetcherInterface;
-
+use Hateoas\HateoasBuilder;
+use Hateoas\Representation\CollectionRepresentation;
+use Hateoas\Representation\OffsetRepresentation;
+use JMS\Serializer\SerializationContext;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-
-use DataHub\ResourceAPIBundle\Document\Record;
-use DataHub\ResourceAPIBundle\Repository\RecordRepository;
-
-use Hateoas\HateoasBuilder;
-use Hateoas\Representation\CollectionRepresentation;
-use Hateoas\Representation\OffsetRepresentation;
-
-use JMS\Serializer\SerializationContext;
 
 /**
  * REST controller for Data.
@@ -39,11 +27,10 @@ use JMS\Serializer\SerializationContext;
  * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
  *
  * @todo This class needs heavy refactoring. There are several things to be done:
- *  - Full Doctrine ODM support to manage the I/O with mongo instead of acustom
- *    service class.
  *  - Use ParamConverters to convert the incoming XML to JSON encoded string and
  *    inject both representations into a simple Document Model.
- *  - Use a proper view handler to switch between JSON and XML variant.
+ *  - Implement proper content negotation.
+ *  - Implement event listeners to offload conversion JSON/XML and fetching of ids.
  *
  * @package DataHub\ResourceAPIBundle
  */
@@ -60,13 +47,13 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @Get("/data")
+     * @FOS\Get("/data")
      *
-     * @QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing entries.")
-     * @QueryParam(name="limit", requirements="\d{1,2}", default="5", description="How many entries to return.")
-     * @QueryParam(name="sort", requirements="[a-zA-Z\.]+,(asc|desc|ASC|DESC)", nullable=true, description="Sorting field and direction.")
+     * @FOS\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing entries.")
+     * @FOS\QueryParam(name="limit", requirements="\d{1,2}", default="5", description="How many entries to return.")
+     * @FOS\QueryParam(name="sort", requirements="[a-zA-Z\.]+,(asc|desc|ASC|DESC)", nullable=true, description="Sorting field and direction.")
      *
-     * @View(
+     * @FOS\View(
      *     serializerGroups={"list"},
      *     serializerEnableMaxDepthChecks=true
      * )
@@ -117,9 +104,9 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @Get("/data/{id}", requirements={"id" = ".+?"})
+     * @FOS\Get("/data/{id}", requirements={"id" = ".+?"})
      *
-     * @View(
+     * @FOS\View(
      *     serializerGroups={"single"},
      *     serializerEnableMaxDepthChecks=true
      * )
@@ -166,13 +153,13 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @View(
+     * @FOS\View(
      *     serializerGroups={"single"},
      *     serializerEnableMaxDepthChecks=true,
      *     statusCode=201
      * )
      *
-     * @Post("/data")
+     * @FOS\Post("/data")
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
@@ -250,12 +237,12 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @View(
+     * @FOS\View(
      *     serializerGroups={"single"},
      *     serializerEnableMaxDepthChecks=true
      * )
      *
-     * @Put("/data/{id}", requirements={"id" = ".+?"})
+     * @FOS\Put("/data/{id}", requirements={"id" = ".+?"})
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
@@ -347,9 +334,9 @@ class DataController extends Controller
      *     }
      * )
      *
-     * @View(statusCode="204")
+     * @FOS\View(statusCode="204")
      *
-     * @Delete("/data/{id}", requirements={"id" = ".+?"})
+     * @FOS\Delete("/data/{id}", requirements={"id" = ".+?"})
      *
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      * @param Request $request the request object
