@@ -8,3 +8,10 @@ services:
         class: DataHub\ResourceAPIBundle\Repository\RecordRepository
         factory: [@doctrine_mongodb, getRepository]
         arguments: [DataHub\ResourceAPIBundle\Document\Record]
+
+
+    datahub.resource_api.param_converter.record_converter:
+        class: DataHub\ResourceAPIBundle\Request\ParamConverter\RecordParamConverter
+        tags:
+            - { name: request.param_converter, converter: record_converter }
+        arguments: ['@doctrine_mongodb']
