@@ -35,6 +35,32 @@ class RecordParamConverter implements ParamConverterInterface
      */
     public function supports(ParamConverter $configuration)
     {
+        // if there is no manager, this means that only Doctrine DBAL is configured
+        if (null === $this->registry || !count($this->registry->getManagers())) {
+            return false;
+        }
+
+        // Check, if option class was set in configuration
+        if (null === $configuration->getClass()) {
+            return false;
+        }
+
+        $options = $this->getOptions($configuration);
+
+        // Doctrine Entity?
+        $em = $this->getManager($options['entity_manager'], $configuration->getClass());
+        if (null === $em) {
+            return false;
+        }
+
+        // Get actual entity manager for class
+        $em = $this->registry->getManagerForClass($configuration->getClass());
+
+        // Check, if class name is what we need
+        if ('DataHub\ResourceAPIBundle\Document\Record' !== $em->getClassMetadata($configuration->getClass())->getName()) {
+            return false;
+        }
+
         return true;
     }
 
@@ -55,4 +81,23 @@ class RecordParamConverter implements ParamConverterInterface
 
         $request->attributes->set($configuration->getName(), $record);
     }
+
+    protected function getOptions(ParamConverter $configuration)
+    {
+        return array_replace(array(
+            'entity_manager' => null,
+            'exclude' => array(),
+            'mapping' => array(),
+            'strip_null' => false,
+        ), $configuration->getOptions());
+    }
+
+    private function getManager($name, $class)
+    {
+        if (null === $name) {
+            return $this->registry->getManagerForClass($class);
+        }
+        return $this->registry->getManager($name);
+    }
+
 }
