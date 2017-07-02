@@ -22,7 +22,6 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-            ->scalarNode('datahub_oai_base_url')->defaultValue('http://example.com/oai')->end()
             ->scalarNode('datahub_oai_repo_name')->defaultValue('Datahub')->end()
             ->scalarNode('datahub_oai_contact_email')->defaultValue('example@example.com')->end()
             ->scalarNode('datahub_oai_pagination_num_records')->defaultValue(25)->end()

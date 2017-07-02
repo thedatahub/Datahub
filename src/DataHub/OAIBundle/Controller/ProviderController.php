@@ -24,17 +24,15 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class ProviderController extends Controller
 {
-		/**
-		 * @Route("/")
-		 */
-		public function indexAction(ServerRequestInterface $psrRequest) {
-				$request = $this->getRequest();
+    /**
+     * @Route("/")
+     */
+    public function indexAction(ServerRequestInterface $psrRequest) {
+        $repository =  $this->get('datahub.oai.repository');
+        $provider = new Provider($repository);
+        $provider->setRequest($psrRequest);
+        $psrResponse = $provider->getResponse();
 
-				$repository =  $this->get('datahub.oai.repository');
-				$provider = new Provider($repository);
-				$provider->setRequest($psrRequest);
-				$psrResponse = $provider->getResponse();
-
-				return $psrResponse;
-		}
+        return $psrResponse;
+    }
 }

@@ -20,7 +20,6 @@ class DataHubOAIExtension extends ConfigurableExtension
     public function loadInternal(array $mergedConfig, ContainerBuilder $container)
     {
         foreach (array(
-            'datahub_oai_base_url',
             'datahub_oai_repo_name',
             'datahub_oai_contact_email',
             'datahub_oai_pagination_num_records'

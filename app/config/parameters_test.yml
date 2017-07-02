@@ -1,0 +1,14 @@
+# This file is auto-generated during the composer install
+parameters:
+    secret: ThisTokenIsNotSoSecretChangeIt
+    service_name: 'Datahub'
+    service_address: hello@organisation.com
+    service_organisation: 'Organisation'
+    service_organisation_website: 'http://organisation.com'
+    public_api_method_access:
+        - GET
+    public_api_user_id: Anonymous
+    access_token_lifetime: 14400
+    datahub_oai_repo_name: 'Datahub OAI'
+    datahub_oai_contact_email: hello@organisation.com
+    datahub_oai_pagination_num_records: 100

@@ -21,6 +21,7 @@ use Picturae\OaiPmh\Interfaces\SetList as InterfaceSetList;
 use DataHub\ResourceBundle\Service\DataService;
 use DataHub\ResourceBundle\Service\DataConvertersService;
 
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Implements the various verbs the OAI endpoint stream_supports.
@@ -290,9 +291,10 @@ class Repository implements InterfaceRepository
      * Sets OAI endpoint base URL.
      * @param string $oaiBaseUrl the base URL of the OAI repository
      */
-    public function setBaseUrl($oaiBaseUrl)
+    public function setBaseUrl(RequestStack $requestStack)
     {
-        $this->oaiBaseUrl = $oaiBaseUrl;
+        $request = $requestStack->getCurrentRequest();
+        $this->oaiBaseUrl = $request->getSchemeAndHttpHost();
     }
 
     /**

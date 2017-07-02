@@ -43,7 +43,7 @@ class OAITestCase extends WebTestCase {
         $response = json_decode(json_encode(simplexml_load_string($response)), TRUE);
         $response = $response[$verb];
         $this->assertArrayHasKey('repositoryName', $response);
-        $this->assertEquals('Datahub', $response['repositoryName']);
+        $this->assertEquals('Datahub OAI', $response['repositoryName']);
     }
 
     public function testListMetadataFormats() {

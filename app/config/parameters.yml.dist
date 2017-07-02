@@ -50,7 +50,6 @@ parameters:
     access_token_lifetime: 14400
 
     # OAI endpoint config
-    datahub_oai_base_url: 'http://datahub_ubuntu:8000/oai' # base URL for the OAI endpoint
     datahub_oai_repo_name: 'Datahub' # name of the OAI endpoint
     datahub_oai_contact_email: 'noreply@datahub.inuits.eu' # comma separated 'email1', 'email2'
     datahub_oai_pagination_num_records: 25 # number of records per page
