@@ -54,6 +54,9 @@ class ProviderControllerTest extends WebTestCase {
         }
     }
 
+    /**
+     * Implements OAI Identify verb
+     */
     public function identify()
     {
         $action = sprintf('/oai/?verb=%s', 'Identify');
@@ -61,6 +64,9 @@ class ProviderControllerTest extends WebTestCase {
         return $this->client->getResponse();
     }
 
+    /**
+     * Implements OAI ListMetdataFormats verb
+     */
     public function listMetdataFormats()
     {
         $action = sprintf('/oai/?verb=%s', 'ListMetadataFormats');
@@ -68,6 +74,9 @@ class ProviderControllerTest extends WebTestCase {
         return $this->client->getResponse();
     }
 
+    /**
+     * Implements OAI ListSets verb
+     */
     public function listSets()
     {
         $action = sprintf('/oai/?verb=%s', 'ListSets');
@@ -75,6 +84,9 @@ class ProviderControllerTest extends WebTestCase {
         return $this->client->getResponse();
     }
 
+    /**
+     * Implements OAI ListIdentifiers verb
+     */
     public function listIdentifiers()
     {
         $action = sprintf('/oai/?verb=%s&metadataPrefix=%s', 'ListIdentifiers', 'oai_lido');
@@ -82,6 +94,9 @@ class ProviderControllerTest extends WebTestCase {
         return $this->client->getResponse();
     }
 
+    /**
+     * Implements OAI ListRecords verb
+     */
     public function listRecords()
     {
         $action = sprintf('/oai/?verb=%s&metadataPrefix=%s', 'ListRecords', 'oai_lido');
@@ -89,6 +104,11 @@ class ProviderControllerTest extends WebTestCase {
         return $this->client->getResponse();
     }
 
+    /**
+     * Implements OAI GetRecord verb
+     *
+     * @param $id The identifier used to get a particular record.
+     */
     public function getRecord($id)
     {
         $action = sprintf('/oai/?verb=%s&metadataPrefix=%s&identifier=%s', 'GetRecord', 'oai_lido', $id);
@@ -96,10 +116,18 @@ class ProviderControllerTest extends WebTestCase {
         return $this->client->getResponse();
     }
 
+    /**
+     * Converts an XML string into an \SimpleXMLElement object.
+     *
+     * @param $content The raw XML string
+     * @return SimpleXMLElement A SimpleXMLElement encapsulating the XML string
+     */
     public function xml($content)
     {
         $xml = new \SimpleXMLElement($content);
 
+        // We need to explicitely set the xmlns namespaces. xpath() does not
+        // work if we don't do this.
         $xml->registerXPathNamespace('oai', 'http://www.openarchives.org/OAI/2.0/');
         $xml->registerXPathNamespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance');
         $xml->registerXPathNamespace('lido', 'http://www.lido-schema.org');
@@ -162,6 +190,9 @@ class ProviderControllerTest extends WebTestCase {
         $xml = $this->xml($content);
 
         $this->assertCount(5, $xml->xpath('//oai:header/oai:identifier'));
+
+        // @todo
+        //   Tests with resumptionToken
     }
 
     public function testListRecords()
@@ -178,11 +209,14 @@ class ProviderControllerTest extends WebTestCase {
 
         $this->assertCount(5, $xml->xpath('//oai:record'));
         $this->assertCount(1, $xml->xpath('//oai:record/oai:metadata/lido:lido[lido:lidoRecID="identifier-1"]'));
+
+        // @todo
+        //   Tests with resumptionToken
     }
 
     public function testVerbGetRecord()
     {
-        /* $response = $this->getRecord('identifier-1');
+        $response = $this->getRecord('identifier-1');
 
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
@@ -190,7 +224,26 @@ class ProviderControllerTest extends WebTestCase {
         $this->assertEquals(200, $statusCode);
         $this->assertNotEmpty($content);
 
-        $xml = $this->xml($content); */
+        $xml = $this->xml($content);
+
+        $this->assertCount(1, $xml->xpath('//oai:record'));
+        $this->assertCount(1, $xml->xpath('//oai:record/oai:metadata/lido:lido[lido:lidoRecID="identifier-1"]'));
+    }
+
+    public function testVerbGetRecordNotFound()
+    {
+        $response = $this->getRecord('does-not-exist');
+
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(400, $statusCode);
+        $this->assertNotEmpty($content);
+
+        $xml = $this->xml($content);
+
+        $error = $xml->xpath('//oai:error');
+        $this->assertEquals("No matching identifier does-not-exist", $error[0][0]);
     }
 
     /**

@@ -38,14 +38,17 @@ class Repository implements InterfaceRepository
 
     private $paginationSize;
 
+    private $container;
+
     /**
      * Constructor.
      *
      * @param DataService           $dataService
      * @param DataConvertersService $dataConvertersService
      */
-    public function __construct(DataService $dataService) {
+    public function __construct(DataService $dataService, ContainerInterface $container) {
         $this->dataService = $dataService;
+        $this->container = $container;
     }
 
     /**
@@ -98,15 +101,24 @@ class Repository implements InterfaceRepository
      */
     public function getRecord($metadataFormat, $identifier)
     {
-        // Fetch record
-        $record = $this->dataService->getData($identifier);
+        $recordRepository = $this->container->get('datahub.resource_api.repository.default');
+        $record = $recordRepository->findOneByProperty('recordIds', $identifier);
 
-        // Throw exception if record does not exist
-        if (!$record) {
+        if (!$record instanceof DOCRecord) {
             throw new IdDoesNotExistException('No matching identifier ' . $identifier);
         }
 
-        $data = $record['raw'];
+        $data = $record->getRaw();
+
+        // Fetch record
+        // $record = $this->dataService->getData($identifier);
+
+        // Throw exception if record does not exist
+        // if (!$record) {
+        //    throw new IdDoesNotExistException('No matching identifier ' . $identifier);
+        // }
+
+        // $data = $record['raw'];
 
         $recordMetadata = new \DOMDocument();
         $recordMetadata->loadXML($data);
