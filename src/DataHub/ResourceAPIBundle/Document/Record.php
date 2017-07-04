@@ -31,10 +31,10 @@ class Record
     /** @ODM\Field(type="string") @ODM\Index */
     // protected $owner;
 
-    /** @ODM\Date */
+    /** @ODM\Field(type="timestamp") */
     protected $created;
 
-    /** @ODM\Date */
+    /** @ODM\Field(type="timestamp") */
     protected $updated;
 
     /**
@@ -60,8 +60,9 @@ class Record
      */
     public function onPrePersist()
     {
-        $this->created = new DateTime();
-        $this->updated = new DateTime();
+        $dateTime = new DateTime();
+        $this->created = $dateTime->getTimeStamp();
+        $this->updated = $dateTime->getTimeStamp();
     }
 
     /**
@@ -69,7 +70,8 @@ class Record
      */
     public function onPreUpdate()
     {
-        $this->updated = new DateTime();
+        $dateTime = new DateTime();
+        $this->updated = $dateTime->getTimeStamp();
     }
 
     /**
@@ -82,7 +84,12 @@ class Record
 
     public function getUpdated()
     {
-        return $this->updated;
+        return (string) $this->updated;
+    }
+
+    public function getCreated()
+    {
+        return (string) $this->created;
     }
 
     public function getRaw() {
