@@ -13,7 +13,7 @@ use DataHub\OAIBundle\Repository\Repository;
  * Functional testing suite for the Datahub OAI Endpoint.
  *
  * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
- * @package DataHub\ResourceAPIBundle
+ * @package DataHub\OAIBundle
  */
 class ProviderControllerTest extends WebTestCase {
 
@@ -87,9 +87,14 @@ class ProviderControllerTest extends WebTestCase {
     /**
      * Implements OAI ListIdentifiers verb
      */
-    public function listIdentifiers()
+    public function listIdentifiers($resumptionToken = null)
     {
         $action = sprintf('/oai/?verb=%s&metadataPrefix=%s', 'ListIdentifiers', 'oai_lido');
+
+        if (!is_null($resumptionToken)) {
+            $action = sprintf('/oai/?verb=%s&resumptionToken=%s', 'ListIdentifiers', $resumptionToken);
+        }
+
         $this->client->request('GET', $action);
         return $this->client->getResponse();
     }
@@ -97,9 +102,14 @@ class ProviderControllerTest extends WebTestCase {
     /**
      * Implements OAI ListRecords verb
      */
-    public function listRecords()
+    public function listRecords($resumptionToken = null)
     {
         $action = sprintf('/oai/?verb=%s&metadataPrefix=%s', 'ListRecords', 'oai_lido');
+
+        if (!is_null($resumptionToken)) {
+            $action = sprintf('/oai/?verb=%s&resumptionToken=%s', 'ListRecords', $resumptionToken);
+        }
+
         $this->client->request('GET', $action);
         return $this->client->getResponse();
     }
@@ -189,10 +199,73 @@ class ProviderControllerTest extends WebTestCase {
 
         $xml = $this->xml($content);
 
-        $this->assertCount(5, $xml->xpath('//oai:header/oai:identifier'));
+        $this->assertCount(4, $xml->xpath('//oai:header/oai:identifier'));
+        $this->assertCount(1, $xml->xpath('//oai:resumptionToken'));
+
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-1"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-2"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-3"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-4"]'));
+        $this->assertCount(0, $xml->xpath('//oai:header[oai:identifier="identifier-5"]'));
+
+        // Test support for resumptionToken
+
+        $nodes = $xml->xpath('//oai:resumptionToken');
+        $resumptionToken = (string) array_pop($nodes);
+
+        $response = $this->listIdentifiers($resumptionToken);
+
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(200, $statusCode);
+        $this->assertNotEmpty($content);
+
+        $xml = $this->xml($content);
+
+        $this->assertCount(0, $xml->xpath('//oai:header[oai:identifier="identifier-4"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-5"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-6"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-7"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-8"]'));
+        $this->assertCount(0, $xml->xpath('//oai:header[oai:identifier="identifier-9"]'));
+
+        $nodes = $xml->xpath('//oai:resumptionToken');
+        $resumptionToken = (string) array_pop($nodes);
+
+        $response = $this->listIdentifiers($resumptionToken);
+
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(200, $statusCode);
+        $this->assertNotEmpty($content);
+
+        $xml = $this->xml($content);
+
+        $this->assertCount(0, $xml->xpath('//oai:header[oai:identifier="identifier-8"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-9"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-10"]'));
+
+        // Test if an invalid resumptionToken was given
+
+        $response = $this->listIdentifiers('invalidresumptiontoken');
+
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(400, $statusCode);
+        $this->assertNotEmpty($content);
+
+        $xml = $this->xml($content);
+
+        $nodes = $xml->xpath('//oai:error');
+        $errorMessage = (string) array_pop($nodes);
+
+        $this->assertEquals('An invalid resumptionToken was given', $errorMessage);
 
         // @todo
-        //   Tests with resumptionToken
+        //   Test from / until when this get implemented
     }
 
     public function testListRecords()
@@ -207,7 +280,7 @@ class ProviderControllerTest extends WebTestCase {
 
         $xml = $this->xml($content);
 
-        $this->assertCount(5, $xml->xpath('//oai:record'));
+        $this->assertCount(4, $xml->xpath('//oai:record'));
         $this->assertCount(1, $xml->xpath('//oai:record/oai:metadata/lido:lido[lido:lidoRecID="identifier-1"]'));
 
         // @todo

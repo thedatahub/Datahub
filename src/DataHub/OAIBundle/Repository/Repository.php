@@ -2,9 +2,12 @@
 
 namespace DataHub\OAIBundle\Repository;
 
+use DataHub\ResourceAPIBundle\Document\Record as DOCRecord;
+use DataHub\ResourceAPIBundle\Repository\RecordRepository as DOCRecordRepository;
 use DateTime;
 use OpenSkos2\OaiPmh\Concept as OaiConcept;
 use Picturae\OaiPmh\Exception\IdDoesNotExistException;
+use Picturae\OaiPmh\Exception\BadResumptionTokenException;
 use Picturae\OaiPmh\Implementation\MetadataFormatType as ImplementationMetadataFormatType;
 use Picturae\OaiPmh\Implementation\RecordList as OaiRecordList;
 use Picturae\OaiPmh\Implementation\Repository\Identity as ImplementationIdentity;
@@ -17,10 +20,6 @@ use Picturae\OaiPmh\Interfaces\RecordList;
 use Picturae\OaiPmh\Interfaces\Repository as InterfaceRepository;
 use Picturae\OaiPmh\Interfaces\Repository\Identity;
 use Picturae\OaiPmh\Interfaces\SetList as InterfaceSetList;
-
-use DataHub\ResourceBundle\Service\DataService;
-use DataHub\ResourceBundle\Service\DataConvertersService;
-
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -38,17 +37,15 @@ class Repository implements InterfaceRepository
 
     private $paginationSize;
 
-    private $container;
+    private $recordRepository;
 
     /**
      * Constructor.
      *
-     * @param DataService           $dataService
-     * @param DataConvertersService $dataConvertersService
+     * @param RecordRepository
      */
-    public function __construct(DataService $dataService, ContainerInterface $container) {
-        $this->dataService = $dataService;
-        $this->container = $container;
+    public function __construct(DOCRecordRepository $recordRepository) {
+        $this->recordRepository = $recordRepository;
     }
 
     /**
@@ -101,28 +98,20 @@ class Repository implements InterfaceRepository
      */
     public function getRecord($metadataFormat, $identifier)
     {
-        $recordRepository = $this->container->get('datahub.resource_api.repository.default');
-        $record = $recordRepository->findOneByProperty('recordIds', $identifier);
+        $record = $this->recordRepository->findOneByProperty('recordIds', $identifier);
 
         if (!$record instanceof DOCRecord) {
             throw new IdDoesNotExistException('No matching identifier ' . $identifier);
         }
 
-        $data = $record->getRaw();
+        $xml = $record->getRaw();
+        $metadata = new \DOMDocument();
+        $metadata->loadXML($xml);
 
-        // Fetch record
-        // $record = $this->dataService->getData($identifier);
+        $updated = $record->getUpdated();
 
-        // Throw exception if record does not exist
-        // if (!$record) {
-        //    throw new IdDoesNotExistException('No matching identifier ' . $identifier);
-        // }
-
-        // $data = $record['raw'];
-
-        $recordMetadata = new \DOMDocument();
-        $recordMetadata->loadXML($data);
-        return new Record(new Header($identifier, new \DateTime()), $recordMetadata);
+        $header = new Header($identifier, $updated);
+        return new Record($header, $metadata);
     }
 
     /**
@@ -137,30 +126,32 @@ class Repository implements InterfaceRepository
      */
     public function listRecords($metadataFormat = null, DateTime $from = null, DateTime $until = null, $set = null, $offset = 0)
     {
-        $items = array();
-        $token = '';
-        $data = $this->dataService->cgetData($offset, $offset + $this->getPaginationSize());
-        $completeListSize = $data['count'];
+        $limit = $this->getPaginationSize();
+        $records = $this->recordRepository->findBy(array(), null, $limit, $offset);
+        $totalCount = $this->recordRepository->count();
+        $intervalCount = count($records);
 
-        if ($completeListSize > $offset+$this->getPaginationSize()) {
-            // Include token only if more records exist than shown
-            $token = $this->encodeResumptionToken($offset + $this->getPaginationSize(), $from, $until, $metadataFormat, $set);
+        $token = null;
+        if ($intervalCount < $records) {
+            $nextOffset = $offset + $limit;
+            $token = $this->encodeResumptionToken($nextOffset, $from, $until, $metadataFormat, $set);
         }
 
-        foreach ($data['results'] as $record) {
-            // speed up OAI calls by not serializing and using raw data
-            $data = $record['raw'];
+        $items = [];
+        foreach ($records as $record) {
+            $identifiers = $record->getRecordIds();
+            $updated = $record->getUpdated();
+            $xml = $record->getRaw();
 
-            $recordMetadata = new \DOMDocument();
-            $recordMetadata->loadXML($data);
-            $xpath = new \DOMXpath($recordMetadata);
-            $lidoRecID = $xpath->query("/lido:lido/lido:lidoRecID");
-            $identifier = $lidoRecID->item(0)->nodeValue;
+            $metadata = new \DOMDocument();
+            $metadata->loadXML($xml);
 
-            $items[] = new Record(new Header($identifier, new \DateTime()), $recordMetadata);
+            $identifier = array_pop($identifiers);
+            $header = new Header($identifier, $updated);
+            $items[] = new Record($header, $metadata);
         }
 
-        return new OaiRecordList($items, $token, $completeListSize);
+        return new OaiRecordList($items, $token, $totalCount);
     }
 
     /**
@@ -173,22 +164,20 @@ class Repository implements InterfaceRepository
     public function listRecordsByToken($token)
     {
         $params = $this->decodeResumptionToken($token);
+        extract($params);
 
-        $items = $this->listRecords($params['metadataPrefix'], $params['from'], $params['until'], $params['set'], $params['offset']);
+        $records = $this->listRecords($metadataPrefix, $from, $until, $set, $offset);
 
-        // Only show if there are more records available, else $token = '';
-        $token = '';
-        if ($items->getCompleteListSize() > $params['offset']+$this->getPaginationSize()) { // should check on total size!
-            $token = $this->encodeResumptionToken(
-                $params['offset'] + $this->getPaginationSize(),
-                $params['from'],
-                $params['until'],
-                $params['metadataPrefix'],
-                $params['set']
-            );
+        $totalCount = $records->getCompleteListSize();
+        $limit = $this->getPaginationSize();
+        $nextOffset = $offset + $limit;
+
+        $token = null;
+        if ($nextOffset < $totalCount) {
+            $token = $this->encodeResumptionToken($nextOffset, $from, $until, $metadataPrefix, $set);
         }
 
-        return new OaiRecordList($items->getItems(), $token, $items->getCompleteListSize());
+        return new OaiRecordList($records->getItems(), $token, $totalCount);
     }
 
     /**
@@ -240,7 +229,13 @@ class Repository implements InterfaceRepository
      */
     private function decodeResumptionToken($token)
     {
-        $params = (array) json_decode(base64_decode($token));
+        $decoded = json_decode(base64_decode($token));
+
+        if (is_null($decoded)) {
+            throw new BadResumptionTokenException('An invalid resumptionToken was given');
+        }
+
+        $params = (array) $decoded;
 
         if (!empty($params['from'])) {
             $params['from'] = new \DateTime('@' . $params['from']);

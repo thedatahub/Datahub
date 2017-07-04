@@ -80,6 +80,11 @@ class Record
         $this->json = json_decode($this->json, true);
     }
 
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
     public function getRaw() {
         return $this->raw;
     }
