@@ -1,12 +1,4 @@
 services:
-    datahub.resource.data:
-        class: DataHub\ResourceBundle\Service\DataService
-        arguments: ['@logger']
-        calls:
-          - [setDocumentManager, ["@datahub.shared.documents"]]
-          - [setCollectionName, [%data_hub_resource.work_data_collection%]]
-          - [setAnonymousUser, [%public_api_user_id%]]
-
     datahub.resource.datatype.datatypeRegister:
         class: DataHub\ResourceBundle\DataType\DataTypeRegister
 

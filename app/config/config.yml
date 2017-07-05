@@ -172,18 +172,11 @@ doctrine_mongodb:
         default:
             auto_mapping: true
 
-# app/config/config.yml
 stof_doctrine_extensions:
     default_locale: en_US
     mongodb:
         default:
             timestampable: true # not needed: listeners are not enabled by default
-
-data_hub_shared:
-    database_name: %mongodb_database%
-
-data_hub_resource:
-    # work_data_collection: WorkData
 
 # OAI endpoint config, see parameters.yml
 data_hub_oai:
