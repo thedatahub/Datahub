@@ -14,10 +14,10 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        $dataManager = $this->get('datahub.resource.data');
+        $recordsRepository = $recordRepository = $this->get('datahub.resource_api.repository.default');
 
         return [
-             'documentCount' => $dataManager->countData()
+             'documentCount' => $recordsRepository->count()
         ];
     }
 }
