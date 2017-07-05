@@ -3,9 +3,12 @@ php app/console cache:clear --env=test
 php app/console doctrine:mongodb:schema:drop --env=test
 php app/console doctrine:mongodb:fixtures:load --env=test -n
 bin/phpunit -c app --stop-on-failure --coverage-html scripts/coverage --filter="test" src/DataHub/ResourceAPIBundle/Tests/Controller/DataControllerTest.php
-php app/console cache:clear --env=test
+# bin/phpunit -c app --stop-on-failure --coverage-html scripts/coverage --filter="test" src/DataHub/
+bin/phpunit -c app --stop-on-failure --coverage-html scripts/coverage --filter="test" src/DataHub/OAIBundle/Tests/ProviderControllerTest.php
 php app/console doctrine:mongodb:schema:drop --env=test
-php app/console doctrine:mongodb:fixtures:load --env=test -n
-bin/phpunit -c app --stop-on-failure --coverage-html scripts/coverage --filter="test" src/DataHub/OAIBundle/Tests/OAITest.php
+# php app/console cache:clear --env=test
+# php app/console doctrine:mongodb:schema:drop --env=test
+# php app/console doctrine:mongodb:fixtures:load --env=test -n
+# bin/phpunit -c app --stop-on-failure --coverage-html scripts/coverage --filter="test" src/DataHub/OAIBundle/Tests/OAITest.php
 # CORE_COUNT=$(getconf _NPROCESSORS_ONLN)
 # ./bin/parallel-phpunit --pu-threads $CORE_COUNT --pu-cmd 'phpunit -c app/' ./src/
