@@ -9,6 +9,7 @@ parameters:
         - GET
     public_api_user_id: Anonymous
     access_token_lifetime: 14400
+    datahub_enabled_data_type: lido
     datahub_oai_repo_name: 'Datahub OAI'
     datahub_oai_contact_email: hello@organisation.com
     datahub_oai_pagination_num_records: 4

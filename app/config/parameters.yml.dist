@@ -49,6 +49,10 @@ parameters:
     # token should remain valid for 4 hours
     access_token_lifetime: 14400
 
+    # The enabled data type for your Datahub instance.
+    # Currently supported values: lido
+    datahub_enabled_data_type: lido
+
     # OAI endpoint config
     datahub_oai_repo_name: 'Datahub' # name of the OAI endpoint
     datahub_oai_contact_email: 'noreply@datahub.inuits.eu' # comma separated 'email1', 'email2'

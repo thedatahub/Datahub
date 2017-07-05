@@ -6,4 +6,4 @@ services:
         class: DataHub\ResourceBundle\Builder\ConverterFactory
         arguments: ["@datahub.resource.datatype.datatypeRegister"]
         calls:
-          - ['setConverter', ['lido']]
+          - ['setConverter', ['%datahub_enabled_data_type%']]
