@@ -18,6 +18,3 @@ swiftmailer:
 
 doctrine_mongodb:
     default_database: %mongodb_database%-test
-
-data_hub_shared:
-    database_name: %mongodb_database%-test
