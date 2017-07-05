@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "71193db49e8edff1801c3dbc662dc539",
+    "content-hash": "828fa12ae7a825e4affc52d12649144e",
     "packages": [
         {
             "name": "alcaeus/mongo-php-adapter",
@@ -3444,16 +3444,16 @@
         },
         {
             "name": "stof/doctrine-extensions-bundle",
-            "version": "dev-master",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stof/StofDoctrineExtensionsBundle.git",
-                "reference": "f9e3854f90eb35ed2c28f0fc8a4c1ed6627d0a80"
+                "reference": "4e7499d25dc5d0862da09fa8e336164948a29a25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stof/StofDoctrineExtensionsBundle/zipball/f9e3854f90eb35ed2c28f0fc8a4c1ed6627d0a80",
-                "reference": "f9e3854f90eb35ed2c28f0fc8a4c1ed6627d0a80",
+                "url": "https://api.github.com/repos/stof/StofDoctrineExtensionsBundle/zipball/4e7499d25dc5d0862da09fa8e336164948a29a25",
+                "reference": "4e7499d25dc5d0862da09fa8e336164948a29a25",
                 "shasum": ""
             },
             "require": {
@@ -3501,7 +3501,7 @@
                 "translatable",
                 "tree"
             ],
-            "time": "2017-01-13 18:32:32"
+            "time": "2016-01-26T23:58:32+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -6315,7 +6315,6 @@
         "nelmio/api-doc-bundle": 20,
         "jms/serializer-bundle": 20,
         "twig/extensions": 20,
-        "stof/doctrine-extensions-bundle": 20,
         "picturae/oai-pmh": 20,
         "phpunit/phpunit": 20
     },

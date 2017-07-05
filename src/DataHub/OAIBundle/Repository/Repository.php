@@ -104,13 +104,10 @@ class Repository implements InterfaceRepository
             throw new IdDoesNotExistException('No matching identifier ' . $identifier);
         }
 
+        $updated = $record->getUpdated();
         $xml = $record->getRaw();
         $metadata = new \DOMDocument();
         $metadata->loadXML($xml);
-
-        $updated = $record->getUpdated();
-        $updated = new DateTime();
-        $updated->setTimestamp($record->getUpdated());
 
         $header = new Header($identifier, $updated);
         return new Record($header, $metadata);
@@ -143,8 +140,6 @@ class Repository implements InterfaceRepository
         foreach ($records as $record) {
             $identifiers = $record->getRecordIds();
             $updated = $record->getUpdated();
-            $updated = new DateTime();
-            $updated->setTimestamp($record->getUpdated());
             $xml = $record->getRaw();
 
             $metadata = new \DOMDocument();

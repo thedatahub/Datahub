@@ -4,6 +4,7 @@ namespace DataHub\ResourceAPIBundle\Document;
 
 use DateTime;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
 use Hateoas\Configuration\Annotation as Hateoas;
 
@@ -14,7 +15,6 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * @package DataHub\ResourceAPIBundle
  *
  * @ODM\Document(collection="Records", repositoryClass="DataHub\ResourceAPIBundle\Repository\RecordRepository")
- * @ODM\HasLifecycleCallbacks
  * @Serializer\XmlRoot("record")
  * @Hateoas\Relation("self",
  *     href = "expr('/api/v1/data/' ~ object.getUrlEncodedPrimaryRecordId())",
@@ -31,10 +31,20 @@ class Record
     /** @ODM\Field(type="string") @ODM\Index */
     // protected $owner;
 
-    /** @ODM\Field(type="timestamp") */
+    /**
+     * @var \DateTime $created
+     *
+     * @ODM\Field(type="date")
+     * @Gedmo\Timestampable(on="create")
+     */
     protected $created;
 
-    /** @ODM\Field(type="timestamp") */
+    /**
+     * @var \DateTime $updated
+     *
+     * @ODM\Field(type="date")
+     * @Gedmo\Timestampable(on="update")
+     */
     protected $updated;
 
     /**
@@ -56,25 +66,6 @@ class Record
     protected $objectIds;
 
     /**
-     * @ODM\PrePersist
-     */
-    public function onPrePersist()
-    {
-        $dateTime = new DateTime();
-        $this->created = $dateTime->getTimeStamp();
-        $this->updated = $dateTime->getTimeStamp();
-    }
-
-    /**
-     * @ODM\PreUpdate
-     */
-    public function onPreUpdate()
-    {
-        $dateTime = new DateTime();
-        $this->updated = $dateTime->getTimeStamp();
-    }
-
-    /**
      * @ODM\PostLoad
      */
     public function onPostLoad()
@@ -84,12 +75,12 @@ class Record
 
     public function getUpdated()
     {
-        return (string) $this->updated;
+        return $this->updated;
     }
 
     public function getCreated()
     {
-        return (string) $this->created;
+        return $this->created;
     }
 
     public function getRaw() {

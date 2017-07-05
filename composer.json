@@ -41,7 +41,7 @@
         "nelmio/api-doc-bundle": "*@dev",
         "jms/serializer-bundle": "*@dev",
         "twig/extensions": "*@dev",
-        "stof/doctrine-extensions-bundle": "*@dev",
+        "stof/doctrine-extensions-bundle": "^1.2",
 
         "picturae/oai-pmh": "*@dev",
         "symfony/psr-http-message-bridge": "^1.0",
