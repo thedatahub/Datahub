@@ -17,6 +17,9 @@ class DataTypeRegister implements DataTypeRegisterInterface {
 
     protected $dataTypes;
 
+    /**
+     * Constructor.
+     */
     public function __construct() {
         $this->dataTypes = [
             'lido' => 'DataHub\ResourceBundle\DataType\DataTypeLido',
@@ -25,6 +28,9 @@ class DataTypeRegister implements DataTypeRegisterInterface {
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDataType($id) {
         $result = false;
 

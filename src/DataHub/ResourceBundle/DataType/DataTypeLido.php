@@ -17,6 +17,9 @@ class DataTypeLido implements DataTypeInterface {
 
     protected $rootElement;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct() {
          $this->namespaceMap = [
             'http://www.w3.org/XML/1998/namespace' => 'xml',
@@ -39,22 +42,37 @@ class DataTypeLido implements DataTypeInterface {
         $this->schema = '/lido/1.0/lido-v1.0.xsd';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getCatalog() {
         return $this->catalog;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSchema() {
         return $this->schema;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getNamespaceMap() {
         return $this->namespaceMap;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getRootElement() {
         return $this->rootElement;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getObjectId($record) {
         $result = [];
         $iterator = new \ArrayIterator($record);
@@ -73,6 +91,9 @@ class DataTypeLido implements DataTypeInterface {
         return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getRecordId($record) {
         $result = [];
         $iterator = new \ArrayIterator($record);

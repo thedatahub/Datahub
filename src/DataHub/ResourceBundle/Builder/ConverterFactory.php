@@ -20,10 +20,19 @@ class ConverterFactory implements ConverterFactoryInterface {
 
     protected $converter;
 
+    /**
+     * Constructor
+     *
+     * @param DataTypeRegisterInterface The dataType register which contains all
+     *   available dataType definitions.
+     */
     public function __construct(DataTypeRegisterInterface $dataTypeRegister) {
         $this->dataTypeRegister = $dataTypeRegister;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setConverter($dataType) {
         if ($class = $this->dataTypeRegister->getDataType($dataType)) {
             $dataType = new $class();
@@ -35,8 +44,10 @@ class ConverterFactory implements ConverterFactoryInterface {
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getConverter() {
         return $this->converter;
     }
-
 }

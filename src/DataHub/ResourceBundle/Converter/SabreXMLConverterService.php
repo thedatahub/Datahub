@@ -23,6 +23,9 @@ class SabreXMLConverterService implements ConverterServiceinterface {
 
     protected $schemaLocation;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(DataTypeInterface $dataType) {
         $this->dataType = $dataType;
         $this->service = new Service();
@@ -104,15 +107,24 @@ class SabreXMLConverterService implements ConverterServiceinterface {
         return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function read($serializedData) {
       return $this->service->parse($serializedData);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function write($object) {
         $rootElement = $this->dataType->getRootElement();
         return $this->service->write($rootElement, $object);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDataType() {
         return $this->dataType;
     }
