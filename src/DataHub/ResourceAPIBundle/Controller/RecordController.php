@@ -76,6 +76,16 @@ class RecordController extends Controller
         $records = $recordRepository->findBy(array(), null, $limit, $offset);
         $total = $recordRepository->count();
 
+        // @todo
+        //   The record itself is stored as a plain JSON string in the document
+        //   We need to decode it manually before we can pass the entire object
+        //   off to the serializer. Put this in a separate handler / service.
+        foreach ($records as &$record) {
+            $json = $record->getJson();
+            $json = json_decode($json, true);
+            $record->setJson($json);
+        }
+
         $offsetCollection = new OffsetRepresentation(
             new CollectionRepresentation(
                 $records, 'records', 'records'
@@ -125,6 +135,14 @@ class RecordController extends Controller
         if ($request->getRequestFormat() == 'xml') {
             return new Response($record->getRaw(), Response::HTTP_OK, array('Content-Type' => 'application/xml'));
         }
+
+        // @todo
+        //   The record itself is stored as a plain JSON string in the document
+        //   We need to decode it manually before we can pass the entire object
+        //   off to the serializer. Put this in a separate handler / service.
+        $json = $record->getJson();
+        $json = json_decode($json, true);
+        $record->setJson($json);
 
         $hateoas = HateoasBuilder::create()->build();
         $context = SerializationContext::create()->setGroups(array('json'));
