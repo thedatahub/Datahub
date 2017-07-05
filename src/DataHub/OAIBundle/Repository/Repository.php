@@ -126,12 +126,19 @@ class Repository implements InterfaceRepository
     public function listRecords($metadataFormat = null, DateTime $from = null, DateTime $until = null, $set = null, $offset = 0)
     {
         $limit = $this->getPaginationSize();
-        $records = $this->recordRepository->findBy(array(), null, $limit, $offset);
-        $totalCount = $this->recordRepository->count();
-        $intervalCount = count($records);
+
+        if (is_null($from) && is_null($until)) {
+            $records = $this->recordRepository->findBy(array(), null, $limit, $offset);
+            $intervalCount = count($records);
+            $totalCount = $this->recordRepository->count();
+        } else {
+            $records = $this->recordRepository->findByBetweenFromUntil($from, $until, $limit, $offset);
+            $intervalCount = $records->count(true);
+            $totalCount = $this->recordRepository->findByBetweenFromUntil($from, $until, null, null, true);
+        }
 
         $token = null;
-        if ($intervalCount < $records) {
+        if ($intervalCount < $totalCount) {
             $nextOffset = $offset + $limit;
             $token = $this->encodeResumptionToken($nextOffset, $from, $until, $metadataFormat, $set);
         }

@@ -87,12 +87,20 @@ class ProviderControllerTest extends WebTestCase {
     /**
      * Implements OAI ListIdentifiers verb
      */
-    public function listIdentifiers($resumptionToken = null)
+    public function listIdentifiers($resumptionToken = null, $from = null, $until = null)
     {
         $action = sprintf('/oai/?verb=%s&metadataPrefix=%s', 'ListIdentifiers', 'oai_lido');
 
         if (!is_null($resumptionToken)) {
             $action = sprintf('/oai/?verb=%s&resumptionToken=%s', 'ListIdentifiers', $resumptionToken);
+        }
+
+        if (!is_null($from)) {
+            $action = sprintf('%s&from=%s', $action, $from);
+        }
+
+        if (!is_null($until)) {
+            $action = sprintf('%s&until=%s', $action, $until);
         }
 
         $this->client->request('GET', $action);
@@ -264,8 +272,81 @@ class ProviderControllerTest extends WebTestCase {
 
         $this->assertEquals('An invalid resumptionToken was given', $errorMessage);
 
-        // @todo
-        //   Test from / until when this get implemented
+        // Test From / Until
+
+        $from = new \DateTime();
+        $from->modify('-1 day');
+        $from = $from->format('Y-m-d\TH:i:s\Z');
+
+        $until = new \DateTime();
+        $until->modify("+1 day");
+        $until = $until->format('Y-m-d\TH:i:s\Z');
+
+        $response = $this->listIdentifiers(null, $from, $until);
+
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(200, $statusCode);
+        $this->assertNotEmpty($content);
+
+        $xml = $this->xml($content);
+
+        $this->assertCount(4, $xml->xpath('//oai:header/oai:identifier'));
+        $this->assertCount(1, $xml->xpath('//oai:resumptionToken'));
+
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-1"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-2"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-3"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-4"]'));
+        $this->assertCount(0, $xml->xpath('//oai:header[oai:identifier="identifier-5"]'));
+
+        // Test From / Until with ResumptionToken
+
+        $nodes = $xml->xpath('//oai:resumptionToken');
+        $resumptionToken = (string) array_pop($nodes);
+
+        $response = $this->listIdentifiers($resumptionToken);
+
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(200, $statusCode);
+        $this->assertNotEmpty($content);
+
+        $xml = $this->xml($content);
+
+        $this->assertCount(0, $xml->xpath('//oai:header[oai:identifier="identifier-4"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-5"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-6"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-7"]'));
+        $this->assertCount(1, $xml->xpath('//oai:header[oai:identifier="identifier-8"]'));
+        $this->assertCount(0, $xml->xpath('//oai:header[oai:identifier="identifier-9"]'));
+
+        // Test From / Until without a result
+
+        $from = new \DateTime();
+        $from->modify('-3 days');
+        $from = $from->format('Y-m-d\TH:i:s\Z');
+
+        $until = new \DateTime();
+        $until->modify("-2 days");
+        $until = $until->format('Y-m-d\TH:i:s\Z');
+
+        $response = $this->listIdentifiers(null, $from, $until);
+
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(400, $statusCode);
+        $this->assertNotEmpty($content);
+
+        $xml = $this->xml($content);
+
+        $nodes = $xml->xpath('//oai:error');
+        $errorMessage = (string) array_pop($nodes);
+
+        $this->assertEquals('The combination of the values of the from, until, set and metadataPrefix arguments results in an empty list.', $errorMessage);
     }
 
     public function testListRecords()
