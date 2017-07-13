@@ -1,0 +1,20 @@
+language: php
+php:
+  - '5.6'
+services: mongodb
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y php5-cli php5-intl php5-mcrypt perl cpanminus make libmodule-install-perl libyaz-dev libwrap0-dev libxml2-dev zlib1g zlib1g-dev libexpat1-dev libxslt1-dev libxml-libxml-perl libxml-libxslt-perl libssl-dev libgdbm-dev perl-doc php-pear
+  - sudo cpanm 'Test::More' --notest
+  - sudo cpanm YAML --notest
+  - sudo cpanm Catmandu --notest
+  - yes '' | sudo pecl install -f mongo
+  - echo 'extension = "mongo.so"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+install:
+  - composer install
+before_script:
+  - ./scripts/update_install
+  - app/console app:setup
+  - app/console doctrine:mongodb:fixtures:load --append
+script:
+  - ./scripts/run_tests
