@@ -2,15 +2,15 @@
 
 [![Software License][ico-license]](LICENSE)
 
-The Datahub is a metadata aggregator. This applicaiton allows data providers to aggregate and publish metadata describing objects on the web through a RESTful API leveraging standardized exchange formats.
+The Datahub is a metadata aggregator. This application allows data providers to aggregate and publish metadata describing objects on the web through a RESTful API leveraging standardized exchange formats.
 
-The Datahub is build with the [Symfony framework](https://symfony.com), [MongoDB](https://www.mongodb.org) and [Catmandu](http://librecat.org/).
+The Datahub is build with the [Symfony framework](https://symfony.com) and [MongoDB](https://www.mongodb.org).
 
 ## Features
 
 * A RESTful API which supports:
   * Ingest and retrieval of individual metadata records.
-  * Validation of ingested records through Catmandu.
+  * Validation of ingested records against XSD schemas.
   * Supports OAuth to restrict access to the API.
 * An OAI-PMH endpoint for harvesting metadata records.
 * Includes support for [LIDO XML](http://lido-schema.org/) but can be extended to include MARC XML, Dublin Core or other formats.
@@ -23,7 +23,6 @@ This project requires following dependencies:
   * With the php-cli, php-intl and php-mcrypt extensions.
   * The [PECL Mongo](https://pecl.php.net/package/mongo) extension.
 * MongoDB >= 3.2.10
-* Catmandu >= 1.0304 (Note: this dependency requires Perl)
 
 ## Install
 
@@ -59,6 +58,51 @@ Refer to the [Symfony setup documentation](https://symfony.com/doc/current/setup
 ### The REST API
 
 The REST API is available at `api/v1/data`. Documentation about the available API methods can be found  at `/docs/api`.
+
+#### POST and PUT actions
+
+The PUT and POST actions expect and XML formatted body in the HTTP request. The Content-Type HTTP request header also needs to be set accordingly. Currently, supported: `application/lido+xml`. Finally, you will need to add a valid OAuth token via the `access_token` query parameter.
+
+A valid POST HTTP request looks like this:
+
+```
+POST /api/v1/data?access_token=MThmYWMxMjFlZWZmYjVmZDU2NDNmZWIzYTE0YmNiYTk3YTc5ODJmMWJjOGI1MjE5MWY4ZjEyZWZlZmM2ZmZmNg HTTP/1.1
+Host: example.org
+Content-Type: application/lido+xml
+Cache-Control: no-cache
+
+<?xml version="1.0" encoding="UTF-8"?>
+<lido:lido xmlns:lido="http://www.lido-schema.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.lido-schema.org http://www.lido-schema.org/schema/v1.0/lido-v1.0.xsd">
+	<lido:lidoRecID lido:source="Deutsches Dokumentationszentrum für Kunstgeschichte - Bildarchiv Foto Marburg" lido:type="local">DE-Mb112/lido-obj00154983</lido:lidoRecID>
+	<lido:category>
+...
+```
+
+#### GET actions
+
+Sending a GET HTTP request to the `api/v1/data` endpoint will return a paginated list of all the records available in the API. The endpoint will return a HTTP response with a JSON formatted body. The endpoint respects the [HATEOAS](https://en.wikipedia.org/wiki/HATEOAS) constraint.
+
+Content negotation is currently only supported via a file extension on individual resource URL's. Negotation via the HTTP Accept header is on the roadmap.
+
+```
+GET api/v1/data               # only JSON supported
+GET api/v1/data/objectPID     # return JSON
+GET api/v1/data/objectPID.xml # return XML
+```
+
+### The OAI endpoint
+
+The datahub supports the [OAI-PMH protocol](https://www.openarchives.org/OAI/openarchivesprotocol.html). The endpoint is available via the `/oai` path.
+
+```
+GET oai/?metadataPrefix=oai_lido&verb=ListIdentifiers
+GET oai/?metadataPrefix=oai_lido&verb=ListRecords
+GET oai/?metadataPrefix=oai_lid&verb=GetRecord&identifier=objectPID
+GET oai/?metadataPrefix=oai_lid&verb=GetRecord&identifier=objectPID
+GET oai/?metadataPrefix=oai_lido&verb=ListIdentifiers&from=2017-06-29T05:22:30Z&until=2017-07-14T04:22:30Z
+```
+
+The datahub doesn't implement grouping of records nor soft deletes. As such, the OAI endpoint doesn't OAI sets and indicating whether a record has been deleted.
 
 ### OAuth support and security
 
