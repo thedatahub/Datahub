@@ -44,12 +44,5 @@ class AppSetupCommand extends ContainerAwareCommand
         $this->runCommand('assets:install --symlink web');
         $this->runCommand('cache:clear');
         $this->runCommand('assetic:dump');
-
-        // Create indexes on owner, recordIds (unique) and objectIds
-        $documents = $this->getContainer()->get('datahub.shared.documents');
-        $documents->getCollection('Records')->ensureIndex(['recordIds' => 1], ['unique' => true]);
-        $documents->getCollection('Records')->ensureIndex(['objectIds' => 1]);
-
-        $this->runCommand('doctrine:mongodb:schema:update');
     }
 }

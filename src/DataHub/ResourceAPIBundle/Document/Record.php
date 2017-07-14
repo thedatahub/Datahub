@@ -59,10 +59,10 @@ class Record
      */
     protected $raw;
 
-    /** @ODM\Field(type="collection") */
+    /** @ODM\Field(type="collection") @Index(unique=true) */
     protected $recordIds;
 
-    /** @ODM\Field(type="collection") */
+    /** @ODM\Field(type="collection") @Index */
     protected $objectIds;
 
     /**
