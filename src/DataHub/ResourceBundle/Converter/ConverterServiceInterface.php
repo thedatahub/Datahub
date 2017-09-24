@@ -10,7 +10,7 @@ use DataHub\ResourceBundle\DataType\DataTypeInterface;
  * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
  * @package DataHub\ResourceBundle
  */
-interface ConverterServiceinterface {
+interface ConverterServiceInterface {
     /**
      * Constructor.
      *

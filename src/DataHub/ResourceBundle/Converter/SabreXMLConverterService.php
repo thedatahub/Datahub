@@ -15,7 +15,7 @@ use DOMDocument;
  * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
  * @package DataHub\ResourceBundle
  */
-class SabreXMLConverterService implements ConverterServiceinterface {
+class SabreXMLConverterService implements ConverterServiceInterface {
 
     protected $service;
 
