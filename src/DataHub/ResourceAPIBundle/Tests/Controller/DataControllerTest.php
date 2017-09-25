@@ -177,12 +177,15 @@ class DataControllerTest extends WebTestCase
 
         $response = $this->getAll();
         $statusCode = $response->getStatusCode();
+
+        $this->assertEquals(200, $statusCode);
+
         $content = $response->getContent();
         $content = json_decode($content, true);
 
         $this->assertEquals(0, $content['offset']);
         $this->assertEquals(5, $content['limit']);
-        $this->assertEquals(14, $content['total']);
+        $this->assertEquals(15, $content['total']);
         $this->assertEquals($content['_links'], [
             'self' => [ 'href' => '/api/v1/data?limit=5'],
             'first' => [ 'href' => '/api/v1/data?limit=5'],
@@ -192,12 +195,15 @@ class DataControllerTest extends WebTestCase
 
         $response = $this->getAll(5, 5);
         $statusCode = $response->getStatusCode();
+
+        $this->assertEquals(200, $statusCode);
+
         $content = $response->getContent();
         $content = json_decode($content, true);
 
         $this->assertEquals(5, $content['offset']);
         $this->assertEquals(5, $content['limit']);
-        $this->assertEquals(14, $content['total']);
+        $this->assertEquals(15, $content['total']);
         $this->assertEquals($content['_links'], [
             'self' => [ 'href' => '/api/v1/data?offset=5&limit=5'],
             'first' => [ 'href' => '/api/v1/data?limit=5'],

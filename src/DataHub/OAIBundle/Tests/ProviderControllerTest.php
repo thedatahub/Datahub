@@ -20,38 +20,54 @@ class ProviderControllerTest extends WebTestCase {
     /**
      * {@inheritdoc}
      */
-    public function setUp()
-    {
+    protected function setUp() {
         $this->client = static::createClient();
+        $this->validRecord = file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml');
     }
 
     /**
-     * {@inheritdoc}
+     * Gets an OAuth access token
+     *
+     * @return string A valid OAuth access token.
      */
-    public static function setUpBeforeClass()
-    {
-        $validRecord = file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml');
-        $client = static::createClient();
-
-        // Access token
-        $client->request('GET', '/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
-        $response = $client->getResponse();
+    protected function getAccessToken() {
+        $this->client->request('GET', '/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
+        $response = $this->client->getResponse();
         $data = json_decode($response->getContent(), true);
-        $accessToken = $data['access_token'];
+        return $data['access_token'];
+    }
 
-        // Prep record as DOMDocument
-        $doc = new \DOMDocument();
-        $doc->formatOutput = true;
-        $doc->loadXML($validRecord);
+    /**
+     * Implements a POST client call.
+     *
+     * @param string $record Required valid record string.
+     *
+     * @param Symfony\Component\HttpFoundation\Response Response object
+     */
+    protected function post($record) {
+        $accessToken = $this->getAccessToken();
+        $action = sprintf('/api/v1/data?access_token=%s', $accessToken);
 
-        // Post records
-        foreach (range(1, 10) as $number) {
-            $doc->getElementsByTagName("lidoRecID")->item(0)->nodeValue = sprintf('identifier-%s', $number);
-            $record = $doc->saveXML();
+        $this->client->request('POST', $action, [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $record);
 
-            $action = sprintf('/api/v1/data?access_token=%s', $accessToken);
-            $client->request('POST', $action, [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $record);
-        }
+        return $this->client->getResponse();
+    }
+
+    /**
+     * Implements a DELETE client call.
+     *
+     * @param string $id     The identifier of the record to be deleted.
+     * @param string $record Required valid record string.
+     *
+     * @param Symfony\Component\HttpFoundation\Response Response object
+     */
+    protected function delete($id) {
+        $accessToken = $this->getAccessToken();
+        $action = sprintf("/api/v1/data/%s?access_token=%s", $id, $accessToken);
+
+        $this->client->request('DELETE', $action);
+
+        return $this->client->getResponse();
     }
 
     /**
@@ -197,6 +213,16 @@ class ProviderControllerTest extends WebTestCase {
 
     public function testListIdentifiers()
     {
+        $doc = new \DOMDocument();
+        $doc->formatOutput = true;
+        $doc->loadXML($this->validRecord);
+
+        foreach (range(1, 10) as $number) {
+            $doc->getElementsByTagName("lidoRecID")->item(0)->nodeValue = sprintf('identifier-%s', $number);
+            $record = $doc->saveXML();
+            $response = $this->post($record);
+        }
+
         $response = $this->listIdentifiers();
 
         $statusCode = $response->getStatusCode();
@@ -338,7 +364,7 @@ class ProviderControllerTest extends WebTestCase {
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
 
-        $this->assertEquals(400, $statusCode);
+        $this->assertEquals(200, $statusCode);
         $this->assertNotEmpty($content);
 
         $xml = $this->xml($content);
@@ -347,14 +373,33 @@ class ProviderControllerTest extends WebTestCase {
         $errorMessage = (string) array_pop($nodes);
 
         $this->assertEquals('The combination of the values of the from, until, set and metadataPrefix arguments results in an empty list.', $errorMessage);
+
+        foreach (range(1, 10) as $number) {
+            $id = sprintf('identifier-%s', $number);
+            $this->delete($id);
+        }
     }
 
     public function testListRecords()
     {
+        $doc = new \DOMDocument();
+        $doc->formatOutput = true;
+        $doc->loadXML($this->validRecord);
+
+       foreach (range(1, 10) as $number) {
+            $id = sprintf('identifier-%s', $number);
+            $this->delete($id);
+
+            $doc->getElementsByTagName("lidoRecID")->item(0)->nodeValue = sprintf('identifier-%s', $number);
+            $record = $doc->saveXML();
+            $r = $this->post($record);
+        }
+
         $response = $this->listRecords();
 
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
+
 
         $this->assertEquals(200, $statusCode);
         $this->assertNotEmpty($content);
@@ -370,7 +415,9 @@ class ProviderControllerTest extends WebTestCase {
 
     public function testVerbGetRecord()
     {
-        $response = $this->getRecord('identifier-1');
+        $this->post($this->validRecord);
+
+        $response = $this->getRecord('DE-Mb112/lido-obj00154983');
 
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
@@ -381,7 +428,10 @@ class ProviderControllerTest extends WebTestCase {
         $xml = $this->xml($content);
 
         $this->assertCount(1, $xml->xpath('//oai:record'));
-        $this->assertCount(1, $xml->xpath('//oai:record/oai:metadata/lido:lido[lido:lidoRecID="identifier-1"]'));
+        $this->assertCount(1, $xml->xpath('//oai:record/oai:metadata/lido:lido[lido:lidoRecID="DE-Mb112/lido-obj00154983"]'));
+
+        $d = urlencode('DE-Mb112/lido-obj00154983');
+        $this->delete($d);
     }
 
     public function testVerbGetRecordNotFound()
@@ -398,25 +448,5 @@ class ProviderControllerTest extends WebTestCase {
 
         $error = $xml->xpath('//oai:error');
         $this->assertEquals("No matching identifier does-not-exist", $error[0][0]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function tearDownAfterClass()
-    {
-        $client = static::createClient();
-
-        // Access token
-        $client->request('GET', '/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
-        $response = $client->getResponse();
-        $data = json_decode($response->getContent(), true);
-        $accessToken = $data['access_token'];
-
-        // Delete records
-        foreach (range(1, 10) as $number) {
-            $action = sprintf("/api/v1/data/%s?access_token=%s", $number, $accessToken);
-            $client->request('DELETE', $action);
-        }
     }
 }
