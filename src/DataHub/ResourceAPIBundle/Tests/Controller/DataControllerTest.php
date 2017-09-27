@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 /**
  * Functional testing for DataController
  *
+ * @runTestsInSeparateProcesses
+ *
  * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
  * @package DataHub\ResourceAPIBundle
  */
