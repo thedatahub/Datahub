@@ -18,11 +18,44 @@ use DataHub\OAIBundle\Repository\Repository;
 class ProviderControllerTest extends WebTestCase {
 
     /**
+     * {@inheridoc}
+     */
+    public static function setUpBeforeClass()
+    {
+        $validRecord = file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml');
+
+        $doc = new \DOMDocument();
+        $doc->formatOutput = true;
+        $doc->loadXML($validRecord);
+
+        foreach (range(1, 10) as $number) {
+            $doc->getElementsByTagName("lidoRecID")->item(0)->nodeValue = sprintf('identifier-%s', $number);
+            $record = $doc->saveXML();
+            $response = ProviderControllerTest::post($record);
+        }
+
+        ProviderControllerTest::post($validRecord);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function tearDownAfterClass()
+    {
+        foreach (range(1, 10) as $number) {
+            $id = sprintf('identifier-%s', $number);
+            ProviderControllerTest::delete($id);
+        }
+
+        $d = urlencode('DE-Mb112/lido-obj00154983');
+        ProviderControllerTest::delete($d);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp() {
         $this->client = static::createClient();
-        $this->validRecord = file_get_contents(__DIR__.'/../Resources/LidoXML/LIDO-Example_FMobj00154983-LaPrimavera.xml');
     }
 
     /**
@@ -30,9 +63,10 @@ class ProviderControllerTest extends WebTestCase {
      *
      * @return string A valid OAuth access token.
      */
-    protected function getAccessToken() {
-        $this->client->request('GET', '/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
-        $response = $this->client->getResponse();
+    protected static function getAccessToken() {
+        $client = static::createClient();
+        $client->request('GET', '/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
+        $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
         return $data['access_token'];
     }
@@ -44,13 +78,14 @@ class ProviderControllerTest extends WebTestCase {
      *
      * @param Symfony\Component\HttpFoundation\Response Response object
      */
-    protected function post($record) {
-        $accessToken = $this->getAccessToken();
+    protected static function post($record) {
+        $accessToken = ProviderControllerTest::getAccessToken();
         $action = sprintf('/api/v1/data?access_token=%s', $accessToken);
 
-        $this->client->request('POST', $action, [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $record);
+        $client = static::createClient();
+        $client->request('POST', $action, [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $record);
 
-        return $this->client->getResponse();
+        return $client->getResponse();
     }
 
     /**
@@ -61,13 +96,14 @@ class ProviderControllerTest extends WebTestCase {
      *
      * @param Symfony\Component\HttpFoundation\Response Response object
      */
-    protected function delete($id) {
-        $accessToken = $this->getAccessToken();
+    protected static function delete($id) {
+        $accessToken = ProviderControllerTest::getAccessToken();
         $action = sprintf("/api/v1/data/%s?access_token=%s", $id, $accessToken);
 
-        $this->client->request('DELETE', $action);
+        $client = static::createClient();
+        $client->request('DELETE', $action);
 
-        return $this->client->getResponse();
+        return $client->getResponse();
     }
 
     /**
@@ -213,16 +249,6 @@ class ProviderControllerTest extends WebTestCase {
 
     public function testListIdentifiers()
     {
-        $doc = new \DOMDocument();
-        $doc->formatOutput = true;
-        $doc->loadXML($this->validRecord);
-
-        foreach (range(1, 10) as $number) {
-            $doc->getElementsByTagName("lidoRecID")->item(0)->nodeValue = sprintf('identifier-%s', $number);
-            $record = $doc->saveXML();
-            $response = $this->post($record);
-        }
-
         $response = $this->listIdentifiers();
 
         $statusCode = $response->getStatusCode();
@@ -373,28 +399,10 @@ class ProviderControllerTest extends WebTestCase {
         $errorMessage = (string) array_pop($nodes);
 
         $this->assertEquals('The combination of the values of the from, until, set and metadataPrefix arguments results in an empty list.', $errorMessage);
-
-        foreach (range(1, 10) as $number) {
-            $id = sprintf('identifier-%s', $number);
-            $this->delete($id);
-        }
     }
 
     public function testListRecords()
     {
-        $doc = new \DOMDocument();
-        $doc->formatOutput = true;
-        $doc->loadXML($this->validRecord);
-
-       foreach (range(1, 10) as $number) {
-            $id = sprintf('identifier-%s', $number);
-            $this->delete($id);
-
-            $doc->getElementsByTagName("lidoRecID")->item(0)->nodeValue = sprintf('identifier-%s', $number);
-            $record = $doc->saveXML();
-            $r = $this->post($record);
-        }
-
         $response = $this->listRecords();
 
         $statusCode = $response->getStatusCode();
@@ -409,14 +417,10 @@ class ProviderControllerTest extends WebTestCase {
         $this->assertCount(4, $xml->xpath('//oai:record'));
         $this->assertCount(1, $xml->xpath('//oai:record/oai:metadata/lido:lido[lido:lidoRecID="identifier-1"]'));
 
-        // @todo
-        //   Tests with resumptionToken
     }
 
     public function testVerbGetRecord()
     {
-        $this->post($this->validRecord);
-
         $response = $this->getRecord('DE-Mb112/lido-obj00154983');
 
         $statusCode = $response->getStatusCode();
@@ -429,9 +433,6 @@ class ProviderControllerTest extends WebTestCase {
 
         $this->assertCount(1, $xml->xpath('//oai:record'));
         $this->assertCount(1, $xml->xpath('//oai:record/oai:metadata/lido:lido[lido:lidoRecID="DE-Mb112/lido-obj00154983"]'));
-
-        $d = urlencode('DE-Mb112/lido-obj00154983');
-        $this->delete($d);
     }
 
     public function testVerbGetRecordNotFound()
