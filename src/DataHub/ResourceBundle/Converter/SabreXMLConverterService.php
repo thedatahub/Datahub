@@ -88,10 +88,12 @@ class SabreXMLConverterService implements ConverterServiceInterface {
                 );
             }
 
-            // Validation via \DOMDocument
-            $dom = new DOMDocument();
-            $dom->loadXML($serializedData);
-            $result = $dom->schemaValidate($schema);
+            $reader = $this->service->getReader();
+
+            $reader->xml($serializedData);
+            $reader->setSchema($schema);
+            $result = $reader->parse();
+
             if (!$result) {
                 $errors = libxml_get_errors();
                 libxml_clear_errors();
@@ -104,14 +106,7 @@ class SabreXMLConverterService implements ConverterServiceInterface {
             register_shutdown_function('libxml_disable_entity_loader', $disableEntityLoaderPreviousState);
         }
 
-        return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function read($serializedData) {
-      return $this->service->parse($serializedData);
+        return $result['value'];
     }
 
     /**
