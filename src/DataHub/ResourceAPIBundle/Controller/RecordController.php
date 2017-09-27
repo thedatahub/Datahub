@@ -98,7 +98,7 @@ class RecordController extends Controller
         );
 
         $context = SerializationContext::create()->setGroups(array('Default','json'));
-        $json = $this->get('serializer')->serialize($offsetCollection, 'json', $context);
+        $json = $this->get('jms_serializer')->serialize($offsetCollection, 'json', $context);
 
         return new Response($json, Response::HTTP_OK, array('Content-Type' => 'application/hal+json'));
     }
