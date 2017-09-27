@@ -43,7 +43,6 @@ class XmlDecoder implements DecoderInterface
     public function decode($data)
     {
         try {
-            $this->converter->validate($data);
             $result = $this->converter->read($data);
         } catch (\Exception $e) {
             throw new BadRequestHttpException('Invalid XML: ' . $e->getMessage());

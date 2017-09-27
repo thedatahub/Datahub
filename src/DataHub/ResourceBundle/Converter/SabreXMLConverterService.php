@@ -34,9 +34,9 @@ class SabreXMLConverterService implements ConverterServiceInterface {
     }
 
     /**
-     * Validates XML against a XML schema.
+     * Converts an object into a serialized string.
      *
-     * Validate against an XML schema set in a concrete implementation of
+     * Validates against an XML schema set in a concrete implementation of
      * DataHub\ResourceBundle\DataType\DataTypeInterface.
      * This validator uses XML catalogs since external schema's are downloaded
      * on the fly. W3C serves their schemata (xml.xsd) with a delay to discourage
@@ -49,7 +49,7 @@ class SabreXMLConverterService implements ConverterServiceInterface {
      * @throws RuntimeException If the catalog definition contains invalid references.
      * @throws LibXMLException An exeption bubbling up LibXML errors thrown by validation.
      */
-    public function validate($serializedData) {
+    public function read($serializedData) {
         // Set the catalog
         $catalog = $this->dataType->getCatalog();
         foreach ($catalog as &$item) {
