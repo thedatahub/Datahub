@@ -100,7 +100,13 @@ class DataTypeLido implements DataTypeInterface {
 
         $ids = new \CallbackFilterIterator($iterator, function($current, $key, $iterator) {
             if ($current['name'] == '{http://www.lido-schema.org}lidoRecID') {
-                return TRUE;
+                if (!isset($current['attributes']["{http://www.lido-schema.org}pref"])) {
+                    return TRUE;
+                }
+
+                if ($current['attributes']["{http://www.lido-schema.org}pref"] == 'preferred') {
+                    return TRUE;                    
+                }
             }
             return FALSE;
         });
