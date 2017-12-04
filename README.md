@@ -32,11 +32,33 @@ Via Git:
 $ git clone https://github.com/thedatahub/Datahub.git datahub
 $ cd datahub
 $ composer install # Composer will ask you to fill in any missing parameters before it continues
-$ ./scripts/update_install
 ```
 
-The configuration parameters will be stored in `app/config/parameters.yml`.  You'll need to run an initiial one-time setup script, which will scaffold the database structure, generate CSS assets and create the 'admin' user.
-Initial setup, which includes creating the 'admin' user:
+You will be asked to configure the connection to your MongoDB database. You 
+will need to provide these details:
+
+* The connection to your MongoDB instance (i.e. mongodb://127.0.0.1:27017)
+* The username of the user (i.e. datahub)
+* The password of the user
+* The database where your data will persist (i.e. datahub)
+
+Before you install, ensure that you have a running MongoDB instance, and you 
+have created a user with the right permissions. From the 
+[Mongo shell]https://docs.mongodb.com/getting-started/shell/client/) run these
+commands to create the required artefacts in MongoDB:
+
+```
+> use datahub
+> db.createUser(
+   {
+     user: "datahub",
+     pwd: "password",
+     roles: [ "readWrite", "dbAdmin" ]
+   }
+)
+```
+
+The configuration parameters will be stored in `app/config/parameters.yml`.  You'll need to run an initiial one-time setup script, which will scaffold the database structure, generate CSS assets and create the application 'admin' user.
 
 ``` bash
 $ app/console app:setup

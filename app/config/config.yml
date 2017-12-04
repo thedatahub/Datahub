@@ -163,11 +163,14 @@ nelmio_cors:
             max_age: 60
 
 doctrine_mongodb:
+    default_database: %mongodb_database%
     connections:
         default:
             server: %mongodb_server%
-            options: {}
-    default_database: %mongodb_database%
+            options:
+                username: %mongodb_user%
+                password: %mongodb_password%
+                db: admin
     document_managers:
         default:
             auto_mapping: true

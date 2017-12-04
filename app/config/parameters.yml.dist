@@ -31,6 +31,8 @@ parameters:
     # MongoDB connection string & database
     mongodb_server:     mongodb://127.0.0.1:27017/datahub
     mongodb_database:   datahub
+    mongodb_user: datahubuser
+    mongodb_password: datahubpassword
 
     # Catmandu CLI path
     catmandu_cli_path:  /usr/local/bin/catmandu

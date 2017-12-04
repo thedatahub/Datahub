@@ -3,15 +3,22 @@
 parameters:
     mongo.session.options:
         database: %mongodb_database%
-        collection: session
+        collection: Sessions
 
 services:
-    mongo_client:
-        class: MongoClient
-        arguments: ['%mongodb_server%']
+    mongo.connection:
+        class: MongoDoctrine\MongoDB\Connection
+        factory_service: doctrine.odm.mongodb.document_manager
+        factory_method: getConnection
+        calls:
+           - [initialize, []]
+    mongo:
+        class: Mongo
+        factory_service: mongo.connection
+        factory_method: getMongo
     session.handler.mongo:
         class: "Symfony\\Component\\HttpFoundation\Session\\Storage\Handler\\MongoDbSessionHandler"
-        arguments: ['@mongo_client', '%mongo.session.options%']
+        arguments: ['@mongo', '%mongo.session.options%']
     twig.text_extension:
         class: Twig_Extensions_Extension_Text
         tags:
