@@ -38,6 +38,7 @@ a:hover,
 }
 
 .navbar-default .navbar-brand {
+  padding: 0;
 	width: 158px;
   height: 50px;
   background: url(../assets/datahub.png);
@@ -51,6 +52,7 @@ a:hover,
   text-indent: 100%;
   white-space: nowrap;
   overflow: hidden;
+
 }
 
 /* Panels */
