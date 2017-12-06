@@ -31,11 +31,11 @@ before_install:
 before_script:
   - mongo datahub-test --eval 'db.createUser({user:"travis",pwd:"test",roles:["dbAdmin"]});'
   - composer install
-  - app/console app:setup
-  - app/console doctrine:mongodb:fixtures:load --append
+  - app/console app:setup --env=test
+  - app/console doctrine:mongodb:fixtures:load -n --env=test
 
 script:
-  - ./scripts/run_tests
+  - bin/phpunit -c app --stop-on-failure --coverage-html scripts/coverage --filter="test" src/DataHub/
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
