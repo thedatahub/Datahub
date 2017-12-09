@@ -88,6 +88,10 @@ installation operational in a production environment.
 
 ## Usage
 
+### Credentials
+
+The application is installed with as default username `admin` and as default password `datahub`. Changing this is highly recommended.
+
 ### The REST API
 
 The REST API is available at `api/v1/data`. Documentation about the available 
