@@ -34,9 +34,6 @@ parameters:
     mongodb_user: datahubuser
     mongodb_password: datahubpassword
 
-    # Catmandu CLI path
-    catmandu_cli_path:  /usr/local/bin/catmandu
-
     # Enforced transport channel
     security_requires_channel: http
 
