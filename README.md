@@ -24,8 +24,8 @@ to include MARC XML, Dublin Core or other formats.
 This project requires following dependencies:
 
 * PHP = 5.6.* or 7.0.*
-  * With the php-cli, php-intl and php-mcrypt extensions.
-  * The [PECL Mongo](https://pecl.php.net/package/mongo) extension.
+  * With the php-cli, php-intl, php-mbstring and php-mcrypt extensions.
+  * The [PECL Mongo](https://pecl.php.net/package/mongo) (PHP5) or [PECL Mongodb](https://pecl.php.net/package/mongodb) (PHP7) extension. Note that the _mongodb_ extension must be version 1.2.0 or higher. Notably, the package included in Ubuntu 16.04 (_php-mongodb_) is only at 1.1.5.
 * MongoDB >= 3.2.10
 
 ## Install
@@ -87,6 +87,10 @@ to complete your installation using a fully featured web server to make your
 installation operational in a production environment.
 
 ## Usage
+
+### Credentials
+
+The application is installed with as default username `admin` and as default password `datahub`. Changing this is highly recommended.
 
 ### The REST API
 
