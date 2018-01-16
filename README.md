@@ -1,6 +1,7 @@
 # Datahub
 
-[![Software License][ico-license]](LICENSE) [![Build Status](https://travis-ci.org/thedatahub/Datahub.svg?branch=master)](https://travis-ci.org/thedatahub/Datahub)
+[![Software License][ico-license]](LICENSE)
+[![Build Status](https://travis-ci.org/thedatahub/Datahub.svg?branch=master)](https://travis-ci.org/thedatahub/Datahub)
 
 The Datahub is a metadata aggregator. This application allows data providers to 
 aggregate and publish metadata describing objects on the web through a RESTful 
