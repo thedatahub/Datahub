@@ -1,5 +1,5 @@
 {
-    "name": "vlaamsekunstcollectie/datahub",
+    "name": "thedatahub/datahub",
     "license": "GPL-3.0",
     "type": "project",
     "autoload": {
