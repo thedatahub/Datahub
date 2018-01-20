@@ -15,5 +15,5 @@ parameters:
     datahub_oai_pagination_num_records: 4
     mongodb_server: 'mongodb://127.0.0.1:27017'
     mongodb_database: datahub
-    mongodb_user: travis
-    mongodb_password: test
+    mongodb_user: datahub
+    mongodb_password: datahub

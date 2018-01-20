@@ -30,7 +30,7 @@ before_install:
   - pecl install -f mongodb-${DRIVER_VERSION}
 
 before_script:
-  - mongo admin --eval 'db.createUser({user:"travis",pwd:"test",roles:["dbAdmin"]});'
+  - mongo admin --eval 'db.createUser({user:"datahub",pwd:"datahub",roles:["dbAdmin"]});'
   - composer install
   - app/console app:setup --env=test
   - app/console doctrine:mongodb:fixtures:load --append --env=test
