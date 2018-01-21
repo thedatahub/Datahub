@@ -15,7 +15,6 @@ use DataHub\UserBundle\Document\User;
 use DataHub\UserBundle\Form\Type\UserFormType;
 
 /**
- * @Route("/users")
  * @Security("has_role('ROLE_ADMIN')")
  */
 class UsersController extends Controller

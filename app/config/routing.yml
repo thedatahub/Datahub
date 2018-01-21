@@ -22,7 +22,7 @@ datahub_oauth:
 datahub_users:
     resource: "@DataHubUserBundle/Controller/"
     type:     annotation
-    prefix:   /user/
+    prefix:   /user
 
 datahub_shared:
     resource: "@DataHubSharedBundle/Controller"

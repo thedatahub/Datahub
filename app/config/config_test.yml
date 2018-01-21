@@ -16,5 +16,11 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
 
+security:
+    firewalls:
+        # replace 'main' by the name of your own firewall
+        main:
+            http_basic: ~
+
 doctrine_mongodb:
     default_database: %mongodb_database%-test
