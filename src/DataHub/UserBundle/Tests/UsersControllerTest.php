@@ -21,20 +21,59 @@ class UsersControllerTest extends WebTestCase {
      * {@inheritdoc}
      */
     protected function setUp() {
-        $this->client = static::createClient();
+        $this->client = static::createClient(array(), array(
+            'PHP_AUTH_USER' => 'admin',
+            'PHP_AUTH_PW'   => 'datahub',
+        ));
+        $this->client->followRedirects(true);
+        $this->client->setMaxRedirects(10);
     }
 
-	public function testIndex() {
-		$response = $this->client->request('GET', '/users', array(), array(), array(
-		    'PHP_AUTH_USER' => 'admin',
-		    'PHP_AUTH_PW'   => 'datahub',
-		));
+    public function testIndex() {
+        $this->client->request('GET', '/user');
+
+        $response = $this->client->getResponse();
 
         $statusCode = $response->getStatusCode();
         $content = $response->getContent();
 
         $this->assertEquals(200, $statusCode);
         $this->assertNotEmpty($content);
-	}
+    }
 
+    public function testShowUser() {
+        // To be implemented
+    }
+
+    public function testAddNewUser() {
+        $this->client->request('GET', '/user/new');
+
+        $response = $this->client->getResponse();
+
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(200, $statusCode);
+        $this->assertNotEmpty($content);
+    }
+
+    public function testDeleteUser() {
+        // To be implemented
+    }
+
+    public function testUpdateValidPassowrd() {
+        // To be implemented
+    }
+
+    public function testUpdateInvalidPassword() {
+        // To be implemented
+    }
+
+    public function testLoginDisabledUser() {
+        // To be implemented
+    }
+
+    public function testLoginEnabledUser() {
+        // To be implemented
+    }
 }
