@@ -7,13 +7,15 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 ## NEXT - YYYY-MM-DD
 
 ### Added
-- Nothing
+- Adhere to phpleague/skeleton best practices
+- Updated .editorconfig.
 
 ### Deprecated
 - Nothing
 
 ### Fixed
-- Nothing
+- Fix the users controller routing.
+- Removed catmandu_cli_path from parameters.yml.dist
 
 ### Removed
 - Nothing
