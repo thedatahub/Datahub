@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title></title>
+
+    <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="stylesheet" href="{{ asset('css/boilerplate.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}" />
+
+    {% include 'BraincraftedBootstrapBundle::ie8-support.html.twig' %}
+</head>
+<body>
+  <div id="wrap">
+
+    {% include 'app/topnav.html.twig' %}
+
+    <div class="container-fluid">
+      <div class="row">
+          <div class="col-md-12">
+          {% include 'BraincraftedBootstrapBundle::flash.html.twig' with { 'close': true } %}
+
+          {% block body %}{% endblock %}
+          </div>
+      </div>
+    </div>
+
+    <div id="push"></div>
+
+  </div>
+
+  <div id="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <p>Powered by <a href="https://github.com/thedatahub/datahub">The Datahub</a></p>
+          </div>
+        </div>
+      </div>
+  </div>
+<script>
+    app = {
+        base_path: '{{ app.request.getBaseURL() }}/',
+        asset_path: '{{ asset('') }}',
+    };
+</script>
+{% block javascripts %}
+{% javascripts %}
+{% endjavascripts %}
+{% endblock %}
+{% block scripts %}{% endblock %}
+<script src="/js/main.js"></script>
+</body>
+</html>

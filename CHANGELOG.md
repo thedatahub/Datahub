@@ -14,6 +14,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - Nothing
 
 ### Fixed
+- Move templates to the app/ directory.
 - Fix the users controller routing.
 - Removed catmandu_cli_path from parameters.yml.dist
 
