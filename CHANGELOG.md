@@ -14,9 +14,10 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - Nothing
 
 ### Fixed
+- Removed the default Symfony templates.
 - Move templates to the app/ directory.
 - Fix the users controller routing.
-- Removed catmandu_cli_path from parameters.yml.dist
+- Removed catmandu_cli_path from parameters.yml.dist.
 
 ### Removed
 - Nothing
