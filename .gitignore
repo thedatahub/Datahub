@@ -20,3 +20,4 @@
 docs/build/
 docs/cache/
 scripts/coverage
+node_modules

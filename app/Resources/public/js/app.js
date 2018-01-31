@@ -1,3 +1,8 @@
+var $ = require('jquery');
+require('bootstrap-sass');
+require('selectize');
+require('timeago');
+
 (function($) {
     function initSelectize() {
         $('select').selectize();
@@ -14,7 +19,7 @@
     }
 
     $(function() {
-        app.page = app.page || 'any';
+        //app.page = app.page || 'any';
 
         initSelectize();
         initTooltips();

@@ -1,0 +1,107 @@
+@import '~bootstrap-sass/assets/stylesheets/bootstrap';
+@import '~font-awesome/css/font-awesome';
+  
+  html,
+  body {
+      height: 100%;
+      padding-top: 0;
+  }
+  
+  a,
+  .btn-link {
+    color: #e47168;
+  }
+  
+  a:hover,
+  .btn-link:hover {
+    color: #9D271E;
+  }
+  
+  /* Navigation bar */
+  
+  .navbar {
+      min-height: 70px;
+  }
+  
+  .navbar > .container-fluid {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .navbar-default {
+    background: #e47168;
+  }
+  
+  .navbar-default .navbar-nav > li > a {
+    color: black;
+  }
+  
+  .navbar-default .navbar-nav > li > a.active {
+    color: white;
+  }
+  
+  .navbar-default .navbar-brand {
+    padding: 0;
+      width: 158px;
+    height: 50px;
+    background: url(../assets/datahub.png);
+  }
+  
+  .main-nav {
+      margin-left: 30px;
+  }
+  
+  .hide-text {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+  
+  }
+  
+  /* Panels */
+  
+  .panel-primary {
+      border-color: #e47168;
+  }
+  
+  .panel-primary > .panel-heading {
+      background: #e47168;
+      border-color: #e47168;
+  }
+  
+  /* Form */
+  
+  .btn-primary {
+    background: #e47168;
+    border-color: #e47168;
+  }
+  
+  .btn-primary:hover {
+    background: #9D271E;
+    border-color: #9D271E;
+  }
+  
+  /* Sticky footer */
+  
+  /* Wrapper for page content to push down footer */
+  #wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    /* Negative indent footer by it's height */
+    margin: 0 auto -40px;
+  }
+  
+  /* Set the fixed height of the footer here */
+  #push,
+  #footer {
+    height: 40px;
+  }
+  #footer {
+    background-color: #f5f5f5;
+  }
+  
+  #footer p {
+      margin: 5px auto;
+  }
+  

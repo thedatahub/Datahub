@@ -229,6 +229,35 @@ Running tests using Docker:
 ./scripts/run_tests_docker
 ```
 
+## Front end development
+
+Front end workflows are managed via [yarn](https://yarnpkg.com/en/) and 
+[webpack-encore](https://symfony.com/blog/introducing-webpack-encore-for-asset-management.
+
+The layout is based on [Bootstrap 3.3](https://getbootstrap.com/docs/3.3/) 
+and managed via sass. The code can be found under `app/resources/public/sass`. 
+
+Javascript files can be found under `app/resources/public/js`. Dependencies are 
+managed via `yarn`. Add vendor modules using `require`.
+
+Files are build and stored in `web/build` and included in `app/views/app/base.html.twig`
+via the `asset()` function.
+
+The workflow configuration can be found in `webpack.config.js`.
+
+Get started:
+
+```
+# Install all dependencies
+$ yarn install
+# Build everything in development
+$ yarn run encore dev
+# Watch files and build automatically
+$ yarn run encore dev --watch
+# Build for production
+$ yarn run encore production
+```
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.

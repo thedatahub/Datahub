@@ -6,14 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title></title>
+    <title>{% if page_title is defined %}{{ page_title }} &middot; {% endif%}{% if section_title is defined %}{{ section_title }} &mdash; {% endif %}{{ service_name }}</title>
 
+{% block stylesheets %}
     <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
-    <link rel="stylesheet" href="{{ asset('css/boilerplate.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/main.css') }}" />
+    <link rel="stylesheet" href="{{ asset('build/app.css') }}" />
+{% endblock stylesheets %}
 
-    {% include 'BraincraftedBootstrapBundle::ie8-support.html.twig' %}
 </head>
 <body>
   <div id="wrap">
@@ -23,8 +23,6 @@
     <div class="container-fluid">
       <div class="row">
           <div class="col-md-12">
-          {% include 'BraincraftedBootstrapBundle::flash.html.twig' with { 'close': true } %}
-
           {% block body %}{% endblock %}
           </div>
       </div>
@@ -43,17 +41,13 @@
         </div>
       </div>
   </div>
-<script>
-    app = {
-        base_path: '{{ app.request.getBaseURL() }}/',
-        asset_path: '{{ asset('') }}',
-    };
-</script>
+
 {% block javascripts %}
-{% javascripts %}
-{% endjavascripts %}
-{% endblock %}
-{% block scripts %}{% endblock %}
-<script src="/js/main.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ asset('build/app.js') }}"></script>
+{% endblock javascripts %}
+
+{% block modals %}{% endblock modals %}
+
 </body>
 </html>

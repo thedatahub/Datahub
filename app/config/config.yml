@@ -65,11 +65,6 @@ fos_user:
         address:        %service_address%
         sender_name:    %service_name%
 
-braincrafted_bootstrap:
-    css_preprocessor: lessphp
-    auto_configure:
-        assetic: false
-
 fos_oauth_server:
     db_driver: mongodb       # Drivers available: orm, mongodb, or propel
     client_class:        "DataHub\\OAuthBundle\\Document\Client"
