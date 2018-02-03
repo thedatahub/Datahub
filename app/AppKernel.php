@@ -28,6 +28,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle(),
             new Bazinga\Bundle\HateoasBundle\BazingaHateoasBundle(),
+            new Knp\Bundle\MenuBundle\KnpMenuBundle(),
 
             // Own bundles
             new DataHub\OAIBundle\DataHubOAIBundle(),

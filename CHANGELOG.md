@@ -7,6 +7,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 ## NEXT - YYYY-MM-DD
 
 ### Added
+- Menu's are now managed via KnpMenuBundle.
 - Introducing a yarn/npm based front-end workflow.
 - Adhere to phpleague/skeleton best practices.
 - Updated .editorconfig.

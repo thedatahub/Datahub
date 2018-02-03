@@ -35,9 +35,11 @@
   .navbar-default .navbar-nav > li > a {
     color: black;
   }
-  
-  .navbar-default .navbar-nav > li > a.active {
+
+  .navbar-default .navbar-nav > li.active > a:hover,
+  .navbar-default .navbar-nav > li.active > a {
     color: white;
+    background-color: inherit;
   }
   
   .navbar-default .navbar-brand {

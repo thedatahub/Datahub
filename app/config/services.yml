@@ -23,3 +23,10 @@ services:
         class: Twig_Extensions_Extension_Text
         tags:
             - name: twig.extension
+
+    datahub.core.menu_builder:
+        class: DataHub\SharedBundle\Menu\MenuBuilder
+        arguments: ["@knp_menu.factory", "@security.authorization_checker"]
+        tags:
+            - { name: knp_menu.menu_builder, method: createMainMenu, alias: main }
+            - { name: knp_menu.menu_builder, method: createProfileMenu, alias: profile }

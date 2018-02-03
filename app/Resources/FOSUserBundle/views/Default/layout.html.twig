@@ -10,9 +10,8 @@
                     </h3>
                 </div>
                 <div class="list-group">
-                    <a href="{{ path('datahub_user_users_index') }}" class="list-group-item">
-                        {{ 'Users' | trans }}
-                    </a>
+                    {% set menuItem = knp_menu_get('main', ['Users']) %}
+                    {{ knp_menu_render(['main', 'Users']) }}
                 </div>
             </div>
         </div>
