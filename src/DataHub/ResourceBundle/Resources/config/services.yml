@@ -1,9 +1,0 @@
-services:
-    datahub.resource.datatype.datatypeRegister:
-        class: DataHub\ResourceBundle\DataType\DataTypeRegister
-
-    datahub.resource.builder.converter.factory:
-        class: DataHub\ResourceBundle\Builder\ConverterFactory
-        arguments: ["@datahub.resource.datatype.datatypeRegister"]
-        calls:
-          - ['setConverter', ['%datahub_enabled_data_type%']]

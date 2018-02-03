@@ -12,13 +12,16 @@ services:
         factory_method: getConnection
         calls:
            - [initialize, []]
+
     mongo:
         class: Mongo
         factory_service: mongo.connection
         factory_method: getMongo
+
     session.handler.mongo:
         class: "Symfony\\Component\\HttpFoundation\Session\\Storage\Handler\\MongoDbSessionHandler"
         arguments: ['@mongo', '%mongo.session.options%']
+
     twig.text_extension:
         class: Twig_Extensions_Extension_Text
         tags:
@@ -30,3 +33,57 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: createMainMenu, alias: main }
             - { name: knp_menu.menu_builder, method: createProfileMenu, alias: profile }
+    
+    datahub.oai.http_foundation_factory:
+        class: Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory
+
+    datahub.oai.repository:
+        class: DataHub\OAIBundle\Repository\Repository
+        arguments: ['@datahub.resource_api.repository.default']
+        calls:
+            - [setRepositoryName, [%datahub_oai_repo_name%]]
+            - [setContactEmail, [%datahub_oai_contact_email%]]
+            - [setPaginationSize, [%datahub_oai_pagination_num_records%]]
+            - method: setBaseUrl
+              arguments:
+                  - '@request_stack'
+
+    datahub.oauth.oauth:
+        class: DataHub\OAuthBundle\Service\OAuthService
+        calls:
+            - [setTokenStorage, ["@security.token_storage"]]
+            - [setDocumentManager, ["@doctrine_mongodb.odm.document_manager"]]
+            - [setLogger, ["@logger"]]
+
+    datahub.resource_api.decoder.xml:
+        class: DataHub\ResourceAPIBundle\Decoder\XmlDecoder
+        arguments: ['@logger', '@datahub.resource.builder.converter.factory']
+
+    datahub.resource_api.repository.default:
+        class: DataHub\ResourceAPIBundle\Repository\RecordRepository
+        factory: [@doctrine_mongodb, getRepository]
+        arguments: [DataHub\ResourceAPIBundle\Document\Record]
+
+    datahub.resource_api.param_converter.record_converter:
+        class: DataHub\ResourceAPIBundle\Request\ParamConverter\RecordParamConverter
+        tags:
+            - { name: request.param_converter, converter: record_converter }
+        arguments: ['@doctrine_mongodb']
+
+    datahub.resource.datatype.datatypeRegister:
+        class: DataHub\ResourceBundle\DataType\DataTypeRegister
+
+    datahub.resource.builder.converter.factory:
+        class: DataHub\ResourceBundle\Builder\ConverterFactory
+        arguments: ["@datahub.resource.datatype.datatypeRegister"]
+        calls:
+          - ['setConverter', ['%datahub_enabled_data_type%']]
+
+    datahub.resource.datatype.datatypeRegister:
+        class: DataHub\ResourceBundle\DataType\DataTypeRegister
+
+    datahub.resource.builder.converter.factory:
+        class: DataHub\ResourceBundle\Builder\ConverterFactory
+        arguments: ["@datahub.resource.datatype.datatypeRegister"]
+        calls:
+          - ['setConverter', ['%datahub_enabled_data_type%']]

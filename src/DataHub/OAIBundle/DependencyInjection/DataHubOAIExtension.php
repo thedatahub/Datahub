@@ -26,8 +26,5 @@ class DataHubOAIExtension extends ConfigurableExtension
         ) as $cfgKey) {
             $container->setParameter("data_hub_oai.{$cfgKey}", $mergedConfig[$cfgKey]);
         }
-
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
     }
 }
