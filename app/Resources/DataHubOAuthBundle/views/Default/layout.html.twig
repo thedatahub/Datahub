@@ -10,17 +10,8 @@
                     </h3>
                 </div>
                 <div class="list-group">
-
                     {% set menuItem = knp_menu_get('main', ['OAuth']) %}
                     {{ knp_menu_render(['main', 'OAuth']) }}
-                <!--
-                    <a href="{{ path('datahub_oauth_clients_index') }}" class="list-group-item">
-                        {{ 'Clients' | trans }}
-                    </a>
-
-                    <a href="{{ path('datahub_oauth_tokens_index') }}" class="list-group-item">
-                        {{ 'Tokens' | trans }}
-                    </a> -->
                 </div>
             </div>
         </div>
