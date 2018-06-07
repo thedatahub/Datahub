@@ -1,22 +1,21 @@
 {
-  "devDependencies": {
-    "@symfony/webpack-encore": "^0.17.1",
-    "webpack": "^3.10.0",
-    "webpack-notifier": "^1.5.1"
-  },
   "dependencies": {
     "bootstrap-sass": "^3.3.7",
     "font-awesome": "^4.7.0",
     "jquery": "^3.3.1",
-    "node-sass": "^4.7.2",
-    "sass-loader": "^6.0.6",
     "selectize": "^0.12.4",
-    "timeago": "^1.6.1"
+    "timeago": "^1.6.3"
   },
   "scripts": {
     "dev-server": "./node_modules/.bin/encore dev-server",
     "dev": "./node_modules/.bin/encore dev",
     "webpack": "./node_modules/.bin/encore dev --watch",
     "prod": "./node_modules/.bin/encore production"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.20.1",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.0.1",
+    "webpack-notifier": "^1.6.0"
   }
 }
