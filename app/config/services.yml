@@ -8,15 +8,13 @@ parameters:
 services:
     mongo.connection:
         class: MongoDoctrine\MongoDB\Connection
-        factory_service: doctrine.odm.mongodb.document_manager
-        factory_method: getConnection
+        factory: ["@doctrine.odm.mongodb.document_manager", getConnection]
         calls:
            - [initialize, []]
 
     mongo:
         class: Mongo
-        factory_service: mongo.connection
-        factory_method: getMongo
+        factory: ["@mongo.connection", getMongo]
 
     session.handler.mongo:
         class: Symfony\Component\HttpFoundation\Session\Storage\Handler\MongoDbSessionHandler
