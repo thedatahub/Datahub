@@ -50,7 +50,7 @@ security:
                 path: fos_user_security_logout
             anonymous:    true
             remember_me:
-                key:      "%secret%"
+                secret:      "%secret%"
                 lifetime: 2592000 # 1 month in seconds
                 path:     /
 
