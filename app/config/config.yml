@@ -66,10 +66,10 @@ fos_user:
 
 fos_oauth_server:
     db_driver: mongodb       # Drivers available: orm, mongodb, or propel
-    client_class:        "DataHub\\OAuthBundle\\Document\Client"
-    access_token_class:  "DataHub\\OAuthBundle\\Document\AccessToken"
-    refresh_token_class: "DataHub\\OAuthBundle\\Document\RefreshToken"
-    auth_code_class:     "DataHub\\OAuthBundle\\Document\AuthCode"
+    client_class:        "DataHub\\OAuthBundle\\Document\\Client"
+    access_token_class:  "DataHub\\OAuthBundle\\Document\\AccessToken"
+    refresh_token_class: "DataHub\\OAuthBundle\\Document\\RefreshToken"
+    auth_code_class:     "DataHub\\OAuthBundle\\Document\\AuthCode"
     service:
         user_provider: fos_user.user_provider.username
         options:

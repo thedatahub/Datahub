@@ -19,7 +19,7 @@ services:
         factory_method: getMongo
 
     session.handler.mongo:
-        class: "Symfony\\Component\\HttpFoundation\Session\\Storage\Handler\\MongoDbSessionHandler"
+        class: Symfony\Component\HttpFoundation\Session\Storage\Handler\MongoDbSessionHandler
         arguments: ['@mongo', '%mongo.session.options%']
 
     twig.text_extension:
