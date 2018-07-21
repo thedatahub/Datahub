@@ -15,7 +15,7 @@ trait TimestampableTrait
      * @var \DateTime $createdAt
      *
      * @Gedmo\Timestampable(on="create")
-     * @ODM\Date
+     * @ODM\Field(type="date")
      *
      * @Serializer\Expose
      * @Serializer\Groups({"global", "list", "single"})
@@ -26,7 +26,7 @@ trait TimestampableTrait
      * @var \DateTime $updatedAt
      *
      * @Gedmo\Timestampable(on="update")
-     * @ODM\Date
+     * @ODM\Field(type="date")
      *
      * @Serializer\Expose
      * @Serializer\Groups({"global", "list", "single"})
