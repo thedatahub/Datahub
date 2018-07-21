@@ -61,7 +61,7 @@ services:
 
     datahub.resource_api.repository.default:
         class: DataHub\ResourceAPIBundle\Repository\RecordRepository
-        factory: [@doctrine_mongodb, getRepository]
+        factory: ["@doctrine_mongodb", getRepository]
         arguments: [DataHub\ResourceAPIBundle\Document\Record]
 
     datahub.resource_api.param_converter.record_converter:
