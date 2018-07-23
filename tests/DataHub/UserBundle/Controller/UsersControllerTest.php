@@ -1,6 +1,6 @@
 <?php
 
-namespace DataHub\UserBundle\Tests;
+namespace DataHub\UserBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
@@ -46,15 +46,7 @@ class UsersControllerTest extends WebTestCase {
     }
 
     public function testAddNewUser() {
-        $this->client->request('GET', '/user/new');
-
-        $response = $this->client->getResponse();
-
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-
-        $this->assertEquals(200, $statusCode);
-        $this->assertNotEmpty($content);
+        // To be implemented
     }
 
     public function testDeleteUser() {
