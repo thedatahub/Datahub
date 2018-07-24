@@ -33,10 +33,10 @@ before_script:
   - mongo admin --eval 'db.createUser({user:"datahub",pwd:"datahub",roles:["dbAdmin"]});'
   - composer install
   - app/console app:setup --env=test
-  - app/console doctrine:mongodb:fixtures:load --append --env=test
+  - app/console doctrine:mongodb:fixtures:load --append --fixtures=tests/DataHub --env=test
 
 script:
-  - bin/phpunit -c app --stop-on-failure --coverage-html scripts/coverage --filter="test" src/DataHub/
+  - bin/phpunit -c app --stop-on-failure --coverage-html scripts/coverage
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar

@@ -2,19 +2,19 @@
 
 require_once 'app/autoload.php';
 
-try {
-    $kernel = new AppKernel($_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'], false);
-    $kernel->boot();
+// try {
+//     $kernel = new AppKernel($_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'], false);
+//     $kernel->boot();
 
-    passthru(
-        sprintf('php app/console app:setup --env %s', $_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'])
-    );
-    passthru(
-        sprintf('php app/console doctrine:mongodb:fixtures:load --fixtures=tests/DataHub --env=%s', $_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'])
-    );
-} finally {
-    $kernel->shutdown();
-}
+//     passthru(
+//         sprintf('php app/console app:setup --env %s', $_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'])
+//     );
+//     passthru(
+//         sprintf('php app/console doctrine:mongodb:fixtures:load --fixtures=tests/DataHub --env=%s', $_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'])
+//     );
+// } finally {
+//     $kernel->shutdown();
+// }
 
 // try {
 //     $kernel = new AppKernel('test', false);
