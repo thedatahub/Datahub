@@ -33,13 +33,6 @@ NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
     prefix:   /docs/api
 
-fos_user:
-    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
-
-fos_user_resetting:
-     resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
-     prefix: /resetting
-
 fos_oauth_server_token:
     resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"
 

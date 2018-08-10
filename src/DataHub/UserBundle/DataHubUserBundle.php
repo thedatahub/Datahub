@@ -7,11 +7,4 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class DataHubUserBundle extends Bundle
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getParent()
-    {
-        return 'FOSUserBundle';
-    }
 }

@@ -22,8 +22,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $userAdmin->setUsername(static::DEFAULT_ADMIN_USERNAME);
         $userAdmin->setPlainPassword(static::DEFAULT_ADMIN_PASSWORD);
         $userAdmin->setEmail('testuser+datahub@inuits.eu');
-        $userAdmin->setEnabled(true);
-        $userAdmin->addRole('ROLE_SUPER_ADMIN');
+     #   $userAdmin->setEnabled(true);
+        $userAdmin->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN']);
 
         $manager->persist($userAdmin);
         $manager->flush();
