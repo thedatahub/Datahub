@@ -85,3 +85,22 @@ services:
         arguments: ["@datahub.resource.datatype.datatypeRegister"]
         calls:
           - ['setConverter', ['%datahub_enabled_data_type%']]
+
+    datahub.security.login_form_authenticator:
+        class: DataHub\UserBundle\Security\LoginFormAuthenticator
+        autowire: true
+
+    datahub.security.doctrine.hash_password_listener:
+        class: DataHub\UserBundle\Doctrine\HashPasswordListener
+        autowire: true
+        tags:
+            - { name: doctrine_mongodb.odm.event_subscriber }
+
+    datahub.security.user.repository:
+        class: DataHub\UserBundle\Repository\UserRepository
+        factory: ["@doctrine_mongodb", getRepository]
+        arguments: [DataHub\UserBundle\Document\User]
+
+    datahub.security.user_provider.username:
+        class: DataHub\UserBundle\Security\UserProvider
+        arguments: ["@datahub.security.user.repository"]
