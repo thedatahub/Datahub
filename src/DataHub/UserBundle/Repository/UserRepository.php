@@ -12,4 +12,31 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
  */
 class UserRepository extends DocumentRepository
 {
+
+    /**
+     * Return all stored users.
+     *
+     * @return int
+     */
+    public function getAll()
+    {
+        return
+            $this->createQueryBuilder('Record')
+                ->getQuery()
+                ->execute();
+    }
+
+    /**
+     * Return the number of stored users.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return
+            $this->createQueryBuilder('User')
+                ->count()
+                ->getQuery()
+                ->execute();
+    }
 }

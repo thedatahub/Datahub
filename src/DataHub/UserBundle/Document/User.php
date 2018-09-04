@@ -56,7 +56,6 @@ class User implements UserInterface
      * @Serializer\Expose
      * @Serializer\Groups({"global", "list", "single"})
      * 
-     * @Assert\NotBlank
      * @Assert\Type("String")
      */
     private $password;
@@ -65,6 +64,8 @@ class User implements UserInterface
      * @var string $plainPassword
      * 
      * A non-persisted field used to create the encoded password.
+     *
+     * @Assert\NotBlank(message="Password cannot be empty", groups={"Create"})
      */
     private $plainPassword;
 
@@ -113,6 +114,11 @@ class User implements UserInterface
      * @ODM\ReferenceMany(targetDocument="DataHub\OAuthBundle\Document\RefreshToken", mappedBy="user", orphanRemoval=true)
      */
     # private $refreshTokens;
+
+    public function getId()
+    {
+        return $this->id;
+    }
 
     public function getEmail()
     {

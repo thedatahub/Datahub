@@ -23,7 +23,7 @@ class UserFixtures extends AbstractFixture implements OrderedFixtureInterface
         $userAdmin->setPlainPassword(static::DEFAULT_ADMIN_PASSWORD);
         $userAdmin->setEmail('testuser+datahub@inuits.eu');
         $userAdmin->setEnabled(true);
-        $userAdmin->addRole('ROLE_SUPER_ADMIN');
+        $userAdmin->setRoles(['ROLE_SUPER_ADMIN']);
 
         $manager->persist($userAdmin);
         $manager->flush();
