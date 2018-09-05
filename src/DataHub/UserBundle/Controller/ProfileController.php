@@ -20,8 +20,22 @@ class ProfileController extends Controller
      */
     public function showAction(Request $request, $id)
     {
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException();
+        }
+    
+        $currentUser = $this->getUser();
+
         $documentManager = $this->get('doctrine_mongodb')->getManager();
         $user = $documentManager->getRepository('DataHubUserBundle:User')->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($currentUser->getId() !== $id) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'Unable to access this page!');
+        }
 
         return $this->render(
             '@DataHubUser/Profile/profile.html.twig',
@@ -36,8 +50,22 @@ class ProfileController extends Controller
      */
     public function editAction(Request $request, $id)
     {
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException();
+        }
+    
+        $currentUser = $this->getUser();
+
         $documentManager = $this->get('doctrine_mongodb')->getManager();
         $user = $documentManager->getRepository('DataHubUserBundle:User')->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($currentUser->getId() !== $id) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'Unable to access this page!');
+        }
 
         $form = $this->createForm(
             ProfileForm::class, $user, [
@@ -78,9 +106,23 @@ class ProfileController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException();
+        }
+    
+        $currentUser = $this->getUser();
+
         $documentManager = $this->get('doctrine_mongodb')->getManager();
         $user = $documentManager->getRepository('DataHubUserBundle:User')->find($id);
-        
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($currentUser->getId() !== $id) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'Unable to access this page!');
+        }
+
         $form = $this->createForm(ProfileDeleteForm::class, $user);
 
         $form->handleRequest($request);
