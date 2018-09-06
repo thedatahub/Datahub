@@ -4,6 +4,7 @@ namespace DataHub\SharedBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class MenuBuilder
 {
@@ -15,11 +16,12 @@ class MenuBuilder
      * @param FactoryInterface $factory MenuFactory
      * @param AuthorizationCheckerInterface $authChecker Authentication checker
      */
-    public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker)
+    public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage)
     // public function __construct(FactoryInterface $factory)
     {
         $this->factory = $factory;
         $this->authChecker = $authChecker;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -31,6 +33,8 @@ class MenuBuilder
         $menu = $this->factory->createItem('root');
 
         if ($this->authChecker->isGranted('ROLE_USER') !== false) {
+            $user = $this->tokenStorage->getToken()->getUser();
+            $menu->addChild(sprintf('Howdy, %s', $user->getUsername()));
             $menu->addChild('Logout', array('route' => 'security_logout'));
         } else {
             $menu->addChild('Login', array('route' => 'security_login'));  
@@ -58,8 +62,8 @@ class MenuBuilder
            $menu['OAuth']->addChild('Clients', array('route' => 'datahub_oauth_clients_index', 'attributes' => array('class' => 'list-group-item')));
            $menu['OAuth']->addChild('Tokens', array('route' => 'datahub_oauth_tokens_index', 'attributes' => array('class' => 'list-group-item')));
 
-            $menu->addChild('Users', array('route' => 'datahub_user_users_index'));
-            $menu['Users']->addChild('Users', array('route' => 'datahub_user_users_index', 'attributes' => array('class' => 'list-group-item')));
+            $menu->addChild('Administration', array('route' => 'datahub_user_users_index'));
+            $menu['Administration']->addChild('Users', array('route' => 'datahub_user_users_index', 'attributes' => array('class' => 'list-group-item')));
        } 
 
         $menu->addChild('REST API', array('route' => 'nelmio_api_doc_index'));

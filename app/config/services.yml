@@ -27,7 +27,7 @@ services:
 
     datahub.core.menu_builder:
         class: DataHub\SharedBundle\Menu\MenuBuilder
-        arguments: ["@knp_menu.factory", "@security.authorization_checker"]
+        arguments: ["@knp_menu.factory", "@security.authorization_checker", "@security.token_storage"]
         tags:
             - { name: knp_menu.menu_builder, method: createMainMenu, alias: main }
             - { name: knp_menu.menu_builder, method: createProfileMenu, alias: profile }
