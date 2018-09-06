@@ -20,7 +20,6 @@
                     <th>{{ 'Username' | trans }}</th>
                     <th>{{ 'Email' | trans }}</th>
                     <th>{{ 'Roles' | trans }}</th>
-                    <th>{{ 'Last login' | trans }}</th>
                     <th>{{ 'Enabled?' | trans }}</th>
                     <th>{{ 'Actions' | trans }}</th>
                 </tr>
@@ -35,7 +34,6 @@
                         </td>
                         <td>{{ user.getEmail() }}</td>
                         <td>{{ user.getRoles() | join('<br>') | raw }}</td>
-                        <td>IMPLEMENT_LAST_LOGIN</td>
                         <td>
                             {% if user.getEnabled() %}
                                 {{ 'Yes' | trans }}
