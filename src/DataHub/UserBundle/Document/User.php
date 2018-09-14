@@ -103,17 +103,17 @@ class User implements UserInterface
     /**
      * @ODM\ReferenceMany(targetDocument="DataHub\OAuthBundle\Document\AuthCode", mappedBy="user", orphanRemoval=true)
      */
-    # private $authcodes;
+    private $authcodes;
 
     /**
      * @ODM\ReferenceMany(targetDocument="DataHub\OAuthBundle\Document\AccessToken", mappedBy="user", orphanRemoval=true)
      */
-    # private $accessTokens;
+    private $accessTokens;
 
     /**
      * @ODM\ReferenceMany(targetDocument="DataHub\OAuthBundle\Document\RefreshToken", mappedBy="user", orphanRemoval=true)
      */
-    # private $refreshTokens;
+    private $refreshTokens;
 
     public function getId()
     {
