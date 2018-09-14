@@ -14,7 +14,7 @@
                 <i class="fa fa-plus"></i> {{ 'New user' | trans }}
             </a>
         </div>
-        <table class="table table-striped">
+        <table class="table table-striped users">
             <thead>
                 <tr>
                     <th>{{ 'Username' | trans }}</th>
@@ -26,28 +26,28 @@
             </thead>
             <tbody>
                 {% for user in users %}
-                    <tr>
-                        <td>
+                    <tr class="user" id="user-{ id: user.getId() }">
+                        <td class="username">
                             <a href="{{ path('datahub_user_users_show', { id: user.getId() }) }}">
                                 {{ user.getUsername() }}
                             </a>
                         </td>
-                        <td>{{ user.getEmail() }}</td>
-                        <td>{{ user.getRoles() | join('<br>') | raw }}</td>
-                        <td>
+                        <td class="email">{{ user.getEmail() }}</td>
+                        <td class="roles">{{ user.getRoles() | join('<br>') | raw }}</td>
+                        <td class="enabled">
                             {% if user.getEnabled() %}
                                 {{ 'Yes' | trans }}
                             {% else %}
                                 {{ 'No' | trans }}
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="actions">
                             <div class="btn-group">
                                 <a href="{{ path('datahub_user_users_edit', { id: user.getId() }) }}" class="btn btn-xs btn-default">
                                     <i class="fa fa-pencil"></i> {{ 'edit' | trans }}
                                 </a>
                                 <a href="{{ path('datahub_user_users_delete', { id: user.getId() }) }}" class="btn btn-xs btn-default">
-                                    <i class="fa fa-times"></i> {{ 'Delete' | trans }}
+                                    <i class="fa fa-times"></i> {{ 'delete' | trans }}
                                 </a>
                             </div>
                         </td>
