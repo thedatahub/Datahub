@@ -24,7 +24,7 @@
                     {% for client in clients %}
                         <tr>
                             <td>{{ client }}</td>
-                            <td>{{ client.getGuessedUser() | default('None' | trans) }}</td>
+                            <td>{{ client.getGuessedUser().getUsername() | default('None' | trans) }}</td>
                             <td>
                                 <a class="btn btn-xs btn-danger pull-right" href="{{ path('datahub_oauth_tokens_revoke', { type: 'client', id: client.getId() }) }}">
                                     <i class="icon fa fa-trash"></i> {{ 'Revoke' | trans }}
@@ -114,7 +114,7 @@
                         <tr>
                             <td>{{ token.getToken() | truncate(6) }}</td>
                             <td>{{ token.getClient() }}</td>
-                            <td>{{ token.getUser() }}</td>
+                            <td>{{ token.getUser().getUsername() }}</td>
                             <td>{% include 'DataHubSharedBundle:Partials:datetime.relative.html.twig' with {value: token.getExpiresAt()} %}</td>
                             <td>{{ token.getScope() }}</td>
                             <td>
@@ -159,7 +159,7 @@
                         <tr>
                             <td>{{ token.getToken() | truncate(6) }}</td>
                             <td>{{ token.getClient() }}</td>
-                            <td>{{ token.getUser() | trans }}</td>
+                            <td>{{ token.getUser().getUsername() | trans }}</td>
                             <td>{% include 'DataHubSharedBundle:Partials:datetime.relative.html.twig' with {value: token.getExpiresAt()} %}</td>
                             <td>{{ token.getScope() }}</td>
                             <td>

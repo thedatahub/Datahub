@@ -41,11 +41,11 @@ class ClientFormType extends AbstractType
                     OAuth2::GRANT_TYPE_EXTENSIONS         => 'extensions',
                 ),
             ))
-            ->add('redirectUris', 'bootstrap_collection', array(
-                'allow_add'    => true,
-                'allow_delete' => true,
-                'required'     => true,
-            ))
+            // ->add('redirectUris', 'bootstrap_collection', array(
+            //     'allow_add'    => true,
+            //     'allow_delete' => true,
+            //     'required'     => true,
+            // ))
             ->add('submit', 'submit')
         ;
 
