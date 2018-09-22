@@ -34,7 +34,11 @@ class MenuBuilder
 
         if ($this->authChecker->isGranted('ROLE_USER') !== false) {
             $user = $this->tokenStorage->getToken()->getUser();
-            $menu->addChild(sprintf('Howdy, %s', $user->getUsername()));
+            $menu->addChild($user->getUsername(), array(
+                'route' => 'datahub_user_users_show',
+                'routeParameters' => array('id' => $user->getID())
+                )
+            );
             $menu->addChild('Logout', array('route' => 'security_logout'));
         } else {
             $menu->addChild('Login', array('route' => 'security_login'));  
