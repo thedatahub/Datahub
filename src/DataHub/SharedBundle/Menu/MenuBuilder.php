@@ -61,13 +61,13 @@ class MenuBuilder
         $menu->addChild('Dashboard', array('route' => 'datahub_shared_default_index'));
 
        if ($this->authChecker->isGranted('ROLE_USER') !== false) {
-           $menu->addChild('OAuth', array('route' => 'datahub_oauth_clients_index'));
-
-           $menu['OAuth']->addChild('Clients', array('route' => 'datahub_oauth_clients_index', 'attributes' => array('class' => 'list-group-item')));
-           $menu['OAuth']->addChild('Tokens', array('route' => 'datahub_oauth_tokens_index', 'attributes' => array('class' => 'list-group-item')));
-
             $menu->addChild('Administration', array('route' => 'datahub_user_users_index'));
+
+            $menu['Administration']->setChildrenAttribute('class', 'list-group');
             $menu['Administration']->addChild('Users', array('route' => 'datahub_user_users_index', 'attributes' => array('class' => 'list-group-item')));
+            // $menu['Administration']->addChild('Clients', array('route' => 'datahub_oauth_clients_index', 'attributes' => array('class' => 'list-group-item')));
+            // $menu['Administration']->addChild('Tokens', array('route' => 'datahub_oauth_tokens_index', 'attributes' => array('class' => 'list-group-item')));
+
        } 
 
         $menu->addChild('REST API', array('route' => 'nelmio_api_doc_index'));
