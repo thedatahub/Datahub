@@ -21,7 +21,7 @@ require('timeago');
     $(function() {
         //app.page = app.page || 'any';
 
-        initSelectize();
+        // initSelectize();
         initTooltips();
         initTimeago();
     });
