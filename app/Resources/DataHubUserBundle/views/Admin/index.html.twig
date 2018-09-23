@@ -6,13 +6,16 @@
 
     <div class="panel panel-primary">
         <div class="panel-heading">
+            <div class="btn-group pull-right">
+                <a href="{{ path('datahub_user_users_add') }}" class="btn btn-xs btn-default">
+                    <i class="fa fa-plus"></i> {{ 'New user' | trans }}
+                </a>
+            </div>
+
             <h3 class="panel-title">
+                <i class="fa fa-user fa-fw"></i>
                 {{ 'Users' | trans }}
             </h3>
-
-            <a href="{{ path('datahub_user_users_add') }}" class="btn btn-xs btn-default">
-                <i class="fa fa-plus"></i> {{ 'New user' | trans }}
-            </a>
         </div>
         <table class="table table-striped users">
             <thead>
@@ -46,8 +49,8 @@
                                 <a href="{{ path('datahub_user_users_edit', { id: user.getId() }) }}" class="btn btn-xs btn-default">
                                     <i class="fa fa-pencil"></i> {{ 'edit' | trans }}
                                 </a>
-                                <a href="{{ path('datahub_user_users_delete', { id: user.getId() }) }}" class="btn btn-xs btn-default">
-                                    <i class="fa fa-times"></i> {{ 'delete' | trans }}
+                                <a href="{{ path('datahub_user_users_delete', { id: user.getId() }) }}" class="btn btn-xs btn-danger">
+                                    <i class="fa fa-trash"></i> {{ 'delete' | trans }}
                                 </a>
                             </div>
                         </td>
