@@ -47,6 +47,31 @@ class User implements UserInterface
      */
     private $username;
 
+    /**
+     * @var string $firstName
+     *
+     * @ODM\Field(type="string")
+     * 
+     * @Serializer\Expose
+     * @Serializer\Groups({"global", "list", "single"})
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     */
+    private $firstName;
+
+    /**
+     * @var string $lastName
+     *
+     * @ODM\Field(type="string")
+     * 
+     * @Serializer\Expose
+     * @Serializer\Groups({"global", "list", "single"})
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     */
+    private $lastName;
 
     /**
      * @var string $password
@@ -138,6 +163,26 @@ class User implements UserInterface
     public function setUsername($username)
     {
         $this->username = $username;
+    }
+
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName($firstName)
+    {
+        $this->firstName = $firstName;
+    }
+    
+    public function getLastname()
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
     }
 
     /**
