@@ -37,9 +37,14 @@ class ProfileController extends Controller
             $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'Unable to access this page!');
         }
 
+        $clients = $documentManager
+            ->getRepository('DataHubOAuthBundle:Client')
+            ->findBy(['user' => $user]);
+
         return $this->render(
             '@DataHubUser/Profile/profile.html.twig',
             [
+                'clients' => $clients,
                 'user' => $user,
             ]
         );
