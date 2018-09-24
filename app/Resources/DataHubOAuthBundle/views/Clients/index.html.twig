@@ -1,5 +1,3 @@
-{% extends 'DataHubOAuthBundle:Default:layout.html.twig' %}
-
 {% set page_title = 'Clients' | trans %}
 
 {% block content %}
@@ -22,15 +20,15 @@
                 </tr>
             </thead>
             <tbody>
-                {% for entity in entities %}
+                {% for client in clients %}
                     <tr>
-                        <td>{{ entity.getLabel() }}</td>
-                        <td>{{ entity.getClientCode() }}</td>
-                        <td>{{ entity.getAllowedGrantTypes() | join('<br>') | raw }}</td>
-                        <td>{{ entity.getRedirectUris() | join('<br>') | raw }}</td>
+                        <td>{{ client.getLabel() }}</td>
+                        <td>{{ client.getClientCode() }}</td>
+                        <td>{{ client.getAllowedGrantTypes() | join('<br>') | raw }}</td>
+                        <td>{{ client.getRedirectUris() | join('<br>') | raw }}</td>
                         <td>
                             <div class="btn-group">
-                                <a href="{{ path('datahub_oauth_clients_show', { id: entity.getId() }) }}" class="btn btn-xs btn-default">
+                                <a href="{{ path('datahub_oauth_clients_show', { id: client.getId() }) }}" class="btn btn-xs btn-default">
                                     <i class="fa fa-eye"></i> {{ 'View' | trans }}
                                 </a>
                             </div>
