@@ -7,16 +7,19 @@
     <div class="panel panel-primary">
 
         <div class="panel-heading">
-            <h3 class="panel-title">
-                {{ 'Profile' | trans }}
-            </h3>
+            <div class="btn-group pull-right">
+                <a href="{{ path('datahub_user_users_edit', { id: user.getId() }) }}" class="btn btn-xs btn-default">
+                    <i class="fa fa-pencil"></i> {{ 'Edit user' | trans }}
+                </a>
+                <a href="{{ path('datahub_user_users_delete', { id: user.getId() }) }}" class="btn btn-xs btn-danger">
+                    <i class="fa fa-plus"></i> {{ 'Delete user' | trans }}
+                </a>
+            </div>
 
-            <a href="{{ path('datahub_user_users_edit', { id: user.getId() }) }}" class="btn btn-xs btn-default">
-                <i class="fa fa-pencil"></i> {{ 'Edit user' | trans }}
-            </a>
-            <a href="{{ path('datahub_user_users_delete', { id: user.getId() }) }}" class="btn btn-xs btn-default">
-                <i class="fa fa-plus"></i> {{ 'Delete user' | trans }}
-            </a>
+            <h3 class="panel-title">
+                <i class="fa fa-user"></i>
+                {{ 'Profile' | trans }}: {{ user.getUsername() }}
+            </h3>
         </div>
 
         <div class="panel-body">
@@ -24,6 +27,8 @@
             <dl>
                 <dt>{{ 'Username' | trans }}</dt>
                 <dd>{{ user.getUsername() }}</dd>
+                <dt>{{ 'Full name' | trans }}</dt>
+                <dd>{{ user.getFirstName() }} {{ user.getLastName() }}</dd>
                 <dt>{{ 'E-mail' | trans }}</dt>
                 <dd>{{ user.getEmail() }}</dd>
                 <dt>{{ 'Roles' | trans }}</dt>
@@ -31,6 +36,9 @@
             </dl>
             </div>
         </div>
+
+        {{ include('DataHubOAuthBundle:Clients:index.html.twig', { 'clients': clients }) }}
+
 
     </div>
 
