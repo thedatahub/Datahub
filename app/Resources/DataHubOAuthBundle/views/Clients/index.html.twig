@@ -3,10 +3,15 @@
 {% block content %}
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">
-                {{ 'Clients' | trans }}
+            <div class="btn-group pull-right">
+                <a href="{{ path('datahub_oauth_clients_new') }}" class="btn btn-xs btn-default">
+                    <i class="fa fa-plus"></i> {{ 'New client' | trans }}</a>
+                </a>
+            </div>
 
-                (<a href="{{ path('datahub_oauth_clients_new') }}">{{ 'add' | trans }}</a>)
+            <h3 class="panel-title">
+                <i class="fa fa-cloud-upload"></i>
+                {{ 'Clients' | trans }}
             </h3>
         </div>
         <table class="table table-striped">
