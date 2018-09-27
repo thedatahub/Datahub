@@ -90,11 +90,13 @@ services:
         class: DataHub\UserBundle\Security\LoginFormAuthenticator
         autowire: true
 
-    datahub.security.doctrine.hash_password_listener:
-        class: DataHub\UserBundle\Doctrine\HashPasswordListener
+    datahub.security.user.dto.profile_edit_assembler:
+        class: DataHub\UserBundle\DTO\ProfileEditAssembler
         autowire: true
-        tags:
-            - { name: doctrine_mongodb.odm.event_subscriber }
+
+    datahub.security.user.dto.profile_create_assembler:
+        class: DataHub\UserBundle\DTO\ProfileCreateAssembler
+        autowire: true
 
     datahub.security.user.repository:
         class: DataHub\UserBundle\Repository\UserRepository

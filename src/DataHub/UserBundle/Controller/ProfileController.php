@@ -8,9 +8,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use DataHub\UserBundle\Form\ProfileForm;
+use DataHub\UserBundle\Form\ProfileCreateFormType;
+use DataHub\UserBundle\Form\ProfileEditFormType;
 use DataHub\UserBundle\Form\ProfileDeleteForm;
 use DataHub\UserBundle\Document\User;
+use DataHub\UserBundle\DTO\ProfileCreateData;
+use DataHub\UserBundle\DTO\ProfileEditData;
 
 class ProfileController extends Controller
 {
@@ -72,8 +75,11 @@ class ProfileController extends Controller
             $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'Unable to access this page!');
         }
 
+        $assembler = $this->get('datahub.security.user.dto.profile_edit_assembler');
+        $profileEditData = $assembler->createDTO($user);
+
         $form = $this->createForm(
-            ProfileForm::class, $user, [
+            ProfileEditFormType::class, $profileEditData, [
                 'create'      => false, 
                 'submitLabel' => 'Update user'
             ]
@@ -83,10 +89,7 @@ class ProfileController extends Controller
 
         if ($form->isValid()) {
 
-            // PlainPassword is not a field watched from Doctrine. So we have to trigger preUpdate manually
-            $eventManager = $documentManager->getEventManager();
-            $eventArgs = new LifecycleEventArgs($user, $documentManager);
-            $eventManager->dispatchEvent(\Doctrine\ODM\MongoDB\Events::preUpdate, $eventArgs);
+            $user = $assembler->updateProfile($user, $profileEditData);
 
             $documentManager->persist($user);
             $documentManager->flush();
@@ -97,7 +100,7 @@ class ProfileController extends Controller
         }
 
         return $this->render(
-            '@DataHubUser/Profile/profile.form.html.twig',
+            '@DataHubUser/Profile/profile.edit.form.html.twig',
             [
                 'form'      => $form->createView(),
                 'title'     => 'Edit user',
@@ -158,17 +161,19 @@ class ProfileController extends Controller
      * @Security("is_granted('ROLE_ADMIN')")
      */
     public function addAction(Request $request)
-    {      
+    {
         $user = new User();
-        $form = $this->createForm(ProfileForm::class, $user);
+
+        $assembler = $this->get('datahub.security.user.dto.profile_create_assembler');
+        $profileCreateData = $assembler->createDTO($user);
+
+        $form = $this->createForm(ProfileCreateFormType::class, $profileCreateData);
 
         $form->handleRequest($request);
 
         if ($form->isValid()) {
 
-            $password = $this->get('security.password_encoder')
-                ->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($password);
+            $user = $assembler->updateProfile($user, $profileCreateData);
 
             $documentManager = $this->get('doctrine_mongodb')->getManager();
             $documentManager->persist($user);
@@ -180,7 +185,7 @@ class ProfileController extends Controller
         }
 
         return $this->render(
-            '@DataHubUser/Profile/profile.form.html.twig',
+            '@DataHubUser/Profile/profile.create.form.html.twig',
             [
                 'form' => $form->createView(),
                 'title' => 'Create a new user',

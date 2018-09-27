@@ -12,8 +12,9 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use DataHub\UserBundle\Document\User;
+use DataHub\UserBundle\DTO\ProfileCreateData;
 
-class ProfileForm extends AbstractType
+class ProfileCreateFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -96,18 +97,9 @@ class ProfileForm extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => User::class,
+                'data_class' => ProfileCreateData::class,
                 'create'     => true,
                 'submitLabel' => 'New user',
-                'validation_groups' => function (FormInterface $form) {
-                    $data = $form->getData();
-
-                    if ($data->getPlainPassword() == '' && $form->getConfig()->getOption('create')) {
-                        return ['Default'];
-                    }
-
-                    return ['Default', 'Update'];
-                }
             ]
         );
     }

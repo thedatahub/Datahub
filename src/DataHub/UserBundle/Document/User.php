@@ -92,7 +92,7 @@ class User implements UserInterface
      *
      * @Assert\NotBlank(message="Password cannot be empty", groups={"Create"})
      */
-    private $plainPassword;
+    // private $plainPassword;
 
     /**
      * @var string $email
@@ -175,7 +175,7 @@ class User implements UserInterface
         $this->firstName = $firstName;
     }
     
-    public function getLastname()
+    public function getLastName()
     {
         return $this->lastName;
     }
@@ -196,19 +196,6 @@ class User implements UserInterface
     public function setPassword($password)
     {
         $this->password = $password;
-    }
-
-    public function getPlainPassword()
-    {
-        return $this->plainPassword;
-    }
-
-    public function setPlainPassword($plainPassword)
-    {
-        $this->plainPassword = $plainPassword;
-        // forces the object to look "dirty" to Doctrine. Avoids
-        // Doctrine *not* saving this entity, if only plainPassword changes
-        $this->password = null;
     }
 
     public function getEnabled()
