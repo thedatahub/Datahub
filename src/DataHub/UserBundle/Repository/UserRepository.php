@@ -21,9 +21,23 @@ class UserRepository extends DocumentRepository
     public function getAll()
     {
         return
-            $this->createQueryBuilder('Record')
+            $this->createQueryBuilder('User')
                 ->getQuery()
                 ->execute();
+    }
+
+    /**
+     * Return users with a matching confirmation token.
+     * 
+     * @return User $user
+     */
+    public function findByConfirmationToken($token)
+    {
+        return
+            $this->createQueryBuilder('user')
+                ->field('confirmationToken')->equals($token)
+                ->getQuery()
+                ->getSingleResult();
     }
 
     /**

@@ -24,6 +24,7 @@ class ProfileCreateAssembler
         $profileCreateData->setFirstName($user->getFirstName());
         $profileCreateData->setLastName($user->getLastName());
         $profileCreateData->setEnabled($user->getEnabled());
+        $profileCreateData->setConfirmationToken($user->getConfirmationToken());
         $profileCreateData->setRoles($user->getRoles());
 
         return $profileCreateData;
@@ -36,6 +37,7 @@ class ProfileCreateAssembler
         $user->setFirstName($profileCreateData->getFirstName());
         $user->setLastName($profileCreateData->getLastName());
         $user->setEnabled($profileCreateData->getEnabled());
+        $user->setConfirmationToken($profileCreateData->getConfirmationToken());
         $user->setRoles($profileCreateData->getRoles());
 
         if ($profileCreateData->getPlainPassword()) {

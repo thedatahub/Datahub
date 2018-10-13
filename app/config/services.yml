@@ -106,3 +106,26 @@ services:
     datahub.security.user_provider.username:
         class: DataHub\UserBundle\Security\UserProvider
         arguments: ["@datahub.security.user.repository"]
+
+    datahub.security.security.login_manager:
+        class: DataHub\UserBundle\Security\LoginManager
+        arguments: ['@security.token_storage', '@security.user_checker', '@security.authentication.session_strategy', '@request_stack', null]
+
+    datahub.security.util.token_generator:
+        class: DataHub\UserBundle\Util\TokenGenerator
+
+    datahub.security.listener.email_confirmation:
+        class: DataHub\UserBundle\EventListener\EmailConfirmationListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments: ['@router', '@session', '@datahub.security.util.token_generator', '@datahub.security.mailer.mailer']
+
+    datahub.security.mailer.mailer:
+        class: DataHub\UserBundle\Mailer\Mailer
+        arguments: ['@mailer', '@router', '@twig', '%service_address%']
+
+    datahub.security.listener.authentication:
+        class: DataHub\UserBundle\EventListener\AuthenticationListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments: ['@datahub.security.security.login_manager', 'main']

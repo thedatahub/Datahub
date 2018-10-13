@@ -7,7 +7,6 @@ use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 use Doctrine\Common\Collections\ArrayCollection as ArrayCollection;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Security\Core\Role\Role;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use DataHub\SharedBundle\Document\Traits;
@@ -116,6 +115,18 @@ class User implements UserInterface
     private $enabled;
 
     /**
+     * @var string $confirmationToken
+     * 
+     * @ODM\Field(type="string")
+     * 
+     * @Serializer\Expose
+     * @Serializer\Groups({"global", "list", "single"})
+     * 
+     * @Assert\Type("String")
+     */
+    private $confirmationToken;
+
+    /**
      * @var array $roles
      * 
      * @ODM\Field(type="collection")
@@ -206,6 +217,16 @@ class User implements UserInterface
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+    }
+
+    public function setConfirmationToken($confirmationToken)
+    {
+        $this->confirmationToken = $confirmationToken;
+    }
+
+    public function getConfirmationToken()
+    {
+        return $this->confirmationToken;
     }
 
     /**

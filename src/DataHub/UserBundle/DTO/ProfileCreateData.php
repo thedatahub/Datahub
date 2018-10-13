@@ -58,6 +58,18 @@ class ProfileCreateData
     private $email;
 
     /**
+     * @var boolean $enabled
+     */
+    private $enabled;
+
+    /**
+     * @var string $confirmationToken
+     *
+     * @Assert\Type("String")
+     */
+    private $confirmationToken;
+
+    /**
      * @var array $roles
      */
     private $roles;
@@ -131,6 +143,16 @@ class ProfileCreateData
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+    }
+
+    public function getConfirmationToken()
+    {
+        return $this->confirmationToken;
+    }
+
+    public function setConfirmationToken($confirmationToken)
+    {
+        $this->confirmationToken = $confirmationToken;
     }
 
     /**

@@ -67,6 +67,13 @@ class ProfileEditData
      */
     private $roles;
 
+    /**
+     * @var string $confirmationToken
+     * 
+     * @Assert\Type("String")
+     */
+    private $confirmationToken;
+
 
     public function getEmail()
     {
@@ -161,4 +168,14 @@ class ProfileEditData
 
         $this->roles = $roles;
     }
+
+    public function getConfirmationToken()
+    {
+        return $this->confirmationToken;
+    }
+
+    public function setConfirmationToken($confirmationToken)
+    {
+        $this->confirmationToken = $confirmationToken;
+    }    
 }

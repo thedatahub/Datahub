@@ -8,6 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use DataHub\UserBundle\DataHubUserEvents;
+use DataHub\UserBundle\Event\FormEvent;
 use DataHub\UserBundle\Form\ProfileCreateFormType;
 use DataHub\UserBundle\Form\ProfileEditFormType;
 use DataHub\UserBundle\Form\ProfileDeleteForm;
@@ -163,6 +165,7 @@ class ProfileController extends Controller
     public function addAction(Request $request)
     {
         $user = new User();
+        $dispatcher = $this->get('event_dispatcher');
 
         $assembler = $this->get('datahub.security.user.dto.profile_create_assembler');
         $profileCreateData = $assembler->createDTO($user);
@@ -172,6 +175,9 @@ class ProfileController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+
+            $event = new FormEvent($form, $request);
+            $dispatcher->dispatch(DataHubUserEvents::REGISTRATION_SUCCESS, $event);
 
             $user = $assembler->updateProfile($user, $profileCreateData);
 
