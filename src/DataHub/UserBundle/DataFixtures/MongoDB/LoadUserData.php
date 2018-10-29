@@ -18,12 +18,17 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
      */
     protected function doLoad(ObjectManager $manager)
     {
-        $userAdmin = new User();
-        $userAdmin->setUsername(static::DEFAULT_ADMIN_USERNAME);
-        $userAdmin->setPlainPassword(static::DEFAULT_ADMIN_PASSWORD);
-        $userAdmin->setEmail('testuser+datahub@inuits.eu');
-     #   $userAdmin->setEnabled(true);
-        $userAdmin->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN']);
+        $userAdmin = new User;
+        $assembler = $this->container->get('datahub.security.user.dto.profile_create_assembler');
+        
+        $profileCreateData = $assembler->createDTO($userAdmin);
+
+        $profileCreateData->setUsername(static::DEFAULT_ADMIN_USERNAME);
+        $profileCreateData->setPlainPassword(static::DEFAULT_ADMIN_PASSWORD);
+        $profileCreateData->setEmail('testuser+datahub@inuits.eu');
+        $profileCreateData->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN']);
+
+        $userAdmin = $assembler->updateProfile($userAdmin, $profileCreateData);
 
         $manager->persist($userAdmin);
         $manager->flush();
