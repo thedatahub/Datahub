@@ -61,18 +61,18 @@ class Mailer implements MailerInterface
     /**
      * {@inheritdoc}
      */
-    // public function sendResettingEmailMessage(UserInterface $user)
-    // {
-    //     $template = $this->parameters['template']['resetting'];
-    //     $url = $this->router->generate('fos_user_resetting_reset', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
+    public function sendResetConfirmationEmailMessage($user)
+    {
+        $template = '@DataHubUser/Resetting/email.txt.twig';
+        $url = $this->router->generate('datahub_user_resetting_confirmation', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
 
-    //     $context = array(
-    //         'user' => $user,
-    //         'confirmationUrl' => $url,
-    //     );
+        $context = array(
+            'user' => $user,
+            'confirmationUrl' => $url,
+        );
 
-    //     $this->sendMessage($template, $context, $this->parameters['from_email']['resetting'], (string) $user->getEmail());
-    // }
+        $this->sendMessage($template, $context, $this->fromEmail, (string) $user->getEmail());
+    }
 
     /**
      * @param string $templateName

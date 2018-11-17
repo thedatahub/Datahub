@@ -98,6 +98,10 @@ services:
         class: DataHub\UserBundle\DTO\ProfileCreateAssembler
         autowire: true
 
+    datahub.security.user.dto.resetpassword_create_assembler:
+        class: DataHub\UserBundle\DTO\ResetPasswordAssembler
+        arguments: ['@doctrine_mongodb']
+
     datahub.security.user.repository:
         class: DataHub\UserBundle\Repository\UserRepository
         factory: ["@doctrine_mongodb", getRepository]
@@ -116,6 +120,12 @@ services:
 
     datahub.security.listener.email_confirmation:
         class: DataHub\UserBundle\EventListener\EmailConfirmationListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments: ['@router', '@session', '@datahub.security.util.token_generator', '@datahub.security.mailer.mailer']
+
+    datahub.security.listener.email_reset_confirmation:
+        class: DataHub\UserBundle\EventListener\EmailResetConfirmationListener
         tags:
             - { name: kernel.event_subscriber }
         arguments: ['@router', '@session', '@datahub.security.util.token_generator', '@datahub.security.mailer.mailer']

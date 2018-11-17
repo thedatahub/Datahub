@@ -42,6 +42,7 @@ class AuthenticationListener implements EventSubscriberInterface
     {
         return [
             DataHubUserEvents::REGISTRATION_CONFIRMED => 'onAuthenticate',
+            DataHubUserEvents::RESET_CONFIRMED => 'onAuthenticate',
         ];
     }
 
