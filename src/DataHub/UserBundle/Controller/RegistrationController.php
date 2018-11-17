@@ -54,7 +54,7 @@ class RegistrationController extends Controller
     }
 
     /**
-     * @Route("/registration/confirmed}", name="datahub_user_registration_confirmed")
+     * @Route("/registration/confirmed", name="datahub_user_registration_confirmed")
      */
 
     public function confirmedAction(Request $request)
