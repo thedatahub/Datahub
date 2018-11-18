@@ -30,7 +30,7 @@ class SecurityController extends Controller
         return array(
             // last username entered by the user
             'form' => $form->createView(),
-            'error'         => $error,
+            'error' => $error,
         );
     }
 

@@ -1,6 +1,6 @@
 {% extends 'DataHubUserBundle::layout.html.twig' %}
 
-{% set page_title = 'Login' | trans({}, 'FOSUserBundle') %}
+{% set page_title = 'Log in to this Datahub' | trans({}, 'FOSUserBundle') %}
 
 {% block content %}
 
@@ -12,19 +12,17 @@
 {% endif %}
 
     {{ form_start(form) }}
-        <div class="form-group input-group">
-            {{ form_row(form._username) }}
-            <span class="input-group-addon"><i class="fa fa-user"></i></span>
-        </div>
-        <div class="form-group input-group">
-            {{ form_row(form._password) }}
-            <span class="input-group-addon"><i class="fa fa-key"></i></span>
-        </div>
-        <button type="submit" class="btn btn-success">Login <span class="fa fa-lock"></span></button>
-    {{ form_end(form) }}
 
-    <a href="{{ path('datahub_user_resetting_request') }}">
-        {{ 'Request a new password.' | trans }}
-    </a>
+        {{ form_row(form._username) }}
+
+        {{ form_row(form._password) }}
+
+        <button type="submit" class="btn btn-primary">Login <span class="fa fa-lock"></span></button>
+
+        <a href="{{ path('datahub_user_resetting_request') }}" class="btn btn-default">
+            {{ 'Request a new password.' | trans }}
+            <span class="fa fa-question-circle"></span>
+        </a>
+    {{ form_end(form) }}
 
 {% endblock %}
