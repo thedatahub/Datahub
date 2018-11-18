@@ -2,18 +2,29 @@
 
 namespace DataHub\UserBundle\DTO;
 
+use DataHub\UserBundle\Repository\UserRepository;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /** 
  * DTO for Profile
  */
 class ProfileCreateData
 {
+    private $repository;
+
+    public function __construct(UserRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * @var string $username
      *
-     * @Assert\NotBlank
-     * @Assert\Type("string")
+     * @Assert\Type(
+     *     type="alnum",
+     *     message="The value {{ value }} should only consist of alphanumeric characters."
+     * )
      */
     private $username;
 
@@ -177,5 +188,38 @@ class ProfileCreateData
         }
 
         $this->roles = $roles;
+    }
+
+    /**
+     * Custom form constraints.
+     * 
+     * @param ExecutionContextInterface $context Context
+     * 
+     * @return void
+     * 
+     * @todo Workaround. Deprecate this validation by setting a Unique on the
+     *   Mongodb document. Tried setting a unique index on the with the MongoDB 
+     *   Unique constraint, but it doesn't work. Check again when upgrading
+     *   Symfony.
+     * 
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        $email = $this->getEmail();
+
+        if ($this->repository->findOneBy(array('email' => $email))) {
+            $context->buildViolation('A user with this email address already exists.')
+                ->atPath('email')
+                ->addViolation();
+        }
+
+        $username = $this->getUsername();
+
+        if ($this->repository->findOneBy(array('username' => $username))) {
+            $context->buildViolation('A user with this username already exists.')
+                ->atPath('username')
+                ->addViolation();
+        }
     }
 }

@@ -12,11 +12,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 use DataHub\SharedBundle\Document\Traits;
 
 /** 
- * @ODM\Document(collection="Users", repositoryClass="DataHub\UserBundle\Repository\UserRepository")
- * 
- * @MongoDBUnique({"username"})
- * @MongoDBUnique({"email"})
- *
+ * @ODM\Document(
+ *   collection="Users", 
+ *   repositoryClass="DataHub\UserBundle\Repository\UserRepository"
+ * ) 
  * @Serializer\ExclusionPolicy("all")
  */
 class User implements UserInterface

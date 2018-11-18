@@ -102,7 +102,7 @@ services:
 
     datahub.security.user.dto.profile_create_assembler:
         class: DataHub\UserBundle\DTO\ProfileCreateAssembler
-        autowire: true
+        arguments: ['@security.password_encoder', '@doctrine_mongodb']
 
     datahub.security.user.dto.resetpassword_create_assembler:
         class: DataHub\UserBundle\DTO\ResetPasswordAssembler

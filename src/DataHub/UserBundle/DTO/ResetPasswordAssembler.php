@@ -8,7 +8,7 @@ use DataHub\UserBundle\Document\User;
 
 class ResetPasswordAssembler
 {
-    private $documentManager;
+    private $managerRegistry;
 
     public function __construct(ManagerRegistry $managerRegistry)
     {

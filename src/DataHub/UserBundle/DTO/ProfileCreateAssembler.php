@@ -4,20 +4,25 @@ namespace DataHub\UserBundle\DTO;
 
 use DataHub\UserBundle\Document\User;
 use DataHub\UserBundle\DTO\ProfileCreateData;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 
 class ProfileCreateAssembler
 {
     private $passwordEncoder;
     
-    public function __construct(UserPasswordEncoder $passwordEncoder)
+    private $managerRegistry;
+
+    public function __construct(UserPasswordEncoder $passwordEncoder, ManagerRegistry $managerRegistry)
     {
         $this->passwordEncoder = $passwordEncoder;
+        $this->managerRegistry = $managerRegistry;
     }
 
     public function createDTO(User $user)
     {
-        $profileCreateData = new ProfileCreateData();
+        $repository = $this->managerRegistry->getRepository('DataHubUserBundle:User');
+        $profileCreateData = new ProfileCreateData($repository);
 
         $profileCreateData->setUsername($user->getUsername());
         $profileCreateData->setEmail($user->getEmail());
