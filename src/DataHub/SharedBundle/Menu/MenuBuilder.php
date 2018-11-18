@@ -60,7 +60,7 @@ class MenuBuilder
 
         $menu->addChild('Dashboard', array('route' => 'datahub_shared_default_index'));
 
-       if ($this->authChecker->isGranted('ROLE_USER') !== false) {
+       if ($this->authChecker->isGranted('ROLE_ADMIN') !== false) {
             $menu->addChild('Administration', array('route' => 'datahub_user_users_index'));
 
             $menu['Administration']->setChildrenAttribute('class', 'list-group');

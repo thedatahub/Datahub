@@ -9,7 +9,6 @@ framework:
 
 web_profiler:
     toolbar: true
-    only_exceptions: true
     intercept_redirects: false
 
 monolog:
@@ -18,10 +17,10 @@ monolog:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: [!event]
+            channels: ['!event']
         console:
             type:   console
-            channels: [!event, !doctrine]
+            channels: ['!event', '!doctrine']
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
         #firephp:
@@ -33,6 +32,12 @@ monolog:
 
 assetic:
     use_controller: false
+
+swiftmailer:
+    transport: gmail
+    username: matthias.vandermaesen@gmail.com
+    password: rhuttmcbqyrvqgji
+    delivery_address: ['matthias.vandermaesen@gmail.com']
 
 #swiftmailer:
 #    delivery_address: me@example.com

@@ -90,6 +90,12 @@ services:
         class: DataHub\UserBundle\Security\LoginFormAuthenticator
         autowire: true
 
+    datahub.security.user.form.edit_profile:
+        class: DataHub\UserBundle\Form\ProfileEditFormType
+        arguments: ["@security.authorization_checker", "@security.token_storage"]
+        tags:
+            - { name: form.type }
+
     datahub.security.user.dto.profile_edit_assembler:
         class: DataHub\UserBundle\DTO\ProfileEditAssembler
         autowire: true

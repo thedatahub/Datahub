@@ -4,6 +4,8 @@ namespace DataHub\UserBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -11,12 +13,24 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use DataHub\UserBundle\Document\User;
 use DataHub\UserBundle\Form\ProfileCreateFormType;
 use DataHub\UserBundle\DTO\ProfileEditData;
 
 class ProfileEditFormType extends AbstractType
 {
+    private $authChecker;
+
+    private $tokenStorage;
+
+    public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage)
+    {
+        $this->authChecker = $authChecker;
+        $this->tokenStorage = $tokenStorage;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -49,25 +63,36 @@ class ProfileEditFormType extends AbstractType
                         'class' => 'form-control'
                     ]
                 ]
-            )
-            ->add(
-                'roles', ChoiceType::class, [
-                    'choices'  => [
-                        'super administrator' => 'ROLE_SUPER_ADMIN',
-                        'Administrator' => 'ROLE_ADMIN',
-                        'User' => 'ROLE_USER',
-                    ],
-                    'required' => false,
-                    'empty_data' => 'ROLE_USER',
-                    'multiple' => true,
-                    // *this line is important*
-                    'choices_as_values' => true,
-                    'attr' => [
-                        'class' => 'form-control'
-                    ]
-                ]
-            )
-            ->add(
+            );
+
+            $isGranted = $this->authChecker->isGranted('ROLE_ADMIN');
+
+            $builder->addEventListener(
+                FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($isGranted) {
+                    if ($isGranted) {
+                        $form = $event->getForm();
+                        $form->add(
+                            'roles', ChoiceType::class, [
+                                'choices'  => [
+                                    'super administrator' => 'ROLE_SUPER_ADMIN',
+                                    'Administrator' => 'ROLE_ADMIN',
+                                    'User' => 'ROLE_USER',
+                                ],
+                                'required' => false,
+                                'empty_data' => 'ROLE_USER',
+                                'multiple' => true,
+                                // *this line is important*
+                                'choices_as_values' => true,
+                                'attr' => [
+                                    'class' => 'form-control'
+                                ]
+                            ]
+                        );          
+                    }
+                }
+            );
+
+            $builder->add(
                 'plainPassword', RepeatedType::class, [
                     'options' => [
                         'attr' => [
