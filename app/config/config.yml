@@ -43,6 +43,9 @@ twig:
         service_organisation_website: '%service_organisation_website%'
         service_organisation: '%service_organisation%'
         service_address: '%service_address%'
+    form:
+        resources: 
+            - 'bootstrap_3_layout.html.twig'
 
 # Swiftmailer Configuration
 swiftmailer:
