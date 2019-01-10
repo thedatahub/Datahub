@@ -40,6 +40,15 @@ class UserRepository extends DocumentRepository
                 ->getSingleResult();
     }
 
+    public function getSuperAdmin()
+    {
+        return
+            $this->createQueryBuilder('user')
+                ->field('roles')->equals('ROLE_SUPER_ADMIN')
+                ->getQuery()
+                ->getSingleResult();
+    }
+
     /**
      * Return the number of stored users.
      *

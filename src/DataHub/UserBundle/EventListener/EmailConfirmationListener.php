@@ -35,6 +35,7 @@ class EmailConfirmationListener implements EventSubscriberInterface
     {
         return array(
             DataHubUserEvents::REGISTRATION_SUCCESS => 'onRegistrationSuccess',
+            DataHubUserEvents::INSTALLATION_SUCCESS => 'onInstallationSuccess',
         );
     }
 
@@ -48,6 +49,26 @@ class EmailConfirmationListener implements EventSubscriberInterface
         $user = $event->getForm()->getData();
 
         $user->setEnabled(false);
+        if (null == $user->getConfirmationToken()) {
+            $user->setConfirmationToken($this->tokenGenerator->generateToken());
+        }
+
+        $this->mailer->sendConfirmationEmailMessage($user);
+    }
+
+    /**
+     * Callback
+     * 
+     * @param FormEvent $event
+     */
+    public function onInstallationSuccess(FormEvent $event)
+    {
+        $user = $event->getForm()->getData();
+
+        $user->setEnabled(false);
+        $user->setRoles(['ROLE_SUPER_ADMIN']);
+        $user->setPlainPassword($this->tokenGenerator->generateToken());
+
         if (null == $user->getConfirmationToken()) {
             $user->setConfirmationToken($this->tokenGenerator->generateToken());
         }

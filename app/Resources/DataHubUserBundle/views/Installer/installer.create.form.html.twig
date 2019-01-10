@@ -1,0 +1,40 @@
+{% extends 'DataHubUserBundle::layout.html.twig' %}
+
+{% set page_title = 'Create an administrative user' | trans({}, 'FOSUserBundle') %}
+
+{% block content %}
+
+        <div class="panel-body">
+
+            <div class="row">
+
+            <div class="col-md-12">
+
+                {{ form_start(form) }}
+                    
+                    {{ form_errors(form) }}
+
+                    <div class="form-group">
+                        {{ form_row(form.username) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.firstName) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.lastName) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.email) }}
+                    </div>
+                    
+                    {{ form_row(form.newUserBtn) }}
+    
+                {{ form_end(form) }}
+
+            </div>
+
+            </div>
+
+        </div>
+
+{% endblock content %}

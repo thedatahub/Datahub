@@ -124,6 +124,12 @@ services:
     datahub.security.util.token_generator:
         class: DataHub\UserBundle\Util\TokenGenerator
 
+    datahub.security.listener.installer:
+        class: DataHub\UserBundle\EventListener\InstallerListener
+        arguments: ['@controller_resolver', '@datahub.security.user.repository']
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+
     datahub.security.listener.email_confirmation:
         class: DataHub\UserBundle\EventListener\EmailConfirmationListener
         tags:

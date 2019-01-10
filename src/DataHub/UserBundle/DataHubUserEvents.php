@@ -10,7 +10,14 @@ final class DataHubUserEvents
      * @Event("DataHub\UserBundle\Event\FormEvent")
      */
     const REGISTRATION_SUCCESS = 'datahub_user.registration.success';
-    
+   
+    /**
+     * The INSTALLATION_SUCESS event occurs when the installation form is submitted successfully.
+     *
+     * @Event("DataHub\UserBundle\Event\FormEvent")
+     */
+    const INSTALLATION_SUCCESS = 'datahub_user.installation.success';
+
     /**
      * The REGISTRATION_CONFIRMED event occurs when the registration was confirmed succesfully.
      * 

@@ -18,6 +18,20 @@ use DataHub\UserBundle\DTO\ProfileEditData;
 class RegistrationController extends Controller
 {
     /**
+     * @Route("/register", name="datahub_user_register")
+     */
+    public function registerAction(Request $request)
+    {
+        // @todo
+        //   We don't implement public registration of users. Yet.
+
+        // Do a redirect to a seperate InstallerController here. 
+        // Keeps the InstallerListener happy and allows specific form handling.
+        $url = $this->generateUrl('datahub_user_install_admin');
+        return new RedirectResponse($url);
+    }
+
+    /**
      * @Route("/registration/confirmation/{token}", name="datahub_user_registration_confirmation")
      */
     public function confirmAction(Request $request, $token)
