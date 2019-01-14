@@ -158,7 +158,7 @@ doctrine_mongodb:
             options:
                 username: %mongodb_user%
                 password: %mongodb_password%
-                db: admin
+                authSource: %mongodb_database%
     document_managers:
         default:
             auto_mapping: true
