@@ -2,10 +2,8 @@
 
 namespace DataHub\UserBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
-
-use DataHub\OAIBundle\Repository\Repository;
 
 /**
  * Functional testing for UsersController
@@ -17,95 +15,117 @@ use DataHub\OAIBundle\Repository\Repository;
  */
 class SecurityControllerTest extends WebTestCase {
 
+    public function setUp()
+    {
+        $fixtures = array(
+           'DataHub\UserBundle\DataFixtures\MongoDB\LoadUserData',
+        );
+        $this->loadFixtures($fixtures, null, 'doctrine_mongodb');
+    }
+
     public function testLoginForm() {
-        $client = static::createClient();
+        $client = $this->makeClient();
 
-        $crawler = $client->request('GET', '/user/login');
-        $response = $client->getResponse();
+        // Dashboard page
+        $crawler = $client->request('GET', '/');
+        $this->assertStatusCode(200, $client);
+        $this->assertSame(1, $crawler->filter('a.login')->count());
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('Username', $response->getContent());
+        // Go to /user/login page
+        $link = $crawler->filter('a[class="login"]')->link();
+        $client->click($link);
+        $this->assertStatusCode(200, $client);
+        $crawler = $client->getCrawler();
 
+        $this->assertContains('Log in to this Datahub', $client->getResponse()->getContent());
+        $this->assertSame(1, $crawler->filter('button.login')->count());
+        $this->assertSame(1, $crawler->filter('a.password-reset')->count());
+
+        // Submit the form with the correct credentials
         $form = $crawler->selectButton('Login')->form();
-
-        $form['login_form[_username]'] = 'admin';
-        $form['login_form[_password]'] = 'datahub';
-
-        $crawler = $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $client->followRedirect();
-        $this->assertRegexp(
-            '/Logout/',
-            $client->getResponse()->getContent()
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'admin',
+                'login_form[_password]' => 'datahub',
+            )
         );
+        $client->submit($form);
+
+        // Check if we are back on the dashboard and logged in as 'admin'.
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
+        // $this->assertTrue($client->getResponse()->isRedirect('/'));
+
+        $crawler = $client->getCrawler();
+        $this->assertSame(1, $crawler->filter('a.logout')->count());
+        $this->assertSame(1, $crawler->filter('a.logged-in-user')->count());
+        $this->assertSame('admin', $crawler->filter('a.logged-in-user')->text());
     }
 
-    public function testLoginFormInvalidUsername() {
-        $client = static::createClient();
+    public function testLoginFormInvalidCredentials() {
+        $client = $this->makeClient();
 
+        // Go directly to the /user/login page
         $crawler = $client->request('GET', '/user/login');
-        $response = $client->getResponse();
+        $this->assertStatusCode(200, $client);
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('Username', $response->getContent());
-
+        // Submit the form with an incorrect username
         $form = $crawler->selectButton('Login')->form();
-
-        $form['login_form[_username]'] = 'invaliduser';
-        $form['login_form[_password]'] = 'datahub';
-
-        $crawler = $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $client->followRedirect();
-        $this->assertRegexp(
-            '/Username could not be found./',
-            $client->getResponse()->getContent()
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'invaliduser',
+                'login_form[_password]' => 'datahub',
+            )
         );
-    }
+        $client->submit($form);
+   
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
+        $crawler = $client->getCrawler();
 
-    public function testLoginFormInvalidPassword() {
-        $client = static::createClient();
+        $this->assertSame(1, $crawler->filter('div.alert-danger')->count());
+        $this->assertSame('Those credentials are not valid.', $crawler->filter('div.alert-danger > strong')->text());
 
-        $crawler = $client->request('GET', '/user/login');
-        $response = $client->getResponse();
-
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('Username', $response->getContent());
-
+        // Submit the form with an incorrect password
         $form = $crawler->selectButton('Login')->form();
-
-        $form['login_form[_username]'] = 'admin';
-        $form['login_form[_password]'] = 'invalidpassword';
-
-        $crawler = $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $client->followRedirect();
-        $this->assertRegexp(
-            '/Invalid credentials./',
-            $client->getResponse()->getContent()
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'admin',
+                'login_form[_password]' => 'invalidpassword',
+            )
         );
-    }
+        $client->submit($form);
+   
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
+        $crawler = $client->getCrawler();
 
+        $this->assertSame(1, $crawler->filter('div.alert-danger')->count());
+        $this->assertSame('Those credentials are not valid.', $crawler->filter('div.alert-danger > strong')->text());
+    }
+   
     public function testLoginFormEmptyFields() {
-        $client = static::createClient();
+        $client = $this->makeClient();
 
+        // Go directly to the /user/login page
         $crawler = $client->request('GET', '/user/login');
-        $response = $client->getResponse();
+        $this->assertStatusCode(200, $client);
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('Username', $response->getContent());
-
+        // Submit the form with an incorrect username
         $form = $crawler->selectButton('Login')->form();
-
-        $form['login_form[_username]'] = '';
-        $form['login_form[_password]'] = '';
-
-        $crawler = $client->submit($form);
-        $this->assertTrue($client->getResponse()->isRedirect());
-        $client->followRedirect();
-        $this->assertRegexp(
-            '/Username could not be found./',
-            $client->getResponse()->getContent()
+        $form->setValues(
+            array(
+                'login_form[_username]' => '',
+                'login_form[_password]' => '',
+            )
         );
+        $client->submit($form);
+   
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
+        $crawler = $client->getCrawler();
+
+        $this->assertSame(1, $crawler->filter('div.alert-danger')->count());
+        $this->assertSame('Those credentials are not valid.', $crawler->filter('div.alert-danger > strong')->text());
     }
 }
