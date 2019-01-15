@@ -21,6 +21,7 @@ class ProfileCreateData
     /**
      * @var string $username
      *
+     * @Assert\NotBlank
      * @Assert\Type(
      *     type="alnum",
      *     message="The value {{ value }} should only consist of alphanumeric characters."
