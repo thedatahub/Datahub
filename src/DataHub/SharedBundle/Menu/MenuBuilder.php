@@ -34,14 +34,21 @@ class MenuBuilder
 
         if ($this->authChecker->isGranted('ROLE_USER') !== false) {
             $user = $this->tokenStorage->getToken()->getUser();
-            $menu->addChild($user->getUsername(), array(
-                'route' => 'datahub_user_users_show',
-                'routeParameters' => array('id' => $user->getID())
+
+            $menu->addChild(
+                $user->getUsername(), 
+                array(
+                    'route' => 'datahub_user_users_show',
+                    'routeParameters' => array('id' => $user->getID())
                 )
             );
+            $menu[$user->getUserName()]->setLinkAttribute('class', 'logged-in-user');
+
             $menu->addChild('Logout', array('route' => 'security_logout'));
+            $menu['Logout']->setLinkAttribute('class', 'logout');
         } else {
-            $menu->addChild('Login', array('route' => 'security_login'));  
+            $menu->addChild('Login', array('route' => 'security_login'));
+            $menu['Login']->setLinkAttribute('class', 'login');
         }
 
         $menu->setChildrenAttribute('class', 'nav navbar-nav navbar-right');
