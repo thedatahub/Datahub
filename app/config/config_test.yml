@@ -6,6 +6,7 @@ framework:
     test: ~
     session:
         storage_id: session.storage.mock_file
+        name: MOCKSESSION
     profiler:
         collect: false
 
@@ -21,3 +22,5 @@ security:
         # replace 'main' by the name of your own firewall
         main:
             http_basic: ~
+
+liip_functional_test: ~
