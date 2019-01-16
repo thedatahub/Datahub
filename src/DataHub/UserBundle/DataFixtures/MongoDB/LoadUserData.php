@@ -24,8 +24,10 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $profileCreateData = $assembler->createDTO($userAdmin);
 
         $profileCreateData->setUsername(static::DEFAULT_ADMIN_USERNAME);
+        $profileCreateData->setFirstName('Foo');
+        $profileCreateData->setLastName('Bar');
         $profileCreateData->setPlainPassword(static::DEFAULT_ADMIN_PASSWORD);
-        $profileCreateData->setEmail('testuser+datahub@inuits.eu');
+        $profileCreateData->setEmail('foo@bar.foo');
         $profileCreateData->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN']);
 
         $userAdmin = $assembler->updateProfile($userAdmin, $profileCreateData);
