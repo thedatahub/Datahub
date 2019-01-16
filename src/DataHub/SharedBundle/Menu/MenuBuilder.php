@@ -71,14 +71,20 @@ class MenuBuilder
             $menu->addChild('Administration', array('route' => 'datahub_user_users_index'));
 
             $menu['Administration']->setChildrenAttribute('class', 'list-group');
+            $menu['Administration']->setLinkAttribute('class', 'admin-administration');
+
             $menu['Administration']->addChild('Users', array('route' => 'datahub_user_users_index', 'attributes' => array('class' => 'list-group-item')));
+            $menu['Administration']['Users']->setLinkAttribute('class', 'admin-users');
+
             // $menu['Administration']->addChild('Clients', array('route' => 'datahub_oauth_clients_index', 'attributes' => array('class' => 'list-group-item')));
             // $menu['Administration']->addChild('Tokens', array('route' => 'datahub_oauth_tokens_index', 'attributes' => array('class' => 'list-group-item')));
-
        } 
 
         $menu->addChild('REST API', array('route' => 'nelmio_api_doc_index'));
+        $menu['REST API']->setLinkAttribute('class', 'docs-rest-api');
+        
         $menu->addChild('OAI-PMH', array('route' => 'datahub_static_docs_oai'));
+        $menu['OAI-PMH']->setLinkAttribute('class', 'docs-oai-pmh');
 
         $menu->setChildrenAttribute('class', 'nav navbar-nav main-nav');
 

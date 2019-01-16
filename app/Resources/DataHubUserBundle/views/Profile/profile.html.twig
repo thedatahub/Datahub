@@ -8,10 +8,10 @@
 
         <div class="panel-heading">
             <div class="btn-group pull-right">
-                <a href="{{ path('datahub_user_users_edit', { id: user.getId() }) }}" class="btn btn-xs btn-default">
+                <a href="{{ path('datahub_user_users_edit', { id: user.getId() }) }}" class="btn btn-xs btn-default user-edit-user">
                     <i class="fa fa-pencil"></i> {{ 'Edit user' | trans }}
                 </a>
-                <a href="{{ path('datahub_user_users_delete', { id: user.getId() }) }}" class="btn btn-xs btn-danger">
+                <a href="{{ path('datahub_user_users_delete', { id: user.getId() }) }}" class="btn btn-xs btn-danger user-delete-user">
                     <i class="fa fa-plus"></i> {{ 'Delete user' | trans }}
                 </a>
             </div>
@@ -24,15 +24,15 @@
 
         <div class="panel-body">
 
-            <dl>
+            <dl class="user-profile">
                 <dt>{{ 'Username' | trans }}</dt>
-                <dd>{{ user.getUsername() }}</dd>
+                <dd class="field-username">{{ user.getUsername() }}</dd>
                 <dt>{{ 'Full name' | trans }}</dt>
-                <dd>{{ user.getFirstName() }} {{ user.getLastName() }}</dd>
+                <dd class="field-fullname">{{ user.getFirstName() }} {{ user.getLastName() }}</dd>
                 <dt>{{ 'E-mail' | trans }}</dt>
-                <dd>{{ user.getEmail() }}</dd>
+                <dd class="field-email">{{ user.getEmail() }}</dd>
                 <dt>{{ 'Roles' | trans }}</dt>
-                <dd>{{ user.getRoles() | join('<br>') | raw }}</dd>
+                <dd class="field-roles">{{ user.getRoles() | join('<br>') | raw }}</dd>
             </dl>
             </div>
         </div>
