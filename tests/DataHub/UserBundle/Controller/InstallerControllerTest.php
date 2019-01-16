@@ -145,16 +145,13 @@ class InstallerControllerTest extends WebTestCase {
         $this->assertSame(1, $crawler->filter('a.logged-in-user')->count());
         $this->assertSame('admin', $crawler->filter('a.logged-in-user')->text());
 
-        // @todo
-        //   We should have a nice registrastion confirmed message
+        //   We should have a nice registration confirmed message
+        $this->assertContains('<p>Congrats <strong>admin</strong>, your account is now activated.</p>', $client->getResponse()->getContent());
 
-        // The installer should now not be reachable anymore.
-        $client->request('GET', '/user/install/administrator');
-        $this->assertStatusCode(302, $client);
-
-        $client->followRedirect();
+        // Click on the 'Continue' button
+        $link = $crawler->filter('a.confirmed-continue')->link();
+        $client->click($link);
         $this->assertStatusCode(200, $client);
-
         $crawler = $client->getCrawler();
 
         // Yup, I see the navbar, I'm not on the installer page anymore.
@@ -163,5 +160,34 @@ class InstallerControllerTest extends WebTestCase {
         $this->assertSame(1, $crawler->filter('a.logout')->count());
         $this->assertSame(1, $crawler->filter('a.logged-in-user')->count());
         $this->assertSame('admin', $crawler->filter('a.logged-in-user')->text());
+
+        // The installer should now not be reachable anymore.
+        $client->request('GET', '/user/install/administrator');
+        $this->assertStatusCode(302, $client);
+
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
+
+        // Let's log out and try the confirmation token again. Shouldn't work this time.
+        $link = $crawler->filter('a[class="logout"]')->link();
+        $client->click($link);
+        $this->assertStatusCode(302, $client);
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
+        $crawler = $client->getCrawler();
+
+        $this->assertSame(1, $crawler->filter('a.login')->count());
+
+        $client->request('GET', $url);
+        $this->assertStatusCode(302, $client);
+
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
+
+        $crawler = $client->getCrawler();
+
+        $this->assertContains('Log in to this Datahub', $client->getResponse()->getContent());
+        $this->assertSame(1, $crawler->filter('button.login')->count());
+        $this->assertSame(1, $crawler->filter('a.password-reset')->count());
     }
 }

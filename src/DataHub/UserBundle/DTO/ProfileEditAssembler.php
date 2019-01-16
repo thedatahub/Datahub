@@ -37,6 +37,7 @@ class ProfileEditAssembler
         $user->setLastName($profileEditData->getLastName());
         $user->setEnabled($profileEditData->getEnabled());
         $user->setRoles($profileEditData->getRoles());
+        $user->setConfirmationToken($profileEditData->getConfirmationToken());
 
         if ($profileEditData->getPlainPassword()) {
             $encoded = $this->passwordEncoder->encodePassword(
