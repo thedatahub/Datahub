@@ -149,6 +149,8 @@ class InstallerControllerTest extends WebTestCase {
         $this->assertContains('<p>Congrats <strong>admin</strong>, your account is now activated.</p>', $client->getResponse()->getContent());
 
         // Click on the 'Continue' button
+        // @todo
+        //    This should go towards the edit page with a request to update the password (!!!)
         $link = $crawler->filter('a.confirmed-continue')->link();
         $client->click($link);
         $this->assertStatusCode(200, $client);
