@@ -3,7 +3,7 @@
 {% set page_title = 'layout.register' | trans({}, 'DataHubUserBundle') %}
 
 {% block content %}
-<p>{{ 'registration.confirmed' | trans({ '%username%': '<strong>' ~ user.username ~ '</strong>' }, 'FOSUserBundle') | raw }}</p>
+<p>{{ 'registration.confirmed' | trans({ '%username%': '<strong>' ~ user.username ~ '</strong>' }, 'DataHubUserBundle') | raw }}</p>
 
 <div class="btn-group">
     <a href="{{ path('datahub_shared_default_index') }}" class="btn btn-default">
