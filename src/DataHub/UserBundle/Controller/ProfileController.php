@@ -20,10 +20,10 @@ use DataHub\UserBundle\DTO\ProfileEditData;
 class ProfileController extends Controller
 {
     /**
-     * @Route("/profile/{id}", name="datahub_user_users_show")
+     * @Route("/profile/{username}", name="datahub_user_users_show")
      * @Template()
      */
-    public function showAction(Request $request, $id)
+    public function showAction(Request $request, $username)
     {
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException();
@@ -32,13 +32,15 @@ class ProfileController extends Controller
         $currentUser = $this->getUser();
 
         $documentManager = $this->get('doctrine_mongodb')->getManager();
-        $user = $documentManager->getRepository('DataHubUserBundle:User')->find($id);
+        $user = $documentManager
+            ->getRepository('DataHubUserBundle:User')
+            ->findOneBy(['username' => $username]);
 
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
-        if ($currentUser->getId() !== $id) {
+        if ($currentUser->getUsername() !== $username) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'Unable to access this page!');
         }
 
@@ -56,9 +58,9 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/profile/{id}/edit", name="datahub_user_users_edit")
+     * @Route("/profile/{username}/edit", name="datahub_user_users_edit")
      */
-    public function editAction(Request $request, $id)
+    public function editAction(Request $request, $username)
     {
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException();
@@ -67,13 +69,15 @@ class ProfileController extends Controller
         $currentUser = $this->getUser();
 
         $documentManager = $this->get('doctrine_mongodb')->getManager();
-        $user = $documentManager->getRepository('DataHubUserBundle:User')->find($id);
+        $user = $documentManager
+            ->getRepository('DataHubUserBundle:User')
+            ->findOneBy(['username' => $username]);
 
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
-        if ($currentUser->getId() !== $id) {
+        if ($currentUser->getUsername() !== $username) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'Unable to access this page!');
         }
 
@@ -98,7 +102,7 @@ class ProfileController extends Controller
 
             $this->addFlash('success', 'User '.$user->getUsername(). ' was edited successfully.');
 
-            return $this->redirectToRoute('datahub_user_users_show', array('id' => $user->getId()));
+            return $this->redirectToRoute('datahub_user_users_show', array('username' => $user->getUsername()));
         }
 
         return $this->render(
@@ -111,10 +115,10 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/profile/{id}/delete", name="datahub_user_users_delete")
+     * @Route("/profile/{username}/delete", name="datahub_user_users_delete")
      * @Template()
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction(Request $request, $username)
     {
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException();
@@ -123,13 +127,15 @@ class ProfileController extends Controller
         $currentUser = $this->getUser();
 
         $documentManager = $this->get('doctrine_mongodb')->getManager();
-        $user = $documentManager->getRepository('DataHubUserBundle:User')->find($id);
+        $user = $documentManager
+            ->getRepository('DataHubUserBundle:User')
+            ->findOneBy(['username' => $username]);
 
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
-        if ($currentUser->getId() !== $id) {
+        if ($currentUser->getUsername() !== $username) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'Unable to access this page!');
         }
 

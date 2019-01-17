@@ -109,6 +109,12 @@ class ProfileControllerTest extends WebTestCase {
         // );
         // $client->submit($form);
 
+        // @todo
+        //   Test against re-using a username (unique username constraint!)
+
+        // @todo
+        //   Test against re-using an e-mail address (unique email constraint!)
+
         $crawler = $client->getCrawler();
         $form = $crawler->selectButton('New user')->form();
         $form->setValues(
@@ -170,7 +176,7 @@ class ProfileControllerTest extends WebTestCase {
         $value = $crawler->filter('dl.user-profile dd.field-email')->first()->text();
         $this->assertSame('user@foo.barfoo', $value);
         $value = $crawler->filter('dl.user-profile dd.field-roles')->first()->text();
-        $this->assertSame('ROLE_USER', $value);
+        $this->assertSame('ROLE_CONSUMER', $value);
 
         $this->assertSame(1, $crawler->filter('a.user-edit-user')->count());
         $this->assertSame(1, $crawler->filter('a.user-delete-user')->count());

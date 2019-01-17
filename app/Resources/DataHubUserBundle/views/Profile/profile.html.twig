@@ -8,10 +8,10 @@
 
         <div class="panel-heading">
             <div class="btn-group pull-right">
-                <a href="{{ path('datahub_user_users_edit', { id: user.getId() }) }}" class="btn btn-xs btn-default user-edit-user">
+                <a href="{{ path('datahub_user_users_edit', { username: user.getUsername() }) }}" class="btn btn-xs btn-default user-edit-user">
                     <i class="fa fa-pencil"></i> {{ 'Edit user' | trans }}
                 </a>
-                <a href="{{ path('datahub_user_users_delete', { id: user.getId() }) }}" class="btn btn-xs btn-danger user-delete-user">
+                <a href="{{ path('datahub_user_users_delete', { username: user.getUsername() }) }}" class="btn btn-xs btn-danger user-delete-user">
                     <i class="fa fa-plus"></i> {{ 'Delete user' | trans }}
                 </a>
             </div>

@@ -42,14 +42,14 @@
                         <a href="{{ path('datahub_user_users_index') }}" class="btn btn-default">
                             <i class="fa fa-angle-double-left"></i> {{ 'Back' | trans }}
                         </a>
-                        <a href="{{ path('datahub_user_users_edit', { id: entity.getId() }) }}" class="btn btn-default">
+                        <a href="{{ path('datahub_user_users_edit', { username: entity.getUsername() }) }}" class="btn btn-default">
                             <i class="fa fa-edit"></i> {{ 'Edit' | trans }}
                         </a>
                     </div>
                 </div>
                 <div class="col-xs-4 text-right">
                     <div class="btn-group">
-                        <a href="{{ path('datahub_user_users_delete', { id: entity.getId() }) }}" class="btn btn-danger" onclick="return confirm('{{ 'Are you sure?' | trans }}')">
+                        <a href="{{ path('datahub_user_users_delete', { username: entity.getUsername() }) }}" class="btn btn-danger" onclick="return confirm('{{ 'Are you sure?' | trans }}')">
                             <i class="fa fa-trash"></i> {{ 'Delete' | trans }}
                         </a>
                     </div>

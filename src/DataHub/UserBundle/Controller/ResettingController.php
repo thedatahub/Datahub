@@ -83,7 +83,7 @@ class ResettingController extends Controller
         $documentManager->flush();
 
         $this->addFlash('success', 'Please reset your password!');
-        $url = $this->generateUrl('datahub_user_users_edit', array('id' => $user->getId()));
+        $url = $this->generateUrl('datahub_user_users_edit', array('username' => $user->getUsername()));
         $response = new RedirectResponse($url);
 
         $event = new FilterUserResponseEvent($user, $request, $response);

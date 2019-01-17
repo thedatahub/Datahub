@@ -17,7 +17,6 @@ class MenuBuilder
      * @param AuthorizationCheckerInterface $authChecker Authentication checker
      */
     public function __construct(FactoryInterface $factory, AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage)
-    // public function __construct(FactoryInterface $factory)
     {
         $this->factory = $factory;
         $this->authChecker = $authChecker;
@@ -39,7 +38,7 @@ class MenuBuilder
                 $user->getUsername(), 
                 array(
                     'route' => 'datahub_user_users_show',
-                    'routeParameters' => array('id' => $user->getID())
+                    'routeParameters' => array('username' => $user->getUsername())
                 )
             );
             $menu[$user->getUserName()]->setLinkAttribute('class', 'logged-in-user');
