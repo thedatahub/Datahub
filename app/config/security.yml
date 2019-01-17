@@ -9,7 +9,7 @@ security:
 
     role_hierarchy:
         ROLE_MANAGER: ROLE_CONSUMER
-        ROLE_ADMINISTRATOR: ROLE_MANAGER
+        ROLE_ADMIN: ROLE_MANAGER
 
     encoders:
         DataHub\UserBundle\Document\User: bcrypt
