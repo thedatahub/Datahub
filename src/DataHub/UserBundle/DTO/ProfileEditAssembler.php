@@ -36,8 +36,15 @@ class ProfileEditAssembler
         $user->setFirstName($profileEditData->getFirstName());
         $user->setLastName($profileEditData->getLastName());
         $user->setEnabled($profileEditData->getEnabled());
-        $user->setRoles($profileEditData->getRoles());
         $user->setConfirmationToken($profileEditData->getConfirmationToken());
+
+        // Make sure we don't lose the admin role on the administrator
+        $roles = $user->getRoles();
+        if (in_array('ROLE_ADMIN', $roles)) {
+            $editedRoles = $profileEditData->getRoles();
+            $edited_roles = array_push($editedRoles, 'ROLE_ADMIN');
+            $user->setRoles($editedRoles);
+        }
 
         if ($profileEditData->getPlainPassword()) {
             $encoded = $this->passwordEncoder->encodePassword(

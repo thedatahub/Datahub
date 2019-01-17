@@ -52,7 +52,6 @@ class ProfileCreateFormType extends AbstractType
             ->add(
                 'roles', ChoiceType::class, [
                     'choices'  => [
-                        'Administrator' => 'ROLE_ADMIN',
                         'Manager' => 'ROLE_MANAGER',
                         'Consumer' => 'ROLE_CONSUMER',
                     ],
