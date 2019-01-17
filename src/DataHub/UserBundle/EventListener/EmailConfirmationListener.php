@@ -66,7 +66,7 @@ class EmailConfirmationListener implements EventSubscriberInterface
         $user = $event->getForm()->getData();
 
         $user->setEnabled(false);
-        $user->setRoles(['ROLE_SUPER_ADMIN']);
+        $user->setRoles(['ROLE_ADMIN']);
         $user->setPlainPassword($this->tokenGenerator->generateToken());
 
         if (null == $user->getConfirmationToken()) {

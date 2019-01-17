@@ -26,7 +26,7 @@ class UserFixtures extends AbstractFixture implements OrderedFixtureInterface
         $profileCreateData->setUsername(static::DEFAULT_ADMIN_USERNAME);
         $profileCreateData->setPlainPassword(static::DEFAULT_ADMIN_PASSWORD);
         $profileCreateData->setEmail('testuser+datahub@inuits.eu');
-        $profileCreateData->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN']);
+        $profileCreateData->setRoles(['ROLE_ADMIN']);
 
         $userAdmin = $assembler->updateProfile($userAdmin, $profileCreateData);
 

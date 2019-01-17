@@ -38,7 +38,7 @@
                                 {{ 'Dashboard' | trans }}
                             </a>
                         </li>
-                        {% if is_granted('ROLE_USER') and is_granted('ROLE_ADMIN') %}
+                        {% if is_granted('ROLE_CONSUMER') and is_granted('ROLE_ADMIN') %}
                             <li>
                                 <a href="{{ path('datahub_oauth_default_index') }}"
                                 {% if app.request.attributes.get('_route') == 'datahub_oauth_default_index' %} class="active"{% endif %}>
@@ -46,7 +46,7 @@
                                 </a>
                             </li>
                         {% endif %}
-                        {% if is_granted('ROLE_USER') and is_granted('ROLE_ADMIN') %}
+                        {% if is_granted('ROLE_CONSUMER') and is_granted('ROLE_ADMIN') %}
                             <li>
                                 <a href="{{ path('datahub_user_users_index') }}"
                                 {% if app.request.attributes.get('_route') == 'datahub_user_users_index' %} class="active"{% endif %}>
@@ -67,7 +67,7 @@
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                    {% if is_granted('ROLE_USER') and is_granted('ROLE_ADMIN') %}
+                    {% if is_granted('ROLE_CONSUMER') and is_granted('ROLE_ADMIN') %}
                         <li>
                             <a href="{{ path('fos_user_security_logout') }}">
                                 {{ 'Logout' | trans }}

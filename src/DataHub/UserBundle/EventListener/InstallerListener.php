@@ -46,7 +46,7 @@ class InstallerListener
     {
         $controller = $event->getController();
         
-        $user = $this->userRepository->getSuperAdmin();
+        $user = $this->userRepository->getAdmin();
         if ($user instanceof User) {
             return;
         }

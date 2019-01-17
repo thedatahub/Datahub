@@ -40,11 +40,11 @@ class UserRepository extends DocumentRepository
                 ->getSingleResult();
     }
 
-    public function getSuperAdmin()
+    public function getAdmin()
     {
         return
             $this->createQueryBuilder('user')
-                ->field('roles')->equals('ROLE_SUPER_ADMIN')
+                ->field('roles')->equals('ROLE_ADMIN')
                 ->getQuery()
                 ->getSingleResult();
     }

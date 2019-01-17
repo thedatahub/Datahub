@@ -28,7 +28,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $profileCreateData->setLastName('Bar');
         $profileCreateData->setPlainPassword(static::DEFAULT_ADMIN_PASSWORD);
         $profileCreateData->setEmail('foo@bar.foo');
-        $profileCreateData->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN']);
+        $profileCreateData->setRoles(['ROLE_ADMIN']);
 
         $userAdmin = $assembler->updateProfile($userAdmin, $profileCreateData);
 

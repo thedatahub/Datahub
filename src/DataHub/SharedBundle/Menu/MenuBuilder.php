@@ -32,7 +32,7 @@ class MenuBuilder
     public function createProfileMenu(array $options) {
         $menu = $this->factory->createItem('root');
 
-        if ($this->authChecker->isGranted('ROLE_USER') !== false) {
+        if ($this->authChecker->isGranted('ROLE_CONSUMER') !== false) {
             $user = $this->tokenStorage->getToken()->getUser();
 
             $menu->addChild(

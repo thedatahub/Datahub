@@ -74,12 +74,12 @@ class ProfileEditFormType extends AbstractType
                         $form->add(
                             'roles', ChoiceType::class, [
                                 'choices'  => [
-                                    'super administrator' => 'ROLE_SUPER_ADMIN',
                                     'Administrator' => 'ROLE_ADMIN',
-                                    'User' => 'ROLE_USER',
+                                    'Manager' => 'ROLE_MANAGER',
+                                    'Consumer' => 'ROLE_CONSUMER',
                                 ],
                                 'required' => false,
-                                'empty_data' => 'ROLE_USER',
+                                'empty_data' => 'ROLE_CONSUMER',
                                 'multiple' => true,
                                 // *this line is important*
                                 'choices_as_values' => true,

@@ -8,8 +8,8 @@ security:
                 property: username
 
     role_hierarchy:
-        ROLE_ADMIN:       [ROLE_USER]
-        ROLE_SUPER_ADMIN: ROLE_ADMIN
+        ROLE_MANAGER: ROLE_CONSUMER
+        ROLE_ADMINISTRATOR: ROLE_MANAGER
 
     encoders:
         DataHub\UserBundle\Document\User: bcrypt

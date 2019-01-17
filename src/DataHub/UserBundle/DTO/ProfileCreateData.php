@@ -175,7 +175,7 @@ class ProfileCreateData
         $roles = $this->roles;
 
         if (!is_array($roles)) {
-            $roles = array();
+            $roles = array('ROLE_CONSUMER');
         }
 
         return $roles;
@@ -183,9 +183,9 @@ class ProfileCreateData
 
     public function setRoles(array $roles)
     {
-        // give everyone ROLE_USER!
-        if (!in_array('ROLE_USER', $roles)) {
-            $roles[] = 'ROLE_USER';
+        // give everyone ROLE_CONSUMER!
+        if (!in_array('ROLE_CONSUMER', $roles)) {
+            $roles[] = 'ROLE_CONSUMER';
         }
 
         $this->roles = $roles;

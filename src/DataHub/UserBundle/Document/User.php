@@ -239,9 +239,9 @@ class User implements UserInterface
             $roles = array();
         }
 
-        // give everyone ROLE_USER!
-        if (!in_array('ROLE_USER', $roles)) {
-            $roles[] = 'ROLE_USER';
+        // give everyone ROLE_CONSUMER!
+        if (!in_array('ROLE_CONSUMER', $roles)) {
+            $roles[] = 'ROLE_CONSUMER';
         }
 
         return $roles;

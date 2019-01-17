@@ -25,7 +25,7 @@ class InstallerController extends controller implements InstallerControllerInter
         // Redirect back to dashboard if a superadministrator already exists
         // Prevent creation of multiple superadministrators.
         $userRepository = $this->get('datahub.security.user.repository');
-        if ($userRepository->getSuperAdmin()) {
+        if ($userRepository->getAdmin()) {
             $url = $this->generateUrl('datahub_shared_default_index');
             return new RedirectResponse($url);
         }
