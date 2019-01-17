@@ -26,7 +26,7 @@ class ProfileControllerTest extends WebTestCase {
         );
     }
 
-    public function testManageUsersAsSuperadmin()
+    public function testManageUserAsAdministrator()
     {
         $client = $this->makeClient();
 
@@ -232,7 +232,9 @@ class ProfileControllerTest extends WebTestCase {
         $value = $crawler->filter('dl.user-profile dd.field-fullname')->first()->text();
         $this->assertSame('bar foo', trim($value));
 
-        // @todo edit a non-existing user
+        // @todo
+        //   I can change the roles of another user 
+        //     (i.e. promote to manager or demote to consumer)
 
         // Delete an existing user
 
@@ -275,20 +277,45 @@ class ProfileControllerTest extends WebTestCase {
         $this->assertStatusCode(403, $client);
 
         // @todo delete a non-existing user
-
-        $client->request('GET', '/user/profile/doesnotexist/delete');
-        $this->assertStatusCode(404, $client);
     }
 
-    public function testManageUsersAsAnonymous()
+    public function testManageOwnProfileAsAdministrator()
     {
         // @todo
-        //   Make sure anonoymous can't add, delete or edit users
+        //   Write tests for this case
+
+        // Not be able to delete myself
+
+        // Not be able to set roles
+
+        // On update of my profile I'm always administrator
     }
 
-    public function testManageUsersAsUser()
+    public function testManageUsersAsNonAdministrator()
     {
         // @todo
-        //   Make sure user can't add, delete or edit other users
+        //   Write tests for this case
+
+        // Not be able to view the user management panel
+
+        // Not be able to add new users
+
+        // Not be able to edit other users
+
+        // Not be able to delete other users
+    }
+
+    public function testManageOwnProfileAsNonAdministrator()
+    {
+        // @todo
+        //   Write tests for this case
+
+        // I can view my own profile
+
+        // I can edit myself
+
+        // I can delete my own account
+
+        // I can't change my roles
     }
 }
