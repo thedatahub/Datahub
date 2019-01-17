@@ -57,9 +57,9 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertSame('admin', trim($crawler->filter('table.users td.username a')->text()));
    
-        // I can edit the user
+        // I can see and click the edit button
 
-        $nodes = $crawler->filter('table.users td.actions div > a');
+        $nodes = $crawler->filter('table.users td.actions div > *');
         $this->assertSame('edit', trim($nodes->first()->text()));
 
         $link = $nodes->first()->link();
@@ -67,14 +67,9 @@ class AdminControllerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
 
-        // I can delete the user
+        // I can see the delete button for the administrator
 
         $this->assertSame('delete', trim($nodes->last()->text()));
-
-        $link = $nodes->last()->link();
-        $client->click($link);
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testIndexActionAsAnonymous()

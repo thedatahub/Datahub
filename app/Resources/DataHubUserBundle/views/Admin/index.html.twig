@@ -49,9 +49,15 @@
                                 <a href="{{ path('datahub_user_users_edit', { username: user.getUsername() }) }}" class="btn btn-xs btn-default users-edit-user">
                                     <i class="fa fa-pencil"></i> {{ 'edit' | trans }}
                                 </a>
+                                {% if 'ROLE_ADMIN' in user.getRoles() %}
+                                <span class="btn btn-xs btn-default users-delete-user">
+                                    <i class="fa fa-trash"></i> {{ 'delete' | trans }}
+                                </span>
+                                {% else %}
                                 <a href="{{ path('datahub_user_users_delete', { username: user.getUsername() }) }}" class="btn btn-xs btn-danger users-delete-user">
                                     <i class="fa fa-trash"></i> {{ 'delete' | trans }}
                                 </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

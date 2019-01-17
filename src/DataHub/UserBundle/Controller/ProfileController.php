@@ -120,9 +120,11 @@ class ProfileController extends Controller
      */
     public function deleteAction(Request $request, $username)
     {
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        //if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        //    throw $this->createAccessDeniedException();
+        //}
     
         $currentUser = $this->getUser();
 
@@ -133,6 +135,14 @@ class ProfileController extends Controller
 
         if (!$user) {
             throw $this->createNotFoundException();
+        }
+
+        // Administrator should not be able to delete own account.
+        if ($currentUser->getUsername() == $username) {
+            $authChecker = $this->get('security.authorization_checker');
+            if ($authChecker->isGranted('ROLE_ADMIN')) {
+                throw $this->createAccessDeniedException();
+            }
         }
 
         if ($currentUser->getUsername() !== $username) {

@@ -30,7 +30,7 @@ class ProfileControllerTest extends WebTestCase {
     {
         $client = $this->makeClient();
 
-        // Log in ad a superadmin
+        // Log in as an administrator
         $crawler = $client->request('GET', '/');
         $link = $crawler->filter('a[class="login"]')->link();
         $client->click($link);
@@ -57,6 +57,14 @@ class ProfileControllerTest extends WebTestCase {
         $crawler = $client->getCrawler();
         $this->assertSame(1, $crawler->filter('table.users')->count());
         $this->assertSame(1, $crawler->filter('a.users-add-user')->count());
+
+        $this->assertSame(1, $crawler->filter('table.users tbody tr')->count());
+        $value = $crawler->filter('table.users tbody tr td.username a')->first()->text();
+        $this->assertSame('admin', trim($value));
+        $value = $crawler->filter('table.users tbody tr td.actions a.users-edit-user')->first()->text();
+        $this->assertSame('edit', trim($value));
+        $value = $crawler->filter('table.users tbody tr td.actions span.users-delete-user')->first()->text();
+        $this->assertSame('delete', trim($value));
 
         // Add a new user
         
@@ -154,11 +162,17 @@ class ProfileControllerTest extends WebTestCase {
 
         $crawler = $client->getCrawler();
 
+        // Check if the user has been created
+
         $value = $crawler->filter('div.alert-success')->first()->text();
         $this->assertSame('User user created successfully.', trim($value));
         $this->assertSame(2, $crawler->filter('table.users tbody tr')->count());
         $value = $crawler->filter('table.users tbody tr td.username a')->last()->text();
         $this->assertSame('user', trim($value));
+        $value = $crawler->filter('table.users tbody tr td.actions a.users-edit-user')->last()->text();
+        $this->assertSame('edit', trim($value));
+        $value = $crawler->filter('table.users tbody tr td.actions a.users-delete-user')->last()->text();
+        $this->assertSame('delete', trim($value));
        
         // Show the profile of an user
 
@@ -255,7 +269,15 @@ class ProfileControllerTest extends WebTestCase {
         $crawler = $client->getCrawler();
         $this->assertSame(1, $crawler->filter('table.users tbody tr')->count());
 
+        // @todo delete the administrator user (shouldn't be possible)
+
+        $client->request('GET', '/user/profile/admin/delete');
+        $this->assertStatusCode(403, $client);
+
         // @todo delete a non-existing user
+
+        $client->request('GET', '/user/profile/doesnotexist/delete');
+        $this->assertStatusCode(404, $client);
     }
 
     public function testManageUsersAsAnonymous()
