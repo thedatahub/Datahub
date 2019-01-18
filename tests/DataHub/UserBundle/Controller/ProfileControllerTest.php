@@ -127,6 +127,29 @@ class ProfileControllerTest extends WebTestCase {
         $form = $crawler->selectButton('New user')->form();
         $form->setValues(
             array(
+                'profile_create_form[username]' => 'manager',
+                'profile_create_form[firstName]' => 'manager',
+                'profile_create_form[lastName]' => 'manager',
+                'profile_create_form[email]' => 'foo.manager@bar.foo',
+                'profile_create_form[plainPassword][first]' => 'valid',
+                'profile_create_form[plainPassword][second]' => 'invalid',
+            )
+        );
+        $client->submit($form);
+
+        $crawler = $client->getCrawler();
+
+        $value = $crawler->filter('div.form-group-username span.help-block ul li')->first()->text();
+        $this->assertSame(' A user with this username already exists.', $value);
+
+        $value = $crawler->filter('div.form-group-email span.help-block ul li')->first()->text();
+        $this->assertSame(' A user with this email address already exists.', $value);
+
+        $crawler = $client->getCrawler();
+
+        $form = $crawler->selectButton('New user')->form();
+        $form->setValues(
+            array(
                 'profile_create_form[username]' => 'user',
                 'profile_create_form[firstName]' => 'foo',
                 'profile_create_form[lastName]' => 'bar',
