@@ -60,6 +60,17 @@ class SecurityControllerTest extends WebTestCase {
         $this->assertSame(1, $crawler->filter('a.logout')->count());
         $this->assertSame(1, $crawler->filter('a.logged-in-user')->count());
         $this->assertSame('admin', $crawler->filter('a.logged-in-user')->text());
+
+        // Go back to the /user/login page. Should redirect back to dashboard
+
+        $client->request('GET', '/user/login');
+        $this->assertStatusCode(302, $client);
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
+
+        $this->assertSame(1, $crawler->filter('a.logout')->count());
+        $this->assertSame(1, $crawler->filter('a.logged-in-user')->count());
+        $this->assertSame('admin', $crawler->filter('a.logged-in-user')->text());
     }
 
     public function testLoginFormInvalidCredentials() {

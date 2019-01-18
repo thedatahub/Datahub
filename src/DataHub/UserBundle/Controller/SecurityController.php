@@ -15,6 +15,12 @@ class SecurityController extends Controller
      */
     public function loginAction()
     {
+        // Redirect logged in users back to the dashboard
+        $securityContext = $this->container->get('security.authorization_checker');
+        if ($securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            return $this->redirectToRoute('datahub_shared_default_index');
+        }
+        
         $authenticationUtils = $this->get('security.authentication_utils');
 
         // get the login error if there is one
