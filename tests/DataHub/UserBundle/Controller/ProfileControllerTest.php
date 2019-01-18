@@ -58,7 +58,7 @@ class ProfileControllerTest extends WebTestCase {
         $this->assertSame(1, $crawler->filter('table.users')->count());
         $this->assertSame(1, $crawler->filter('a.users-add-user')->count());
 
-        $this->assertSame(1, $crawler->filter('table.users tbody tr')->count());
+        $this->assertSame(3, $crawler->filter('table.users tbody tr')->count());
         $value = $crawler->filter('table.users tbody tr td.username a')->first()->text();
         $this->assertSame('admin', trim($value));
         $value = $crawler->filter('table.users tbody tr td.actions a.users-edit-user')->first()->text();
@@ -166,7 +166,7 @@ class ProfileControllerTest extends WebTestCase {
 
         $value = $crawler->filter('div.alert-success')->first()->text();
         $this->assertSame('User user created successfully.', trim($value));
-        $this->assertSame(2, $crawler->filter('table.users tbody tr')->count());
+        $this->assertSame(4, $crawler->filter('table.users tbody tr')->count());
         $value = $crawler->filter('table.users tbody tr td.username a')->last()->text();
         $this->assertSame('user', trim($value));
         $value = $crawler->filter('table.users tbody tr td.actions a.users-edit-user')->last()->text();
@@ -256,7 +256,7 @@ class ProfileControllerTest extends WebTestCase {
         $this->assertStatusCode(200, $client);
        
         $crawler = $client->getCrawler();
-        $this->assertSame(2, $crawler->filter('table.users tbody tr')->count());
+        $this->assertSame(4, $crawler->filter('table.users tbody tr')->count());
 
         $link = $crawler->filter('table.users tbody tr td.actions a.users-delete-user')->last()->link();
         $client->click($link);
@@ -269,7 +269,7 @@ class ProfileControllerTest extends WebTestCase {
         $this->assertStatusCode(200, $client);
 
         $crawler = $client->getCrawler();
-        $this->assertSame(1, $crawler->filter('table.users tbody tr')->count());
+        $this->assertSame(3, $crawler->filter('table.users tbody tr')->count());
 
         // @todo delete the administrator user (shouldn't be possible)
 
@@ -279,43 +279,135 @@ class ProfileControllerTest extends WebTestCase {
         // @todo delete a non-existing user
     }
 
-    public function testManageOwnProfileAsAdministrator()
+    public function testManageProfilesAsAManager()
     {
         // @todo
         //   Write tests for this case
+        $client = $this->makeClient();
 
-        // Not be able to delete myself
-
-        // Not be able to set roles
-
-        // On update of my profile I'm always administrator
-    }
-
-    public function testManageUsersAsNonAdministrator()
-    {
-        // @todo
-        //   Write tests for this case
+        // Log in as an administrator
+        
+        $crawler = $client->request('GET', '/');
+        $link = $crawler->filter('a[class="login"]')->link();
+        $client->click($link);
+        
+        $crawler = $client->getCrawler();
+        $form = $crawler->selectButton('Login')->form();
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'manager',
+                'login_form[_password]' => 'manager',
+            )
+        );
+        $client->submit($form);
+        $client->followRedirect();
 
         // Not be able to view the user management panel
 
+        $this->assertSame(0, $crawler->filter('a.admin-administration')->count());
+        $client->request('GET', '/user/users');
+        $this->assertStatusCode(403, $client);
+
         // Not be able to add new users
+
+        $client->request('GET', '/user/add');
+        $this->assertStatusCode(403, $client);
 
         // Not be able to edit other users
 
-        // Not be able to delete other users
-    }
+        $client->request('GET', '/user/profile/consumer/edit');
+        $this->assertStatusCode(403, $client);
 
-    public function testManageOwnProfileAsNonAdministrator()
-    {
-        // @todo
-        //   Write tests for this case
+        // Not be able to delete other users
+
+        $client->request('GET', '/user/profile/consumer/delete');
+        $this->assertStatusCode(403, $client);
 
         // I can view my own profile
 
+        $client->request('GET', '/user/profile/manager');
+        $this->assertStatusCode(200, $client);
+
         // I can edit myself
 
+        $client->request('GET', '/user/profile/manager/edit');
+        $this->assertStatusCode(200, $client);
+       
         // I can delete my own account
 
+        $client->request('GET', '/user/profile/manager/delete');
+        $this->assertStatusCode(200, $client);
+
         // I can't change my roles
+
+        $client->request('GET', '/user/profile/manager/edit');
+        $crawler = $client->getCrawler();
+        $this->assertSame(0, $crawler->filter('form label[for="profile_edit_form_roles"]')->count());
+    }
+
+    public function testManageProfilesAsAConsumer()
+    {
+        // @todo
+        //   Write tests for this case
+        $client = $this->makeClient();
+
+        // Log in as a consumer
+        
+        $crawler = $client->request('GET', '/');
+        $link = $crawler->filter('a[class="login"]')->link();
+        $client->click($link);
+        
+        $crawler = $client->getCrawler();
+        $form = $crawler->selectButton('Login')->form();
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'consumer',
+                'login_form[_password]' => 'consumer',
+            )
+        );
+        $client->submit($form);
+        $client->followRedirect();
+
+        // Not be able to view the user management panel
+
+        $this->assertSame(0, $crawler->filter('a.admin-administration')->count());
+        $client->request('GET', '/user/users');
+        $this->assertStatusCode(403, $client);
+
+        // Not be able to add new users
+
+        $client->request('GET', '/user/add');
+        $this->assertStatusCode(403, $client);
+
+        // Not be able to edit other users
+
+        $client->request('GET', '/user/profile/manager/edit');
+        $this->assertStatusCode(403, $client);
+
+        // Not be able to delete other users
+
+        $client->request('GET', '/user/profile/manager/delete');
+        $this->assertStatusCode(403, $client);
+
+        // I can view my own profile
+
+        $client->request('GET', '/user/profile/consumer');
+        $this->assertStatusCode(200, $client);
+
+        // I can edit myself
+
+        $client->request('GET', '/user/profile/consumer/edit');
+        $this->assertStatusCode(200, $client);
+       
+        // I can delete my own account
+
+        $client->request('GET', '/user/profile/consumer/delete');
+        $this->assertStatusCode(200, $client);
+
+        // I can't change my roles
+
+        $client->request('GET', '/user/profile/consumer/edit');
+        $crawler = $client->getCrawler();
+        $this->assertSame(0, $crawler->filter('form label[for="profile_edit_form_roles"]')->count());
     }
 }
