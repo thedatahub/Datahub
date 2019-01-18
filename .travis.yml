@@ -46,7 +46,7 @@ before_script:
   - app/console doctrine:mongodb:fixtures:load --append --fixtures=tests/DataHub --env=test
 
 script:
-  - bin/phpunit -c app --stop-on-failure --coverage-html scripts/coverage
+  - bin/phpunit
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
