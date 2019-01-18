@@ -26,6 +26,11 @@ class Client extends BaseClient
     protected $id;
 
     /**
+     * @ODM\ReferenceOne(targetDocument="DataHub\UserBundle\Document\User")
+     */
+    protected $user;
+
+    /**
      * @ODM\ReferenceMany(targetDocument="AuthCode", mappedBy="client", orphanRemoval=true)
      */
     protected $authcodes;
@@ -83,6 +88,16 @@ class Client extends BaseClient
         $this->id = $id;
 
         return $this;
+    }
+
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
     }
 
     /**

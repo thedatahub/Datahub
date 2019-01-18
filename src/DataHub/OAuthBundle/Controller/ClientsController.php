@@ -49,6 +49,8 @@ class ClientsController extends Controller
 
         if ($form->isValid()) {
             $dm = $this->get('doctrine_mongodb')->getManager();
+            $currentUser = $this->getUser();
+            $entity->setUser($currentUser);
             $dm->persist($entity);
             $dm->flush();
 

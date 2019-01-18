@@ -27,7 +27,7 @@ services:
 
     datahub.core.menu_builder:
         class: DataHub\SharedBundle\Menu\MenuBuilder
-        arguments: ["@knp_menu.factory", "@security.authorization_checker"]
+        arguments: ["@knp_menu.factory", "@security.authorization_checker", "@security.token_storage"]
         tags:
             - { name: knp_menu.menu_builder, method: createMainMenu, alias: main }
             - { name: knp_menu.menu_builder, method: createProfileMenu, alias: profile }
@@ -85,3 +85,69 @@ services:
         arguments: ["@datahub.resource.datatype.datatypeRegister"]
         calls:
           - ['setConverter', ['%datahub_enabled_data_type%']]
+
+    datahub.security.login_form_authenticator:
+        class: DataHub\UserBundle\Security\LoginFormAuthenticator
+        autowire: true
+
+    datahub.security.user.form.edit_profile:
+        class: DataHub\UserBundle\Form\ProfileEditFormType
+        arguments: ["@security.authorization_checker", "@security.token_storage"]
+        tags:
+            - { name: form.type }
+
+    datahub.security.user.dto.profile_edit_assembler:
+        class: DataHub\UserBundle\DTO\ProfileEditAssembler
+        autowire: true
+
+    datahub.security.user.dto.profile_create_assembler:
+        class: DataHub\UserBundle\DTO\ProfileCreateAssembler
+        arguments: ['@security.password_encoder', '@doctrine_mongodb']
+
+    datahub.security.user.dto.resetpassword_create_assembler:
+        class: DataHub\UserBundle\DTO\ResetPasswordAssembler
+        arguments: ['@doctrine_mongodb']
+
+    datahub.security.user.repository:
+        class: DataHub\UserBundle\Repository\UserRepository
+        factory: ["@doctrine_mongodb", getRepository]
+        arguments: [DataHub\UserBundle\Document\User]
+
+    datahub.security.user_provider.username:
+        class: DataHub\UserBundle\Security\UserProvider
+        arguments: ["@datahub.security.user.repository"]
+
+    datahub.security.security.login_manager:
+        class: DataHub\UserBundle\Security\LoginManager
+        arguments: ['@security.token_storage', '@security.user_checker', '@security.authentication.session_strategy', '@request_stack', null]
+
+    datahub.security.util.token_generator:
+        class: DataHub\UserBundle\Util\TokenGenerator
+
+    datahub.security.listener.installer:
+        class: DataHub\UserBundle\EventListener\InstallerListener
+        arguments: ['@controller_resolver', '@datahub.security.user.repository']
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+
+    datahub.security.listener.email_confirmation:
+        class: DataHub\UserBundle\EventListener\EmailConfirmationListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments: ['@router', '@session', '@datahub.security.util.token_generator', '@datahub.security.mailer.mailer']
+
+    datahub.security.listener.email_reset_confirmation:
+        class: DataHub\UserBundle\EventListener\EmailResetConfirmationListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments: ['@router', '@session', '@datahub.security.util.token_generator', '@datahub.security.mailer.mailer']
+
+    datahub.security.mailer.mailer:
+        class: DataHub\UserBundle\Mailer\Mailer
+        arguments: ['@mailer', '@router', '@twig', '%service_address%']
+
+    datahub.security.listener.authentication:
+        class: DataHub\UserBundle\EventListener\AuthenticationListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments: ['@datahub.security.security.login_manager', 'main']

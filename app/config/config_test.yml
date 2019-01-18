@@ -6,6 +6,7 @@ framework:
     test: ~
     session:
         storage_id: session.storage.mock_file
+        name: MOCKSESSION
     profiler:
         collect: false
 
@@ -22,5 +23,4 @@ security:
         main:
             http_basic: ~
 
-doctrine_mongodb:
-    default_database: %mongodb_database%-test
+liip_functional_test: ~

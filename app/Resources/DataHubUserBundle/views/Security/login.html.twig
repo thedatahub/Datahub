@@ -1,0 +1,31 @@
+{% extends 'DataHubUserBundle::layout.html.twig' %}
+
+{% set page_title = 'Log in to this Datahub' | trans({}, 'FOSUserBundle') %}
+
+{% block content %}
+
+{% if error %}
+    <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>{{ error.messageKey | trans(error.messageData, 'FOSUserBundle') }}</strong>
+    </div>
+{% endif %}
+
+    {{ form_start(form) }}
+
+        {{ form_row(form._username) }}
+
+        {{ form_row(form._password) }}
+
+        <button type="submit" class="btn btn-primary login">
+            {{ 'Login' | trans }}
+            <span class="fa fa-lock"></span>
+        </button>
+
+        <a href="{{ path('datahub_user_resetting_request') }}" class="btn btn-default password-reset">
+            {{ 'Request a new password.' | trans }}
+            <span class="fa fa-question-circle"></span>
+        </a>
+    {{ form_end(form) }}
+
+{% endblock %}

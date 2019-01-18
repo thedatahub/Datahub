@@ -1,0 +1,15 @@
+{% extends 'DataHubUserBundle::layout.html.twig' %}
+
+{% set page_title = 'Reset your password' | trans({}, 'DataHubUserBundle') %}
+
+{% block content %}
+
+    {{ form_start(form) }}
+        {{ form_row(form.email) }}
+        <button type="submit" class="btn btn-primary">
+            {{ 'Request a new password.' | trans }}
+            <span class="fa fa-question-circle"></span>
+        </button>
+    {{ form_end(form) }}
+
+{% endblock %}

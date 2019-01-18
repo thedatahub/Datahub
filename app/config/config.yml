@@ -43,6 +43,9 @@ twig:
         service_organisation_website: '%service_organisation_website%'
         service_organisation: '%service_organisation%'
         service_address: '%service_address%'
+    form:
+        resources: 
+            - 'bootstrap_3_layout.html.twig'
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -53,16 +56,6 @@ swiftmailer:
     spool:     { type: memory }
 
 # Non-core
-fos_user:
-    db_driver: mongodb # other valid values are 'mongodb', 'couchdb' and 'propel'
-    firewall_name: main
-    user_class: "DataHub\\UserBundle\\Document\\User"
-    registration:
-        confirmation:
-            enabled:    true
-    from_email:
-        address:        %service_address%
-        sender_name:    %service_name%
 
 fos_oauth_server:
     db_driver: mongodb       # Drivers available: orm, mongodb, or propel
@@ -71,7 +64,8 @@ fos_oauth_server:
     refresh_token_class: "DataHub\\OAuthBundle\\Document\\RefreshToken"
     auth_code_class:     "DataHub\\OAuthBundle\\Document\\AuthCode"
     service:
-        user_provider: fos_user.user_provider.username
+        # user_provider: fos_user.user_provider.username
+        user_provider: datahub.security.user_provider.username
         options:
             supported_scopes: internal web external
             access_token_lifetime: %access_token_lifetime%
@@ -128,7 +122,7 @@ fos_rest:
         view_response_listener: true
     exception:
         enabled: true
-    disable_csrf_role: ROLE_API
+  #  disable_csrf_role: ROLE_API
     allowed_methods_listener: true
     access_denied_listener:
         # all requests using the 'json' format will return a 403 on an access denied violation
@@ -164,7 +158,7 @@ doctrine_mongodb:
             options:
                 username: %mongodb_user%
                 password: %mongodb_password%
-                db: admin
+                authSource: %mongodb_database%
     document_managers:
         default:
             auto_mapping: true

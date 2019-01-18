@@ -1,0 +1,16 @@
+{% extends 'app/base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="col-sm-3">
+                {% set menuItem = knp_menu_get('main', ['Administration']) %}
+                {{ knp_menu_render(['main', 'Administration']) }}
+            </div>
+        {% endif %}
+
+        <div class="{{ is_granted('ROLE_ADMIN') ? 'col-sm-9' : 'col-sm-8 col-sm-offset-2' }}">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

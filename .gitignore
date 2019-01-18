@@ -15,6 +15,7 @@
 /bin/
 /composer.phar
 /web/media/
+/tests/_reports
 .fresh_deployed
 .idea/
 *.php~
