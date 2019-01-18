@@ -122,10 +122,6 @@ class ProfileController extends Controller
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        //if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-        //    throw $this->createAccessDeniedException();
-        //}
-    
         $currentUser = $this->getUser();
 
         $documentManager = $this->get('doctrine_mongodb')->getManager();
