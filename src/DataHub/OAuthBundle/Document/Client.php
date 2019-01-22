@@ -6,16 +6,33 @@ use FOS\OAuthServerBundle\Document\Client as BaseClient;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
-use DataHub\SharedBundle\Document\Traits as Traits;
-
 /**
- * @ODM\Document
+ * @ODM\Document(
+ *   collection="Client", 
+ *   repositoryClass="DataHub\OAuthBundle\Repository\ClientRepository"
+ * ) 
  */
 class Client extends BaseClient
 {
+    /**
+     * @var \DateTime $createdAt
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ODM\Field(type="date")
+     */
+    private $createdAt;
+
+    /**
+     * @var \DateTime $updatedAt
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ODM\Field(type="date")
+     */
+    private $updatedAt;
+
     /**
      * @ODM\Id(strategy="auto")
      */
@@ -25,6 +42,11 @@ class Client extends BaseClient
      * @ODM\Field(type="string")
      */
     protected $randomId;
+
+    /**
+     * @ODM\Field(type="string")
+     */
+    protected $applicationName;
 
     /**
      * @ODM\ReferenceOne(targetDocument="DataHub\UserBundle\Document\User")
@@ -45,6 +67,16 @@ class Client extends BaseClient
      * @ODM\ReferenceMany(targetDocument="RefreshToken", mappedBy="client", orphanRemoval=true)
      */
     protected $refreshTokens;
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
 
     /**
      * We use RandomID as a OAuth Client Identifier as an added layer
@@ -67,7 +99,17 @@ class Client extends BaseClient
         return $this->getRandomId();
     }
 
-    public function setUser($user)
+    public function setApplicationName($applicationName)
+    {
+        $this->applicationName = $applicationName;
+    }
+
+    public function getApplicationName()
+    {
+        return $this->applicationName;
+    }
+
+    public function setUser(UserInterface $user)
     {
         $this->user = $user;
     }

@@ -4,38 +4,31 @@
     <div class="panel panel-primary">
         <div class="panel-heading">
             <div class="btn-group pull-right">
-                <a href="{{ path('datahub_oauth_clients_new') }}" class="btn btn-xs btn-default">
+                <a href="{{ path('datahub_oauth_clients_add') }}" class="btn btn-xs btn-default">
                     <i class="fa fa-plus"></i> {{ 'New client' | trans }}</a>
                 </a>
             </div>
 
             <h3 class="panel-title">
                 <i class="fa fa-cloud-upload"></i>
-                {{ 'Clients' | trans }}
+                {{ 'OAuth Clients' | trans }}
             </h3>
         </div>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>{{ 'Label' | trans }}</th>
-                    <th>{{ 'Client Code' | trans }}</th>
+                    <th>{{ 'Application name' | trans }}</th>
                     <th>{{ 'Allowed grant types' | trans }}</th>
-                    <th>{{ 'Redirect URIs' | trans }}</th>
                     <th>{{ 'Actions' | trans }}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for client in clients %}
                     <tr>
-                        <td>{{ client.getLabel() }}</td>
-                        <td>{{ client.getClientCode() }}</td>
-                        <td>{{ client.getAllowedGrantTypes() | join('<br>') | raw }}</td>
-                        <td>{{ client.getRedirectUris() | join('<br>') | raw }}</td>
+                        <td>{{ client.getApplicationName() }}</td>
+                        <td>{{ client.getAllowedGrantTypes() | join(', ') | raw }}</td>
                         <td>
                             <div class="btn-group">
-                                <a href="{{ path('datahub_oauth_clients_show', { id: client.getId() }) }}" class="btn btn-xs btn-default">
-                                    <i class="fa fa-eye"></i> {{ 'View' | trans }}
-                                </a>
                             </div>
                         </td>
                     </tr>

@@ -1,42 +1,35 @@
 {% extends 'DataHubOAuthBundle:Default:layout.html.twig' %}
 
-{% set page_title = 'Client: %entity%' | trans({ '%entity%': entity }) %}
+{% set page_title = 'OAuth client: %client%' | trans({ '%client%': client.getApplicationName() }) %}
 
 {% block content %}
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">
-                {{ 'Client: %entity%' | trans({ '%entity%': entity }) }}
+                <i class="fa fa-cloud-upload"></i>
+                {{ 'OAuth client: %client%' | trans({ '%client%': client.getApplicationName() }) }}
             </h3>
         </div>
         <table class="table table-striped">
             <tr>
-                <th>{{ 'ID' | trans }}</th>
-                <td>{{ entity.getId() }}</td>
-            </tr>
-            <tr>
-                <th>{{ 'Label' | trans }}</th>
-                <td>{{ entity.getLabel() }}</td>
-            </tr>
-            <tr>
-                <th>{{ 'Client Code' | trans }}</th>
-                <td>{{ entity.getClientCode() }}</td>
+                <th>{{ 'Application name' | trans }}</th>
+                <td>{{ client.getApplicationName() }}</td>
             </tr>
             <tr>
                 <th>{{ 'Allowed grant types' | trans }}</th>
-                <td>{{ entity.getAllowedGrantTypes() | join('<br>') | raw }}</td>
+                <td>{{ client.getAllowedGrantTypes() | join('<br>') | raw }}</td>
             </tr>
             <tr>
                 <th>{{ 'Redirect URIs' | trans }}</th>
-                <td>{{ entity.getRedirectUris() | join('<br>') | raw }}</td>
+                <td>{{ client.getRedirectUris() | join('<br>') | raw }}</td>
             </tr>
             <tr>
                 <th>{{ 'Public ID' | trans }}</th>
-                <td>{{ entity.getPublicId() }}</td>
+                <td>{{ client.getPublicId() }}</td>
             </tr>
             <tr>
                 <th>{{ 'Secret' | trans }}</th>
-                <td>{{ entity.getSecret() }}</td>
+                <td>{{ client.getSecret() }}</td>
             </tr>
         </table>
         <div class="panel-footer">
@@ -46,7 +39,7 @@
                         <a href="{{ path('datahub_oauth_clients_index') }}" class="btn btn-default">
                             <i class="fa fa-angle-double-left"></i> {{ 'Back' | trans }}
                         </a>
-                        <a href="{{ path('datahub_oauth_clients_edit', { id: entity.getId() }) }}" class="btn btn-default">
+                        <a href="{{ path('datahub_oauth_clients_edit', { id: client.getId() }) }}" class="btn btn-default">
                             <i class="fa fa-edit"></i> {{ 'Edit' | trans }}
                         </a>
                     </div>
