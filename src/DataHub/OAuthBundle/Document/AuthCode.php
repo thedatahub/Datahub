@@ -45,13 +45,10 @@ class AuthCode extends BaseAuthCode
      * Set client.
      *
      * @param ClientInterface $client
-     * @return AuthCode
      */
     public function setClient(ClientInterface $client)
     {
         $this->client = $client;
-
-        return $this;
     }
 
     /**
@@ -68,12 +65,9 @@ class AuthCode extends BaseAuthCode
      * Set user.
      *
      * @param UserInterface $user
-     * @return AuthCode
      */
     public function setUser(UserInterface $user)
     {
         $this->user = $user;
-
-        return $this;
     }
 }

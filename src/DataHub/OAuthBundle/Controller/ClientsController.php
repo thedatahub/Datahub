@@ -32,7 +32,7 @@ class ClientsController extends Controller
         $result = $dm->getRepository(static::ENTITY_NAME)->findAll();
 
         return array(
-            'entities' => $result,
+            'clients' => $result,
         );
     }
 

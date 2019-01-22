@@ -19,7 +19,6 @@ class ClientFixtures extends AbstractFixture implements FixtureInterface
     protected function doLoad(ObjectManager $manager)
     {
         $entity = new Client();
-        $entity->setLabel('TestClient');
         $entity->setAllowedGrantTypes(['client_credentials', 'refresh_token', 'token', 'password']);
         $entity->setRedirectUris([]);
         $entity->setRandomId(static::DEFAULT_CLIENT_PUBLIC_ID);

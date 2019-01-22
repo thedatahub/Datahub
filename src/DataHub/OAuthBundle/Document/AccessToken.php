@@ -34,6 +34,14 @@ class AccessToken extends BaseAccessToken
     protected $user;
 
     /**
+     * {@inheritdoc}
+     */
+    public function getPublicId()
+    {
+        return $this->getRandomId();
+    }
+
+    /**
      * Get client.
      *
      * @return ClientInterface
@@ -52,8 +60,6 @@ class AccessToken extends BaseAccessToken
     public function setClient(ClientInterface $client)
     {
         $this->client = $client;
-
-        return $this;
     }
 
     /**
@@ -75,7 +81,5 @@ class AccessToken extends BaseAccessToken
     public function setUser(UserInterface $user)
     {
         $this->user = $user;
-
-        return $this;
     }
 }

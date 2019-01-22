@@ -13,17 +13,18 @@ use DataHub\SharedBundle\Document\Traits as Traits;
 
 /**
  * @ODM\Document
- * @MongoDBUnique({"label"})
- * @MongoDBUnique({"clientCode"})
  */
 class Client extends BaseClient
 {
-    use Traits\LabelableTrait;
-
     /**
      * @ODM\Id(strategy="auto")
      */
     protected $id;
+
+    /**
+     * @ODM\Field(type="string")
+     */
+    protected $randomId;
 
     /**
      * @ODM\ReferenceOne(targetDocument="DataHub\UserBundle\Document\User")
@@ -46,48 +47,24 @@ class Client extends BaseClient
     protected $refreshTokens;
 
     /**
-     * @ODM\Field(type="string")
-     */
-    protected $clientCode;
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * {@inheritdoc}
+     * We use RandomID as a OAuth Client Identifier as an added layer
+     * against phising attacks.
+     * 
+     * Per RFC 6749 Section 2.2:
+     * 
+     *  The authorization server issues the registered client a client
+     *  identifier -- a unique string representing the registration
+     *  information provided by the client.
+     * 
+     * We use the $randomId property of the BaseClient which is set
+     * at object instantiation. We do not perform a validation against
+     * uniqueness. This value is based on a string generated through
+     * random_bytes(32). This leaves us with a 2^256 possibilities
+     * of the same string being generated twice.
      */
     public function getPublicId()
     {
         return $this->getRandomId();
-    }
-
-    /**
-     * To string.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->label;
-    }
-
-    /**
-     * Set id
-     *
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function setUser($user)
@@ -98,55 +75,5 @@ class Client extends BaseClient
     public function getUser()
     {
         return $this->user;
-    }
-
-    /**
-     * Get guessed user.
-     *
-     * @return UserInterface|null
-     */
-    public function getGuessedUser()
-    {
-        if ($this->accessTokens->count()) {
-            return $this->accessTokens->first()->getUser();
-        }
-
-        if ($this->refreshTokens->count()) {
-            return $this->refreshTokens->first()->getUser();
-        }
-
-        if ($this->authCodes->count()) {
-            return $this->authCodes->first()->getUser();
-        }
-
-        return null;
-    }
-
-    /**
-     * Set clientCode
-     *
-     * @param string $clientCode
-     * @return self
-     */
-    public function setClientCode($clientCode)
-    {
-        /*
-         * If the ID is already set, it means that this record is already in DB
-         *  and therefore clientCode can't be changed.
-         */
-        if (!$this->getId() || empty($this->getClientCode())) {
-            $this->clientCode = $clientCode;
-        }
-        return $this;
-    }
-
-    /**
-     * Get clientCode
-     *
-     * @return string $clientCode
-     */
-    public function getClientCode()
-    {
-        return $this->clientCode;
     }
 }

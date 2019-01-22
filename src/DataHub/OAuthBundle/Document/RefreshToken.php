@@ -45,13 +45,10 @@ class RefreshToken extends BaseRefreshToken
      * Set client.
      *
      * @param ClientInterface $client
-     * @return RefreshToken
      */
     public function setClient(ClientInterface $client)
     {
         $this->client = $client;
-
-        return $this;
     }
 
     /**
@@ -68,12 +65,9 @@ class RefreshToken extends BaseRefreshToken
      * Set user.
      *
      * @param UserInterface $user
-     * @return RefreshToken
      */
     public function setUser(UserInterface $user)
     {
         $this->user = $user;
-
-        return $this;
     }
 }
