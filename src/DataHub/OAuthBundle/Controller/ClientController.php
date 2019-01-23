@@ -18,23 +18,9 @@ use DataHub\OAuthBundle\Form\ClientDeleteFormType;
 
 class ClientController extends Controller
 {
-    /**
-     * @Route("/", name="datahub_oauth_clients_index")
-     * @Security("is_granted('ROLE_ADMIN')")
-     * @Template()
-     */
-    public function indexAction()
-    {
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $result = $dm->getRepository(static::ENTITY_NAME)->findAll();
-
-        return array(
-            'clients' => $result,
-        );
-    }
 
     /**
-     * @Route("/client/{externalId}", name="datahub_oauth_clients_show")
+     * @Route("/client/{externalId}", name="datahub_oauth_client_show")
      */
     public function showAction(Request $request, $externalId)
     {
@@ -68,7 +54,7 @@ class ClientController extends Controller
     }
 
     /**
-     * @Route("/add", name="datahub_oauth_clients_add")
+     * @Route("/add", name="datahub_oauth_client_add")
      * @Security("is_granted('ROLE_CONSUMER')")
      */
     public function addAction(Request $request)
@@ -110,7 +96,7 @@ class ClientController extends Controller
     }
 
     /**
-     * @Route("/client/{externalId}/edit")
+     * @Route("/client/{externalId}/edit", name="datahub_oauth_client_edit"))
      */
     public function editAction(Request $request, $externalId)
     {
@@ -173,7 +159,7 @@ class ClientController extends Controller
     }
 
     /**
-     * @Route("/{externalId}/delete")
+     * @Route("/{externalId}/delete", name="datahub_oauth_client_delete")
      */
     public function deleteAction(Request $request, $externalId)
     {

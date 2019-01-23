@@ -42,17 +42,19 @@
             <div class="row">
                 <div class="col-xs-8">
                     <div class="btn-group">
+                        {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('datahub_oauth_clients_index') }}" class="btn btn-default">
                             <i class="fa fa-angle-double-left"></i> {{ 'Back' | trans }}
                         </a>
-                        <a href="{{ path('datahub_oauth_clients_edit', { externalId: client.getExternalId() }) }}" class="btn btn-default">
+                        {% endif %}
+                        <a href="{{ path('datahub_oauth_client_edit', { externalId: client.getExternalId() }) }}" class="btn btn-default">
                             <i class="fa fa-edit"></i> {{ 'Edit' | trans }}
                         </a>
                     </div>
                 </div>
                 <div class="col-xs-4 text-right">
                     <div class="btn-group">
-                        <a href="{{ path('datahub_oauth_clients_delete', { externalId: client.getExternalId() }) }}" class="btn btn-danger" onclick="return confirm('{{ 'Are you sure?' | trans }}')">
+                        <a href="{{ path('datahub_oauth_client_delete', { externalId: client.getExternalId() }) }}" class="btn btn-danger" onclick="return confirm('{{ 'Are you sure?' | trans }}')">
                             <i class="fa fa-trash"></i> {{ 'Delete' | trans }}
                         </a>
                     </div>

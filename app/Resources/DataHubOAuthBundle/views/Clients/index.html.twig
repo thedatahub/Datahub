@@ -1,23 +1,20 @@
-{% set page_title = 'Clients' | trans %}
+{% extends 'DataHubOAuthBundle:Layouts:default.html.twig' %}
+
+{% set page_title = 'clients.index' | trans({}, 'FOSUserBundle') %}
 
 {% block content %}
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <div class="btn-group pull-right">
-                <a href="{{ path('datahub_oauth_client_add') }}" class="btn btn-xs btn-default oauth-clients-add-client">
-                    <i class="fa fa-plus"></i> {{ 'New client' | trans }}</a>
-                </a>
-            </div>
-
             <h3 class="panel-title">
                 <i class="fa fa-cloud-upload"></i>
-                {{ 'OAuth Clients' | trans }}
+                {{ 'All OAuth Clients' | trans }}
             </h3>
         </div>
         <table class="table table-striped oauth-clients">
             <thead>
                 <tr>
                     <th>{{ 'Application name' | trans }}</th>
+                    <th>{{ 'Owner' | trans }}</th>
                     <th>{{ 'Allowed grant types' | trans }}</th>
                     <th>{{ 'Created' }}</th>
                     <th>{{ 'Actions' | trans }}</th>
@@ -32,6 +29,10 @@
                                 {{ client.getApplicationName() }}
                                </a>
                         </td>
+                        <td class="owner">
+                            <a href="{{ path('datahub_user_users_show', { username: client.getUser().getUsername() }) }}">
+                                {{ client.getUser().getUserName() }}</td>
+                            </a>
                         <td class="allowedgranttypes">{{ client.getAllowedGrantTypes() | join(', ') | raw }}</td>
                         <td class="createdat">{{ client.getCreatedAt() | date("d M Y H:m") }}</td>
                         <td class="actions">
@@ -56,3 +57,4 @@
         </table>
     </div>
 {% endblock %}
+
