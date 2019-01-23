@@ -16,7 +16,7 @@ use DataHub\OAuthBundle\Form\ClientCreateFormType;
 use DataHub\OAuthBundle\Form\ClientEditFormType;
 use DataHub\OAuthBundle\Form\ClientDeleteFormType;
 
-class ClientsController extends Controller
+class ClientController extends Controller
 {
     /**
      * @Route("/", name="datahub_oauth_clients_index")

@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Client;
  * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
  * @package DataHub\UserBundle
  */
-class ClientsControllerTest extends WebTestCase {
+class ClientControllerTest extends WebTestCase {
 
     public function setUp()
     {
