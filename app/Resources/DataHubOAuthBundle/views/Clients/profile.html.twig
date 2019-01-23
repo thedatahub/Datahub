@@ -28,18 +28,18 @@
                     <tr>
 
                         <td class="applicationname">
-                            <a href="{{ path('datahub_oauth_clients_show', { applicationName: client.getApplicationName() }) }}">
+                            <a href="{{ path('datahub_oauth_clients_show', { externalId: client.getExternalId() }) }}">
                                 {{ client.getApplicationName() }}
-                            </a>
+                               </a>
                         </td>
                         <td class="allowedgranttypes">{{ client.getAllowedGrantTypes() | join(', ') | raw }}</td>
                         <td class="createdat">{{ client.getCreatedAt() | date("d M Y H:m") }}</td>
                         <td class="actions">
                             <div class="btn-group">
-                                <a href="{{ path('datahub_oauth_clients_edit', { id: client.getId() }) }}" class="btn btn-xs btn-default oauth-clients-edit-client">
+                                <a href="{{ path('datahub_oauth_clients_edit', { externalId: client.getExternalId() }) }}" class="btn btn-xs btn-default oauth-clients-edit-client">
                                     <i class="fa fa-pencil"></i> {{ 'Edit' | trans }}
                                 </a>
-                                <a href="{{ path('datahub_oauth_clients_delete', { applicationName: client.getApplicationName() }) }}" class="btn btn-xs btn-danger oauth-clients-delete-client">
+                                <a href="{{ path('datahub_oauth_clients_delete', { externalId: client.getExternalId() }) }}" class="btn btn-xs btn-danger oauth-clients-delete-client">
                                     <i class="fa fa-trash"></i> {{ 'Delete' | trans }}
                                 </a>
                             </div>

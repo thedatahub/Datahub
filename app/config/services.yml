@@ -145,13 +145,6 @@ services:
             - { name: kernel.event_subscriber }
         arguments: ['@datahub.security.security.login_manager', 'main']
 
-    # datahub.oauth.oauth:
-    #     class: DataHub\OAuthBundle\Service\OAuthService
-    #     calls:
-    #         - [setTokenStorage, ["@security.token_storage"]]
-    #         - [setDocumentManager, ["@doctrine_mongodb.odm.document_manager"]]
-    #         - [setLogger, ["@logger"]]
-
     datahbub.oauth.client_manager.default:
         class: DataHub\OAuthBundle\Document\ClientManager
         arguments: ['@fos_oauth_server.document_manager', '%fos_oauth_server.model.client.class%']
@@ -164,3 +157,7 @@ services:
     datahub.oauth.client.dto.client_create_assembler:
         class: DataHub\OAuthBundle\DTO\ClientCreateAssembler
         arguments: ['@security.token_storage', '@doctrine_mongodb']
+
+    datahub.oauth.client.dto.client_edit_assembler:
+        class: DataHub\OAuthBundle\DTO\ClientEditAssembler
+        arguments: ['@doctrine_mongodb']

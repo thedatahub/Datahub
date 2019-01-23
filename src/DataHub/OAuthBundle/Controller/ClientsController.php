@@ -13,16 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 use DataHub\OAuthBundle\Document\Client;
 use DataHub\OAuthBundle\Form\ClientCreateFormType;
+use DataHub\OAuthBundle\Form\ClientEditFormType;
 use DataHub\OAuthBundle\Form\ClientDeleteFormType;
 
-/**
- * @Route("/clients")
- * @Security("has_role('ROLE_ADMIN')")
- */
 class ClientsController extends Controller
 {
-    const ENTITY_NAME = 'DataHubOAuthBundle:Client';
-
     /**
      * @Route("/", name="datahub_oauth_clients_index")
      * @Security("is_granted('ROLE_ADMIN')")
@@ -39,9 +34,9 @@ class ClientsController extends Controller
     }
 
     /**
-     * @Route("/client/{applicationName}", name="datahub_oauth_clients_show")
+     * @Route("/client/{externalId}", name="datahub_oauth_clients_show")
      */
-    public function showAction(Request $request, $applicationName)
+    public function showAction(Request $request, $externalId)
     {
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException();
@@ -52,7 +47,7 @@ class ClientsController extends Controller
         $documentManager = $this->get('doctrine_mongodb')->getManager();
         $client = $documentManager
              ->getRepository('DataHubOAuthBundle:Client')
-             ->findOneBy(['applicationName' => $applicationName]);
+             ->findOneBy(['externalId' => $externalId]);
 
         if (!$client) {
             throw $this->createNotFoundException();
@@ -115,38 +110,9 @@ class ClientsController extends Controller
     }
 
     /**
-     * @Route("/{id}/edit")
-     * @Template()
+     * @Route("/client/{externalId}/edit")
      */
-    public function editAction(Request $request, $id)
-    {
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $entity = $dm->getRepository(static::ENTITY_NAME)->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException();
-        }
-
-        $form = $this->createForm(ClientFormType::class, $entity);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $dm = $this->get('doctrine_mongodb')->getManager();
-            $dm->flush();
-
-            return $this->redirectToRoute('datahub_oauth_clients_show', ['id' => $entity->getId()]);
-        }
-
-        return [
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        ];
-    }
-
-    /**
-     * @Route("/{applicationName}/delete")
-     */
-    public function deleteAction(Request $request, $applicationName)
+    public function editAction(Request $request, $externalId)
     {
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException();
@@ -158,7 +124,70 @@ class ClientsController extends Controller
         $client = $documentManager
              ->getRepository('DataHubOAuthBundle:Client')
              ->findOneBy([
-                 'applicationName' => $applicationName,
+                 'externalId' => $externalId
+            ]);
+
+        if (!$client) {
+            throw $this->createNotFoundException();
+        }
+
+        $clientOwner = $client->getUser();
+
+        if ($currentUser->getId() !== $clientOwner->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'Unable to access this page!');
+        }
+
+        $assembler = $this->get('datahub.oauth.client.dto.client_edit_assembler');
+        $clientEditData = $assembler->createDTO($client);
+
+        $form = $this->createForm(
+            ClientEditFormType::class, $clientEditData
+        );
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $client = $assembler->updateProfile($client, $clientEditData);
+
+            $documentManager = $this->get('doctrine_mongodb')->getManager();
+            $documentManager->persist($client);
+            $documentManager->flush();
+
+            $this->addFlash('success', 'OAuth client ' . $client->getApplicationName() . ' was successfully updated.');
+
+            return $this->render(
+                '@DataHubOAuth/Client/client.html.twig',
+                [
+                    'client' => $client,
+                ]
+            );
+        }
+
+        return $this->render(
+            '@DataHubOAuth/Client/client.edit.form.html.twig',
+            [
+                'form' => $form->createView(),
+                'title' => 'Edit an OAuth client',
+            ]
+        );
+    }
+
+    /**
+     * @Route("/{externalId}/delete")
+     */
+    public function deleteAction(Request $request, $externalId)
+    {
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException();
+        }
+    
+        $currentUser = $this->getUser();
+
+        $documentManager = $this->get('doctrine_mongodb')->getManager();
+        $client = $documentManager
+             ->getRepository('DataHubOAuthBundle:Client')
+             ->findOneBy([
+                 'externalId' => $externalId,
                  'user' => $currentUser
             ]);
 

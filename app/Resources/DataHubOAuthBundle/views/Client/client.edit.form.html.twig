@@ -1,0 +1,48 @@
+{% extends 'DataHubOAuthBundle:Layouts:default.html.twig' %}
+
+{% set page_title = 'clients.addclient' | trans({}, 'FOSUserBundle') %}
+
+{% block content %}
+
+    <div class="panel panel-primary">
+
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <i class="fa fa-cloud-upload fa-fw"></i>
+                {{ 'Edit OAuth client' | trans }}
+            </h3>
+        </div>
+
+        <div class="panel-body">
+
+            <div class="row">
+
+            <div class="col-md-8">
+
+                {{ form_start(form) }}
+                    
+                    {{ form_errors(form) }}
+
+                    <div class="form-group form-group-applicationname">
+                        {{ form_row(form.applicationName) }}
+                    </div>
+                    <div class="form-group form-group-redirecturis">
+                        {{ form_row(form.redirectUris) }}
+                    </div>
+                    <div class="form-group form-group-allowedgranttypes">
+                        {{ form_row(form.allowedGrantTypes) }}
+                    </div>
+                    
+                    {{ form_row(form.newClientBtn) }}
+    
+                {{ form_end(form) }}
+
+            </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock content %}

@@ -3,6 +3,7 @@
 namespace DataHub\OAuthBundle\Document;
 
 use FOS\OAuthServerBundle\Document\Client as BaseClient;
+use FOS\OAuthServerBundle\Util\Random;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
@@ -41,6 +42,11 @@ class Client extends BaseClient
     /**
      * @ODM\Field(type="string")
      */
+    protected $externalId;
+
+    /**
+     * @ODM\Field(type="string")
+     */
     protected $randomId;
 
     /**
@@ -67,6 +73,25 @@ class Client extends BaseClient
      * @ODM\ReferenceMany(targetDocument="RefreshToken", mappedBy="client", orphanRemoval=true)
      */
     protected $refreshTokens;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $token = Random::generateToken();
+        $hash = substr(md5($token), 0, 6);
+        $this->setExternalId($hash);
+    }
+
+    public function setExternalId($externalId)
+    {
+        $this->externalId = $externalId;
+    }
+
+    public function getExternalId()
+    {
+        return $this->externalId;
+    }
 
     public function getCreatedAt()
     {
