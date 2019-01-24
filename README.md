@@ -232,7 +232,7 @@ Running tests using Docker:
 ## Front end development
 
 Front end workflows are managed via [yarn](https://yarnpkg.com/en/) and 
-[webpack-encore](https://symfony.com/blog/introducing-webpack-encore-for-asset-management.
+[webpack-encore](https://symfony.com/blog/introducing-webpack-encore-for-asset-management).
 
 The layout is based on [Bootstrap 3.3](https://getbootstrap.com/docs/3.3/) 
 and managed via sass. The code can be found under `app/resources/public/sass`. 
