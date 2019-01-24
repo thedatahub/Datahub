@@ -75,8 +75,8 @@ class MenuBuilder
             $menu['Administration']->addChild('Users', array('route' => 'datahub_user_users_index', 'attributes' => array('class' => 'list-group-item')));
             $menu['Administration']['Users']->setLinkAttribute('class', 'admin-users');
 
-            // $menu['Administration']->addChild('Clients', array('route' => 'datahub_oauth_clients_index', 'attributes' => array('class' => 'list-group-item')));
-            // $menu['Administration']->addChild('Tokens', array('route' => 'datahub_oauth_tokens_index', 'attributes' => array('class' => 'list-group-item')));
+            $menu['Administration']->addChild('OAuth Clients', array('route' => 'datahub_oauth_clients_index', 'attributes' => array('class' => 'list-group-item')));
+            $menu['Administration']['OAuth Clients']->setLinkAttribute('class', 'admin-oauth-clients');
        } 
 
         $menu->addChild('REST API', array('route' => 'nelmio_api_doc_index'));

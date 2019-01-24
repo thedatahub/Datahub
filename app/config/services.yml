@@ -46,13 +46,6 @@ services:
               arguments:
                   - '@request_stack'
 
-    datahub.oauth.oauth:
-        class: DataHub\OAuthBundle\Service\OAuthService
-        calls:
-            - [setTokenStorage, ["@security.token_storage"]]
-            - [setDocumentManager, ["@doctrine_mongodb.odm.document_manager"]]
-            - [setLogger, ["@logger"]]
-
     datahub.resource_api.decoder.xml:
         class: DataHub\ResourceAPIBundle\Decoder\XmlDecoder
         arguments: ['@logger', '@datahub.resource.builder.converter.factory']
@@ -151,3 +144,20 @@ services:
         tags:
             - { name: kernel.event_subscriber }
         arguments: ['@datahub.security.security.login_manager', 'main']
+
+    datahbub.oauth.client_manager.default:
+        class: DataHub\OAuthBundle\Document\ClientManager
+        arguments: ['@fos_oauth_server.document_manager', '%fos_oauth_server.model.client.class%']
+
+    datahub.oauth.client.repository:
+        class: DataHub\OAuthBundle\Repository\ClientRepository
+        factory: ["@doctrine_mongodb", getRepository]
+        arguments: [DataHub\OAuthBundle\Document\Client]
+
+    datahub.oauth.client.dto.client_create_assembler:
+        class: DataHub\OAuthBundle\DTO\ClientCreateAssembler
+        arguments: ['@security.token_storage', '@doctrine_mongodb']
+
+    datahub.oauth.client.dto.client_edit_assembler:
+        class: DataHub\OAuthBundle\DTO\ClientEditAssembler
+        arguments: ['@doctrine_mongodb']
