@@ -15,6 +15,7 @@ use DataHub\OAuthBundle\Document\Client;
 use DataHub\OAuthBundle\Form\ClientCreateFormType;
 use DataHub\OAuthBundle\Form\ClientEditFormType;
 use DataHub\OAuthBundle\Form\ClientDeleteFormType;
+use DataHub\OAuthBundle\Form\ClientRevokeFormType;
 
 class ClientController extends Controller
 {
@@ -174,7 +175,6 @@ class ClientController extends Controller
              ->getRepository('DataHubOAuthBundle:Client')
              ->findOneBy([
                  'externalId' => $externalId,
-                 'user' => $currentUser
             ]);
 
         if (!$client) {
@@ -208,6 +208,77 @@ class ClientController extends Controller
             [
                 'form' => $form->createView(),
                 'title' => 'Delete OAuth client',
+            ]
+        );
+    }
+
+    /**
+     * @Route("/{externalId}/revoke", name="datahub_oauth_client_revoke_tokens")
+     */
+    public function revokeTokensAction(Request $request, $externalId)
+    {
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException();
+        }
+    
+        $currentUser = $this->getUser();
+
+        $documentManager = $this->get('doctrine_mongodb')->getManager();
+        $client = $documentManager
+             ->getRepository('DataHubOAuthBundle:Client')
+             ->findOneBy([
+                 'externalId' => $externalId,
+            ]);
+
+        if (!$client) {
+            throw $this->createNotFoundException();
+        }
+
+        $clientOwner = $client->getUser();
+
+        if ($currentUser->getId() !== $clientOwner->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', $currentUser, 'Unable to access this page!');
+        }
+
+        $form = $this->createForm(ClientRevokeFormType::class, $client);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            if ($form->getClickedButton() && 'revokeTokensBtn' === $form->getClickedButton()->getName()) {
+                $accessTokens = $documentManager
+                    ->getRepository('DataHubOAuthBundle:AccessToken')
+                    ->findBy([
+                        'client' => $client,
+                    ]);
+
+                foreach ($accessTokens as $token) {
+                    $documentManager->remove($token);
+                    $documentManager->flush();
+                }
+    
+                $refreshTokens = $documentManager
+                    ->getRepository('DataHubOAuthBundle:RefreshToken')
+                    ->findBy([
+                        'client' => $client,
+                    ]);
+
+                foreach ($refreshTokens as $token) {
+                    $documentManager->remove($token);
+                    $documentManager->flush();
+                }
+
+                $this->addFlash('success', 'Client ' . $client->getApplicationName() . ' revoked tokens successfully.');
+            }
+
+            return $this->redirectToRoute('datahub_user_users_show', array('username' => $clientOwner->getUserName()));
+        }
+
+        return $this->render(
+            '@DataHubOAuth/Client/client.revoke.form.html.twig',
+            [
+                'form' => $form->createView(),
+                'title' => 'Revoke OAuth tokens for this client',
             ]
         );
     }
