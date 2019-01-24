@@ -11,29 +11,31 @@
             </h3>
         </div>
         <table class="table table-striped">
-            <tr>
+            <tr class="applicationname">
                 <th>{{ 'Application name' | trans }}</th>
                 <td>{{ client.getApplicationName() }}</td>
             </tr>
-            {% if is_granted('ROLE_ADMIN') %}
-            <tr>
+            <tr class="owner">
                 <th>{{ 'Owner' | trans }}</th>
-                <td>{{ client.getUser().getUserName() }}</td>
+                <td>
+                    <a href="{{ path('datahub_user_users_show', { username: client.getUser().getUsername() }) }}">
+                        {{ client.getUser().getUsername() }}
+                    </a>
+                </td>
             </tr>
-            {% endif %}
-            <tr>
+            <tr class="allowedgranttypes">
                 <th>{{ 'Allowed grant types' | trans }}</th>
                 <td>{{ client.getAllowedGrantTypes() | join('<br>') | raw }}</td>
             </tr>
-            <tr>
+            <tr class="redirecturis">
                 <th>{{ 'Redirect URIs' | trans }}</th>
                 <td>{{ client.getRedirectUris() | join('<br>') | raw }}</td>
             </tr>
-            <tr>
+            <tr class="publicid">
                 <th>{{ 'Public ID' | trans }}</th>
                 <td>{{ client.getPublicId() }}</td>
             </tr>
-            <tr>
+            <tr class="secret">
                 <th>{{ 'Secret' | trans }}</th>
                 <td>{{ client.getSecret() }}</td>
             </tr>
@@ -41,26 +43,28 @@
         <div class="panel-footer">
             <div class="row">
                 <div class="col-xs-8">
-                    <div class="btn-group">
-                        {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('datahub_oauth_clients_index') }}" class="btn btn-default">
-                            <i class="fa fa-angle-double-left"></i> {{ 'Back' | trans }}
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <div class="btn-group"> 
+                        <a href="{{ path('datahub_oauth_clients_index') }}" class="btn btn-default back">
+                            <i class="fa fa-angle-double-left"></i> {{ 'All clients' | trans }}
                         </a>
-                        {% endif %}
-                        <a href="{{ path('datahub_oauth_client_edit', { externalId: client.getExternalId() }) }}" class="btn btn-default">
+                    </div>
+                    {% endif %}
+                    <div class="btn-group"> 
+                        <a href="{{ path('datahub_oauth_client_edit', { externalId: client.getExternalId() }) }}" class="btn btn-default oauth-edit-client">
                             <i class="fa fa-edit"></i> {{ 'Edit' | trans }}
                         </a>
                     </div>
                 </div>
                 <div class="col-xs-4 text-right">
                     <div class="btn-group">
-                        <a href="{{ path('datahub_oauth_client_revoke_tokens', { externalId: client.getExternalId() }) }}" class="btn btn-danger">
+                        <a href="{{ path('datahub_oauth_client_revoke_tokens', { externalId: client.getExternalId() }) }}" class="btn btn-danger oauth-revoke-tokens">
                             <i class="fa fa-trash"></i> {{ 'Revoke' | trans }}
                         </a>
                     </div>
 
                     <div class="btn-group">
-                        <a href="{{ path('datahub_oauth_client_delete', { externalId: client.getExternalId() }) }}" class="btn btn-danger">
+                        <a href="{{ path('datahub_oauth_client_delete', { externalId: client.getExternalId() }) }}" class="btn btn-danger oauth-delete-client">
                             <i class="fa fa-trash"></i> {{ 'Delete this client' | trans }}
                         </a>
                     </div>

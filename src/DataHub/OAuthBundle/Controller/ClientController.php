@@ -198,9 +198,13 @@ class ClientController extends Controller
                 $documentManager->flush();
     
                 $this->addFlash('success', 'Client ' . $client->getApplicationName() . ' removed successfully.');
+
+                return $this->redirectToRoute('datahub_user_users_show', array('username' => $clientOwner->getUserName()));
             }
 
-            return $this->redirectToRoute('datahub_user_users_show', array('username' => $clientOwner->getUserName()));
+            if ($form->getClickedButton() && 'cancelDeleteClientBtn' === $form->getClickedButton()->getName()) {
+                return $this->redirectToRoute('datahub_oauth_client_show', array('externalId' => $client->getExternalid()));
+            }
         }
 
         return $this->render(
