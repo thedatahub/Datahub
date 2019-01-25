@@ -2,8 +2,7 @@
 
 namespace DataHub\OAIBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Bundle\FrameworkBundle\Client;
+use Liip\FunctionalTestBundle\Test\WebTestCase;
 
 use DataHub\OAIBundle\Repository\Repository;
 
@@ -15,12 +14,22 @@ use DataHub\OAIBundle\Repository\Repository;
  * @author Matthias Vandermaesen <matthias.vandermaesen@vlaamsekunstcollectie.be>
  * @package DataHub\OAIBundle
  */
-class ProviderControllerTest extends WebTestCase {
+class RecordControllerTest extends WebTestCase
+{
     /**
      * {@inheritdoc}
      */
-    protected function setUp() {
-        $this->client = static::createClient();
+    protected function setUp() 
+    {
+        $this->loadFixtures(
+            array(
+                'DataHub\UserBundle\DataFixtures\MongoDB\LoadUserData',
+                'DataHub\OAuthBundle\DataFixtures\MongoDB\LoadClientData',
+                'DataHub\ResourceAPIBundle\DataFixtures\MongoDB\LoadRecordData'
+            ), 
+            null, 
+            'doctrine_mongodb'
+        );
     }
 
     /**
@@ -28,9 +37,10 @@ class ProviderControllerTest extends WebTestCase {
      *
      * @return string A valid OAuth access token.
      */
-    protected static function getAccessToken() {
-        $client = static::createClient();
-        $client->request('GET', '/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
+    protected static function getAccessToken() 
+    {
+        $client = $this->makeClient();
+        $client->request('GET', '/oauth/v2/token?grant_type=client_credentials&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
         $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
         return $data['access_token'];
@@ -42,8 +52,9 @@ class ProviderControllerTest extends WebTestCase {
     public function identify()
     {
         $action = sprintf('/oai/?verb=%s', 'Identify');
-        $this->client->request('GET', $action);
-        return $this->client->getResponse();
+        $client = $this->makeClient();
+        $client->request('GET', $action);
+        return $client->getResponse();
     }
 
     /**
@@ -52,8 +63,9 @@ class ProviderControllerTest extends WebTestCase {
     public function listMetdataFormats()
     {
         $action = sprintf('/oai/?verb=%s', 'ListMetadataFormats');
-        $this->client->request('GET', $action);
-        return $this->client->getResponse();
+        $client = $this->makeClient();
+        $client->request('GET', $action);
+        return $client->getResponse();
     }
 
     /**
@@ -62,8 +74,9 @@ class ProviderControllerTest extends WebTestCase {
     public function listSets()
     {
         $action = sprintf('/oai/?verb=%s', 'ListSets');
-        $this->client->request('GET', $action);
-        return $this->client->getResponse();
+        $client = $this->makeClient();
+        $client->request('GET', $action);
+        return $client->getResponse();
     }
 
     /**
@@ -85,8 +98,9 @@ class ProviderControllerTest extends WebTestCase {
             $action = sprintf('%s&until=%s', $action, $until);
         }
 
-        $this->client->request('GET', $action);
-        return $this->client->getResponse();
+        $client = $this->makeClient();
+        $client->request('GET', $action);
+        return $client->getResponse();
     }
 
     /**
@@ -100,8 +114,9 @@ class ProviderControllerTest extends WebTestCase {
             $action = sprintf('/oai/?verb=%s&resumptionToken=%s', 'ListRecords', $resumptionToken);
         }
 
-        $this->client->request('GET', $action);
-        return $this->client->getResponse();
+        $client = $this->makeClient();
+        $client->request('GET', $action);
+        return $client->getResponse();
     }
 
     /**
@@ -112,8 +127,9 @@ class ProviderControllerTest extends WebTestCase {
     public function getRecord($id)
     {
         $action = sprintf('/oai/?verb=%s&metadataPrefix=%s&identifier=%s', 'GetRecord', 'oai_lido', $id);
-        $this->client->request('GET', $action);
-        return $this->client->getResponse();
+        $client = $this->makeClient();
+        $client->request('GET', $action);
+        return $client->getResponse();
     }
 
     /**
