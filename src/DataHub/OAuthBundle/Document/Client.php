@@ -3,27 +3,56 @@
 namespace DataHub\OAuthBundle\Document;
 
 use FOS\OAuthServerBundle\Document\Client as BaseClient;
+use FOS\OAuthServerBundle\Util\Random;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
-use DataHub\SharedBundle\Document\Traits as Traits;
-
 /**
- * @ODM\Document
- * @MongoDBUnique({"label"})
- * @MongoDBUnique({"clientCode"})
+ * @ODM\Document(
+ *   collection="Client", 
+ *   repositoryClass="DataHub\OAuthBundle\Repository\ClientRepository"
+ * ) 
  */
 class Client extends BaseClient
 {
-    use Traits\LabelableTrait;
+    /**
+     * @var \DateTime $createdAt
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ODM\Field(type="date")
+     */
+    private $createdAt;
+
+    /**
+     * @var \DateTime $updatedAt
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ODM\Field(type="date")
+     */
+    private $updatedAt;
 
     /**
      * @ODM\Id(strategy="auto")
      */
     protected $id;
+
+    /**
+     * @ODM\Field(type="string")
+     */
+    protected $externalId;
+
+    /**
+     * @ODM\Field(type="string")
+     */
+    protected $randomId;
+
+    /**
+     * @ODM\Field(type="string")
+     */
+    protected $applicationName;
 
     /**
      * @ODM\ReferenceOne(targetDocument="DataHub\UserBundle\Document\User")
@@ -45,52 +74,67 @@ class Client extends BaseClient
      */
     protected $refreshTokens;
 
-    /**
-     * @ODM\Field(type="string")
-     */
-    protected $clientCode;
-
-    /**
-     * Constructor.
-     */
     public function __construct()
     {
         parent::__construct();
+
+        $token = Random::generateToken();
+        $hash = substr(md5($token), 0, 6);
+        $this->setExternalId($hash);
+    }
+
+    public function setExternalId($externalId)
+    {
+        $this->externalId = $externalId;
+    }
+
+    public function getExternalId()
+    {
+        return $this->externalId;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
     }
 
     /**
-     * {@inheritdoc}
+     * We use RandomID as a OAuth Client Identifier as an added layer
+     * against phising attacks.
+     * 
+     * Per RFC 6749 Section 2.2:
+     * 
+     *  The authorization server issues the registered client a client
+     *  identifier -- a unique string representing the registration
+     *  information provided by the client.
+     * 
+     * We use the $randomId property of the BaseClient which is set
+     * at object instantiation. We do not perform a validation against
+     * uniqueness. This value is based on a string generated through
+     * random_bytes(32). This leaves us with a 2^256 possibilities
+     * of the same string being generated twice.
      */
     public function getPublicId()
     {
         return $this->getRandomId();
     }
 
-    /**
-     * To string.
-     *
-     * @return string
-     */
-    public function __toString()
+    public function setApplicationName($applicationName)
     {
-        return $this->label;
+        $this->applicationName = $applicationName;
     }
 
-    /**
-     * Set id
-     *
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function getApplicationName()
     {
-        $this->id = $id;
-
-        return $this;
+        return $this->applicationName;
     }
 
-    public function setUser($user)
+    public function setUser(UserInterface $user)
     {
         $this->user = $user;
     }
@@ -98,55 +142,5 @@ class Client extends BaseClient
     public function getUser()
     {
         return $this->user;
-    }
-
-    /**
-     * Get guessed user.
-     *
-     * @return UserInterface|null
-     */
-    public function getGuessedUser()
-    {
-        if ($this->accessTokens->count()) {
-            return $this->accessTokens->first()->getUser();
-        }
-
-        if ($this->refreshTokens->count()) {
-            return $this->refreshTokens->first()->getUser();
-        }
-
-        if ($this->authCodes->count()) {
-            return $this->authCodes->first()->getUser();
-        }
-
-        return null;
-    }
-
-    /**
-     * Set clientCode
-     *
-     * @param string $clientCode
-     * @return self
-     */
-    public function setClientCode($clientCode)
-    {
-        /*
-         * If the ID is already set, it means that this record is already in DB
-         *  and therefore clientCode can't be changed.
-         */
-        if (!$this->getId() || empty($this->getClientCode())) {
-            $this->clientCode = $clientCode;
-        }
-        return $this;
-    }
-
-    /**
-     * Get clientCode
-     *
-     * @return string $clientCode
-     */
-    public function getClientCode()
-    {
-        return $this->clientCode;
     }
 }

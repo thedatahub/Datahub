@@ -23,8 +23,7 @@ before_script:
   - mongo datahub-test --eval 'db.createUser({user:"datahub",pwd:"password",roles:[ "readWrite", "dbAdmin" ]});'
   - composer install
   - app/console app:setup --env=test
-  - app/console doctrine:mongodb:fixtures:load --append --fixtures=tests/DataHub --env=test
-
+  
 script:
   - bin/phpunit
 

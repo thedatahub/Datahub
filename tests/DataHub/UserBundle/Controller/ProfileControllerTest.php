@@ -302,6 +302,12 @@ class ProfileControllerTest extends WebTestCase {
         // @todo delete a non-existing user
     }
 
+    public function testElevateRolesAsAdministrator()
+    {
+        // @todo
+        //   Implement me
+    }
+
     public function testManageProfilesAsAManager()
     {
         // @todo

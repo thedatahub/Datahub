@@ -1,6 +1,5 @@
 #!/bin/bash
 # php app/console cache:clear --env=test
 php app/console doctrine:mongodb:schema:drop --env=test
-php app/console doctrine:mongodb:fixtures:load --append --fixtures=tests/DataHub --env=test
-bin/phpunit 
-#php app/console doctrine:mongodb:schema:drop --env=test
+# php app/console doctrine:mongodb:fixtures:load --append --fixtures=tests/DataHub --env=test
+bin/phpunit

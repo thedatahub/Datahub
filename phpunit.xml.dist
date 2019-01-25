@@ -22,7 +22,7 @@
 
     <testsuites>
         <testsuite name="Project Test Suite">
-            <directory>tests</directory>
+            <directory>tests/DataHub</directory>
         </testsuite>
     </testsuites>
 

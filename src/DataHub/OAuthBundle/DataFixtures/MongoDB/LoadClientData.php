@@ -19,8 +19,8 @@ class LoadClientData extends AbstractFixture implements FixtureInterface
     protected function doLoad(ObjectManager $manager)
     {
         $entity = new Client();
-        $entity->setLabel('TestClient');
-        $entity->setAllowedGrantTypes(['client_credentials', 'refresh_token', 'token', 'password']);
+        $entity->setApplicationName('TestClient');
+        $entity->setAllowedGrantTypes(['client_credentials']);
         $entity->setRedirectUris([]);
         $entity->setRandomId(static::DEFAULT_CLIENT_PUBLIC_ID);
         $entity->setSecret(static::DEFAULT_CLIENT_SECRET_ID);
