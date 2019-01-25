@@ -2,7 +2,8 @@
 
 namespace DataHub\ResourceAPIBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+# use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Liip\FunctionalTestBundle\Test\WebTestCase;
 
 /**
  * Functional testing for RecordController
@@ -12,9 +13,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class RecordControllerTest extends WebTestCase
 {
-
-    private $client;
-
     private $record;
 
     private $dataPid;
@@ -23,7 +21,16 @@ class RecordControllerTest extends WebTestCase
      * {@inheritdoc}
      */
     protected function setUp() {
-        $this->client = static::createClient();
+        $this->loadFixtures(
+            array(
+                'DataHub\UserBundle\DataFixtures\MongoDB\LoadUserData',
+                'DataHub\OAuthBundle\DataFixtures\MongoDB\LoadClientData',
+                'DataHub\ResourceAPIBundle\DataFixtures\MongoDB\LoadRecordData'
+            ), 
+            null, 
+            'doctrine_mongodb'
+        );
+
         $this->validRecord = file_get_contents(__DIR__.'/../../Resources/lido.xml');
         $this->invalidRecord = file_get_contents(__DIR__.'/../../Resources/lido_invalid.xml');
         $this->jsonRecord = file_get_contents(__DIR__.'/../../Resources/lido.json');
@@ -37,8 +44,9 @@ class RecordControllerTest extends WebTestCase
      * @return string A valid OAuth access token.
      */
     protected function getAccessToken() {
-        $this->client->request('GET', '/oauth/v2/token?grant_type=password&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
-        $response = $this->client->getResponse();
+        $client = $this->makeClient();
+        $client->request('GET', '/oauth/v2/token?grant_type=client_credentials&username=admin&password=datahub&client_id=slightlylesssecretpublicid&client_secret=supersecretsecretphrase');
+        $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
         return $data['access_token'];
     }
@@ -57,9 +65,10 @@ class RecordControllerTest extends WebTestCase
         $action = (!is_null($id)) ? sprintf("/api/v1/data/%s%s", urlencode($id), $format) : "/api/v1/data";
         $action = sprintf('%s?access_token=%s', $action, $accessToken);
 
-        $this->client->request('GET', $action);
+        $client = $this->makeClient();
+        $client->request('GET', $action);
 
-        return $this->client->getResponse();
+        return $client->getResponse();
     }
 
     /**
@@ -80,9 +89,10 @@ class RecordControllerTest extends WebTestCase
 
         $action = sprintf('%s?access_token=%s', $action, $accessToken);
 
-        $this->client->request('GET', $action);
+        $client = $this->makeClient();
+        $client->request('GET', $action);
 
-        return $this->client->getResponse();
+        return $client->getResponse();
     }
 
     /**
@@ -96,9 +106,10 @@ class RecordControllerTest extends WebTestCase
         $accessToken = $this->getAccessToken();
         $action = sprintf('/api/v1/data?access_token=%s', $accessToken);
 
-        $this->client->request('POST', $action, [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $record);
+        $client = $this->makeClient();
+        $client->request('POST', $action, [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $record);
 
-        return $this->client->getResponse();
+        return $client->getResponse();
     }
 
     /**
@@ -113,9 +124,10 @@ class RecordControllerTest extends WebTestCase
         $accessToken = $this->getAccessToken();
         $action = sprintf('/api/v1/data/%s?access_token=%s', $id, $accessToken);
 
-        $this->client->request('PUT', $action, [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $record);
+        $client = $this->makeClient();
+        $client->request('PUT', $action, [], [], ['CONTENT_TYPE' => 'application/lido+xml'], $record);
 
-        return $this->client->getResponse();
+        return $client->getResponse();
     }
 
     /**
@@ -130,13 +142,127 @@ class RecordControllerTest extends WebTestCase
         $accessToken = $this->getAccessToken();
         $action = sprintf("/api/v1/data/%s?access_token=%s", $id, $accessToken);
 
-        $this->client->request('DELETE', $action);
+        $client = $this->makeClient();
+        $client->request('DELETE', $action);
 
-        return $this->client->getResponse();
+        return $client->getResponse();
     }
 
-    public function testGetRecordJSONAction() {
+    public function testPostAction()
+    {
         $response = $this->post($this->validRecord);
+        
+        // Test valid record
+
+        $statusCode = $response->getStatusCode();
+        $location = $response->headers->get('location');
+        $dataPid = urldecode(preg_replace('/\/api\/v1\/data\/(.*)$/', '$1', $location));
+
+        $this->assertTrue($response->isSuccessful());
+        $this->assertEquals(201, $statusCode);
+        $this->assertEquals($this->dataPid, $dataPid);
+
+        // Test duplicate record
+
+        $response = $this->post($this->validRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+        $content = json_decode($content, true);
+    
+        $this->assertEquals(409, $statusCode);
+        $this->assertEquals("Record with this ID already exists.", $content['message']);
+
+        // Test invalid record
+
+        $response = $this->post($this->invalidRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+        $content = json_decode($content, true);
+    
+        $this->assertEquals(400, $statusCode);
+        $this->assertEquals("Invalid XML: Element '{http://www.lido-schema.org}category': This element is not expected. Expected is ( {http://www.lido-schema.org}lidoRecID ).\n on line 3, column 0", $content['message']);
+
+        // Test empty record
+
+        $response = $this->post($this->emptyRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+        $content = json_decode($content, true);
+
+        $this->assertEquals(422, $statusCode);
+        $this->assertEquals("No record was provided.", $content['message']);
+    }
+
+    public function testPutAction() {
+
+        // Test a valid record
+
+        $response = $this->put($this->dataPid, $this->validRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(201, $statusCode);
+        $this->assertEmpty($content);
+
+        // Update a valid record
+
+        $response = $this->put($this->dataPid, $this->validRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(204, $statusCode);
+        $this->assertEmpty($content);
+
+        // Create an invalid record
+
+        $response = $this->put($this->dataPid, $this->invalidRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+        $content = json_decode($content, true);
+
+        $this->assertEquals(400, $statusCode);
+        $this->assertEquals("Invalid XML: Element '{http://www.lido-schema.org}category': This element is not expected. Expected is ( {http://www.lido-schema.org}lidoRecID ).\n on line 3, column 0", $content['message']);
+
+        // Create an empty record
+
+        $response = $this->put($this->dataPid, $this->emptyRecord);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+        $content = json_decode($content, true);
+
+        $this->assertEquals(422, $statusCode);
+        $this->assertEquals("No record was provided.", $content['message']);
+    }
+
+    public function testDeleteAction() {
+
+        // Delete an existing record 
+
+        $this->post($this->validRecord);
+
+        $response = $this->delete($this->dataPid);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+
+        $this->assertEquals(204, $statusCode);
+        $this->assertEmpty($content);
+
+        // Delete a non-existing record 
+
+        $response = $this->delete($this->dataPid);
+        $statusCode = $response->getStatusCode();
+        $content = $response->getContent();
+        $content = json_decode($content, true);
+
+        $this->assertEquals(404, $statusCode);
+        $this->assertEquals("Record could not be found.", $content['message']);
+    }
+
+    public function testGetSingleRecordAction()
+    {
+        $this->post($this->validRecord);
+
+        // Test the JSON variant
 
         $response = $this->get($this->dataPid);
         $statusCode = $response->getStatusCode();
@@ -146,11 +272,7 @@ class RecordControllerTest extends WebTestCase
         $this->assertNotEmpty($content);
         $this->assertJsonStringEqualsJsonString($this->jsonRecord, $content);
 
-        $this->delete($this->dataPid);
-    }
-
-    public function testGetRecordXMLAction() {
-        $response = $this->post($this->validRecord);
+        // Test the XML variant
 
         $response = $this->get($this->dataPid, 'xml');
         $statusCode = $response->getStatusCode();
@@ -159,22 +281,10 @@ class RecordControllerTest extends WebTestCase
         $this->assertEquals(200, $statusCode);
         $this->assertNotEmpty($content);
         $this->assertXMLStringEqualsXMLString($this->validRecord, $content);
-
-        $this->delete($this->dataPid);
     }
 
-    public function testGetRecordsAction() {
-
-        $doc = new \DOMDocument();
-        $doc->formatOutput = true;
-        $doc->loadXML($this->validRecord);
-
-        foreach (range(1, 15) as $number) {
-            $doc->getElementsByTagName("lidoRecID")->item(0)->nodeValue = sprintf('identifier-%s', $number);
-            $record = $doc->saveXML();
-            $this->post($record);
-        }
-
+    public function testGetMultipleRecordsAction() 
+    {
         $response = $this->getAll();
         $statusCode = $response->getStatusCode();
 
@@ -211,167 +321,5 @@ class RecordControllerTest extends WebTestCase
             'next' => [ 'href' => '/api/v1/data?offset=10&limit=5' ],
             'previous' => [ 'href' => '/api/v1/data?limit=5' ]
         ]);
-
-        foreach (range(1, 15) as $number) {
-            $id = sprintf('identifier-%s', $number);
-            $this->delete($id);
-        }
-
-    }
-
-    public function testPostValidRecordAction() {
-        $response = $this->post($this->validRecord);
-        $statusCode = $response->getStatusCode();
-        $location = $response->headers->get('location');
-        $dataPid = urldecode(preg_replace('/\/api\/v1\/data\/(.*)$/', '$1', $location));
-
-        $this->assertTrue($response->isSuccessful());
-        $this->assertEquals(201, $statusCode);
-        $this->assertEquals($this->dataPid, $dataPid);
-
-        $this->delete($this->dataPid);
-    }
-
-    public function testPostDuplicateRecordAction() {
-        $this->post($this->validRecord);
-
-        $response = $this->post($this->validRecord);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-        $content = json_decode($content, true);
-
-        $this->assertTrue($response->isClientError());
-        $this->assertEquals(409, $statusCode);
-        $this->assertEquals("Record with this ID already exists.", $content['message']);
-
-        $this->delete($this->dataPid);
-    }
-
-    public function testPostInvalidRecordAction() {
-        $response = $this->post($this->invalidRecord);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-        $content = json_decode($content, true);
-
-        $this->assertEquals(400, $statusCode);
-        $this->assertEquals("Invalid XML: Element '{http://www.lido-schema.org}category': This element is not expected. Expected is ( {http://www.lido-schema.org}lidoRecID ).\n on line 3, column 0", $content['message']);
-
-        $this->delete($this->dataPid);
-    }
-
-    public function testPostEmptyRecordAction() {
-        $response = $this->post($this->emptyRecord);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-        $content = json_decode($content, true);
-
-        $this->assertEquals(422, $statusCode);
-        $this->assertEquals("No record was provided.", $content['message']);
-
-        $this->delete($this->dataPid);
-    }
-
-    public function testPutCreateValidRecordAction() {
-        $response = $this->put($this->dataPid, $this->validRecord);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-
-        $this->assertEquals(201, $statusCode);
-        $this->assertEmpty($content);
-
-        $this->delete($this->dataPid);
-    }
-
-    public function testPutUpdateValidRecordAction() {
-        $response = $this->put($this->dataPid, $this->validRecord);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-
-        $this->assertEquals(201, $statusCode);
-        $this->assertEmpty($content);
-
-        $response = $this->put($this->dataPid, $this->validRecord);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-
-        $this->assertEquals(204, $statusCode);
-        $this->assertEmpty($content);
-
-        $this->delete($this->dataPid);
-    }
-
-    public function testPutCreateInvalidRecordAction() {
-        $response = $this->put($this->dataPid, $this->invalidRecord);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-        $content = json_decode($content, true);
-
-        $this->assertEquals(400, $statusCode);
-        $this->assertEquals("Invalid XML: Element '{http://www.lido-schema.org}category': This element is not expected. Expected is ( {http://www.lido-schema.org}lidoRecID ).\n on line 3, column 0", $content['message']);
-
-        $this->delete($this->dataPid);
-    }
-    public function testPutUpdateInvalidRecordAction() {
-        $this->post($this->validRecord);
-
-        $response = $this->put($this->dataPid, $this->invalidRecord);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-        $content = json_decode($content, true);
-
-        $this->assertEquals(400, $statusCode);
-        $this->assertEquals("Invalid XML: Element '{http://www.lido-schema.org}category': This element is not expected. Expected is ( {http://www.lido-schema.org}lidoRecID ).\n on line 3, column 0", $content['message']);
-
-        $this->delete($this->dataPid);
-    }
-
-    public function testPutCreateEmptyRecordAction() {
-        $response = $this->put($this->dataPid, $this->emptyRecord);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-        $content = json_decode($content, true);
-
-        $this->assertEquals(422, $statusCode);
-        $this->assertEquals("No record was provided.", $content['message']);
-
-        $this->delete($this->dataPid);
-    }
-
-    public function testPutUpdateEmptyRecordAction() {
-        $this->post($this->validRecord);
-
-        $response = $this->put($this->dataPid, $this->emptyRecord);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-        $content = json_decode($content, true);
-
-        $this->assertEquals(422, $statusCode);
-        $this->assertEquals("No record was provided.", $content['message']);
-
-        $this->delete($this->dataPid);
-    }
-
-    public function testDeleteExistingRecordAction() {
-        $this->post($this->validRecord);
-
-        $response = $this->delete($this->dataPid);
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-
-        $this->assertEquals(204, $statusCode);
-        $this->assertEmpty($content);
-    }
-
-    public function testDeleteNonExistingRecordAction() {
-        $this->delete($this->dataPid);
-
-        $response = $this->delete($this->dataPid);
-        $statusCode = $response->getStatusCode();
-        $statusCode = $response->getStatusCode();
-        $content = $response->getContent();
-        $content = json_decode($content, true);
-
-        $this->assertEquals(404, $statusCode);
-        $this->assertEquals("Record could not be found.", $content['message']);
     }
 }
