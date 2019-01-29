@@ -75,8 +75,6 @@ nelmio_api_doc:
         authentication:
             name: access_token
             delivery: query
-    motd:
-        template: 'DataHubOAuthBundle::Documentation/motd.html.twig'
 
 fos_rest:
     param_fetcher_listener: true
