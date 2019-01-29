@@ -43,6 +43,5 @@ class AppSetupCommand extends ContainerAwareCommand
 
         $this->runCommand('assets:install --symlink web');
         $this->runCommand('cache:clear');
-        $this->runCommand('assetic:dump');
     }
 }

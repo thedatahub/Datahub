@@ -1,5 +1,0 @@
-# Assetic Configuration
-assetic:
-    debug: %kernel.debug%
-    use_controller: false
-    
