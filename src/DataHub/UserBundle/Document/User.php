@@ -108,6 +108,8 @@ class User implements UserInterface
     /**
      * @var boolean $enabled
      *
+     * @ODM\Field(type="boolean")
+     * 
      * @Serializer\Expose
      * @Serializer\Groups({"global", "list", "single"})
      */

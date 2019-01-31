@@ -26,6 +26,11 @@
                     <div class="form-group">
                         {{ form_row(form.username) }}
                     </div>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="form-group">
+                            {{ form_row(form.enabled) }}
+                        </div>
+                    {% endif %}
                     <div class="form-group">
                         {{ form_row(form.firstName) }}
                     </div>

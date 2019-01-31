@@ -59,6 +59,8 @@ class ProfileEditData
 
     /**
      * @var boolean $enabled
+     * 
+     * @Assert\Type("Boolean")
      */
     private $enabled;
 

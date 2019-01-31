@@ -5,6 +5,7 @@ namespace DataHub\UserBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -26,6 +27,12 @@ class ProfileCreateFormType extends AbstractType
                     ]
                 ]
             )
+            ->add(
+                'enabled', CheckboxType::class, [
+                    'label' => 'Inactive / Active account',
+                    'required' => false,
+                ]
+            )   
             ->add(
                 'firstName', null, [
                     'label' => 'First name',

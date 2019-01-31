@@ -58,7 +58,7 @@ class ProfileControllerTest extends WebTestCase {
         $this->assertSame(1, $crawler->filter('table.users')->count());
         $this->assertSame(1, $crawler->filter('a.users-add-user')->count());
 
-        $this->assertSame(3, $crawler->filter('table.users tbody tr')->count());
+        $this->assertSame(4, $crawler->filter('table.users tbody tr')->count());
         $value = $crawler->filter('table.users tbody tr td.username a')->first()->text();
         $this->assertSame('admin', trim($value));
         $value = $crawler->filter('table.users tbody tr td.actions a.users-edit-user')->first()->text();
@@ -189,7 +189,7 @@ class ProfileControllerTest extends WebTestCase {
 
         $value = $crawler->filter('div.alert-success')->first()->text();
         $this->assertSame('User user created successfully.', trim($value));
-        $this->assertSame(4, $crawler->filter('table.users tbody tr')->count());
+        $this->assertSame(5, $crawler->filter('table.users tbody tr')->count());
         $value = $crawler->filter('table.users tbody tr td.username a')->last()->text();
         $this->assertSame('user', trim($value));
         $value = $crawler->filter('table.users tbody tr td.actions a.users-edit-user')->last()->text();
@@ -236,6 +236,7 @@ class ProfileControllerTest extends WebTestCase {
         $form->setValues(
             array(
                 'profile_edit_form[username]' => 'user',
+                'profile_edit_form[enabled]' => true,
                 'profile_edit_form[firstName]' => 'bar',
                 'profile_edit_form[lastName]' => 'foo',
                 'profile_edit_form[email]' => 'user@foo.barfoo',
@@ -279,7 +280,7 @@ class ProfileControllerTest extends WebTestCase {
         $this->assertStatusCode(200, $client);
        
         $crawler = $client->getCrawler();
-        $this->assertSame(4, $crawler->filter('table.users tbody tr')->count());
+        $this->assertSame(5, $crawler->filter('table.users tbody tr')->count());
 
         $link = $crawler->filter('table.users tbody tr td.actions a.users-delete-user')->last()->link();
         $client->click($link);
@@ -292,7 +293,7 @@ class ProfileControllerTest extends WebTestCase {
         $this->assertStatusCode(200, $client);
 
         $crawler = $client->getCrawler();
-        $this->assertSame(3, $crawler->filter('table.users tbody tr')->count());
+        $this->assertSame(4, $crawler->filter('table.users tbody tr')->count());
 
         // @todo delete the administrator user (shouldn't be possible)
 
@@ -306,6 +307,88 @@ class ProfileControllerTest extends WebTestCase {
     {
         // @todo
         //   Implement me
+    }
+
+    public function testEnableUserAccountAsAdministrator()
+    {
+        $client = $this->makeClient();
+
+        // Log in as an administrator
+        $crawler = $client->request('GET', '/');
+        $link = $crawler->filter('a[class="login"]')->link();
+        $client->click($link);
+        
+        $crawler = $client->getCrawler();
+        $form = $crawler->selectButton('Login')->form();
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'admin',
+                'login_form[_password]' => 'datahub',
+            )
+        );
+        $client->submit($form);
+        $client->followRedirect();
+
+        // Go to the 'Administration' page.
+
+        $crawler = $client->getCrawler();
+        $link = $crawler->filter('a.admin-administration')->link();
+        $client->click($link);
+
+        $this->assertStatusCode(200, $client);
+
+        $crawler = $client->getCrawler();
+
+        // Add a new user
+        
+        $link = $crawler->filter('a.users-add-user')->link();
+        $client->click($link);
+        
+        $crawler = $client->getCrawler();
+        $form = $crawler->selectButton('New user')->form();
+        $form->setValues(
+            array(
+                'profile_create_form[username]' => 'inactive',
+                'profile_create_form[enabled]' => false,
+                'profile_create_form[firstName]' => 'foo',
+                'profile_create_form[lastName]' => 'bar',
+                'profile_create_form[email]' => 'user@foo.barfoo',
+                'profile_create_form[plainPassword][first]' => 'Foob4r!',
+                'profile_create_form[plainPassword][second]' => 'Foob4r!',
+            )
+        );
+        $client->submit($form);
+
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
+
+        $crawler = $client->getCrawler();
+       
+        // Try to log in as the inactive user.
+
+        $userClient = $this->makeClient();
+
+        $crawler = $userClient->request('GET', '/');
+        $link = $crawler->filter('a[class="login"]')->link();
+        $userClient->click($link);
+        
+        $crawler = $userClient->getCrawler();
+        $form = $crawler->selectButton('Login')->form();
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'inactive',
+                'login_form[_password]' => 'Foob4r!',
+            )
+        );
+        $userClient->submit($form);
+
+        $userClient->followRedirect();
+        $this->assertStatusCode(200, $userClient);
+        $crawler = $userClient->getCrawler();
+
+        $this->assertSame(1, $crawler->filter('div.alert-danger')->count());
+        $this->assertSame('Your account is inactive and needs be activated.', $crawler->filter('div.alert-danger > strong')->text());
+
     }
 
     public function testManageProfilesAsAManager()
