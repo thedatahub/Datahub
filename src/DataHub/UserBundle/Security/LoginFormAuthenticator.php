@@ -59,10 +59,16 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         $found = $this->dm->getRepository('DataHubUserBundle:User')
             ->findOneBy(['username' => $username]);
-        
+
         if (!$found) {
             throw new CustomUserMessageAuthenticationException(
                 'Those credentials are not valid.'
+            );
+        }
+
+        if ($found->getEnabled() === false) {
+            throw new CustomUserMessageAuthenticationException(
+                'Your account is inactive and needs be activated.'
             );
         }
 

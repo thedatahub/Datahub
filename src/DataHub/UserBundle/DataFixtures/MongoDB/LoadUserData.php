@@ -26,6 +26,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $profileCreateData = $assembler->createDTO($userAdmin);
 
         $profileCreateData->setUsername(static::DEFAULT_ADMIN_USERNAME);
+        $profileCreateData->setEnabled(true);
         $profileCreateData->setFirstName('Foo');
         $profileCreateData->setLastName('Bar');
         $profileCreateData->setPlainPassword(static::DEFAULT_ADMIN_PASSWORD);
@@ -47,6 +48,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $profileCreateData = $assembler->createDTO($userManager);
 
         $profileCreateData->setUsername('manager');
+        $profileCreateData->setEnabled(true);
         $profileCreateData->setFirstName('Manager');
         $profileCreateData->setLastName('Manager');
         $profileCreateData->setPlainPassword('manager');
@@ -68,6 +70,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $profileCreateData = $assembler->createDTO($userConsumer);
 
         $profileCreateData->setUsername('consumer');
+        $profileCreateData->setEnabled(true);
         $profileCreateData->setFirstName('Consumer');
         $profileCreateData->setLastName('Consumer');
         $profileCreateData->setPlainPassword('consumer');
@@ -80,6 +83,28 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $manager->flush();
 
         $this->addReference('consumer-user', $userConsumer);
+
+        // Inactive consumser
+
+        $userInactiveConsumer = new User;
+        $assembler = $this->container->get('datahub.security.user.dto.profile_create_assembler');
+        
+        $profileCreateData = $assembler->createDTO($userInactiveConsumer);
+
+        $profileCreateData->setUsername('inactiveconsumer');
+        $profileCreateData->setEnabled(false);
+        $profileCreateData->setFirstName('Inactive Consumer');
+        $profileCreateData->setLastName('Inactive Consumer');
+        $profileCreateData->setPlainPassword('inactiveconsumer');
+        $profileCreateData->setEmail('foo.inactiveconsumer@bar.foo');
+        $profileCreateData->setRoles(['ROLE_CONSUMER']);
+
+        $userInactiveConsumer = $assembler->updateProfile($userInactiveConsumer, $profileCreateData);
+
+        $manager->persist($userInactiveConsumer);
+        $manager->flush();
+
+        $this->addReference('inactiveconsumer-user', $userInactiveConsumer);
     }
 
     /**

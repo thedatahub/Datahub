@@ -139,4 +139,30 @@ class SecurityControllerTest extends WebTestCase {
         $this->assertSame(1, $crawler->filter('div.alert-danger')->count());
         $this->assertSame('Those credentials are not valid.', $crawler->filter('div.alert-danger > strong')->text());
     }
+
+    public function testLoginFormInactiveUser()
+    {
+        $client = $this->makeClient();
+
+        // Go directly to the /user/login page
+        $crawler = $client->request('GET', '/user/login');
+        $this->assertStatusCode(200, $client);
+
+        // Submit the form with an inactive account
+        $form = $crawler->selectButton('Login')->form();
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'inactiveconsumer',
+                'login_form[_password]' => 'inactiveconsumer',
+            )
+        );
+        $client->submit($form);
+   
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
+        $crawler = $client->getCrawler();
+
+        $this->assertSame(1, $crawler->filter('div.alert-danger')->count());
+        $this->assertSame('Your account is inactive and needs be activated.', $crawler->filter('div.alert-danger > strong')->text());
+    }
 }
