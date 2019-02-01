@@ -2,7 +2,7 @@
 
 namespace DataHub\UserBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -19,6 +19,17 @@ use DataHub\OAIBundle\Repository\Repository;
  */
 class AdminControllerTest extends WebTestCase 
 {
+    public function setUp()
+    {
+        $this->loadFixtures(
+            array(
+                'DataHub\UserBundle\DataFixtures\MongoDB\LoadUserData'
+            ), 
+            null, 
+            'doctrine_mongodb'
+        );
+    }
+
     public function testIndexActionAsSuperAdmin()
     {
         $client = static::createClient();

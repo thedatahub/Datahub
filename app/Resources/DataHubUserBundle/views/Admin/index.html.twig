@@ -1,5 +1,7 @@
 {% extends 'DataHubUserBundle:Layouts:default.html.twig' %}
 
+{% trans_default_domain 'DataHubUserBundle' %}
+
 {% set page_title = 'users.user' | trans({}, 'FOSUserBundle') %}
 
 {% block content %}
@@ -36,7 +38,7 @@
                             </a>
                         </td>
                         <td class="email">{{ user.getEmail() }}</td>
-                        <td class="roles">{{ user.getRoles() | join('<br>') | raw }}</td>
+                        <td class="roles">{{ user.getRoles() | roleLabels | trans }}</td>
                         <td class="enabled">
                             {% if user.getEnabled() %}
                                 {{ 'Yes' | trans }}

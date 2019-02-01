@@ -1,3 +1,7 @@
+roles:
+    consumer: 'Consumer'
+    manager: 'Manager'
+    administrator: 'Administrator'
 registration:
     check_email: |
         An email has been sent to %email%. It contains an activation link you must click to activate your account.

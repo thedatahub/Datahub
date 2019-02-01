@@ -215,7 +215,7 @@ class ProfileControllerTest extends WebTestCase {
         $value = $crawler->filter('dl.user-profile dd.field-email')->first()->text();
         $this->assertSame('user@foo.barfoo', $value);
         $value = $crawler->filter('dl.user-profile dd.field-roles')->first()->text();
-        $this->assertSame('ROLE_CONSUMER', $value);
+        $this->assertSame('Consumer', $value);
 
         $this->assertSame(1, $crawler->filter('a.user-edit-user')->count());
         $this->assertSame(1, $crawler->filter('a.user-delete-user')->count());

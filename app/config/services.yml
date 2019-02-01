@@ -79,6 +79,12 @@ services:
         calls:
           - ['setConverter', ['%datahub_enabled_data_type%']]
 
+    datahub.security.user.twig.format_roles:
+        class: DataHub\UserBundle\Twig\RolesExtension
+        public: false
+        tags:
+            - { name: twig.extension }
+
     datahub.security.login_form_authenticator:
         class: DataHub\UserBundle\Security\LoginFormAuthenticator
         autowire: true
