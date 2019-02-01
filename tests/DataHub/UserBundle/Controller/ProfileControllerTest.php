@@ -210,6 +210,8 @@ class ProfileControllerTest extends WebTestCase {
         $this->assertSame('user', $value);
         $value = $crawler->filter('dl.user-profile dd.field-fullname')->first()->text();
         $this->assertSame('foo bar', $value);
+        $value = $crawler->filter('dl.user-profile dd.field-enabled')->first()->text();
+        $this->assertSame('No', trim($value));
         $value = $crawler->filter('dl.user-profile dd.field-email')->first()->text();
         $this->assertSame('user@foo.barfoo', $value);
         $value = $crawler->filter('dl.user-profile dd.field-roles')->first()->text();
@@ -252,6 +254,9 @@ class ProfileControllerTest extends WebTestCase {
         $crawler = $client->getCrawler();
         $value = $crawler->filter('div.alert-success')->first()->text();
         $this->assertSame('User user was edited successfully.', trim($value));
+
+        $value = $crawler->filter('dl.user-profile dd.field-enabled')->first()->text();
+        $this->assertSame('Yes', trim($value));
 
         $value = $crawler->filter('dl.user-profile dd.field-fullname')->first()->text();
         $this->assertSame('bar foo', trim($value));

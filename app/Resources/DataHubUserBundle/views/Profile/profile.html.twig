@@ -35,6 +35,14 @@
                 <dd class="field-email">{{ user.getEmail() }}</dd>
                 <dt>{{ 'Roles' | trans }}</dt>
                 <dd class="field-roles">{{ user.getRoles() | join('<br>') | raw }}</dd>
+                <dt>{{ 'Active / Inactive account' | trans }}</dt>
+                <dd class="field-enabled">
+                    {% if user.getEnabled() %}
+                        {{ 'Yes' | trans }}
+                    {% else %}
+                        {{ 'No' | trans }}
+                    {% endif %}
+                </dd>                            
             </dl>
             </div>
         </div>
