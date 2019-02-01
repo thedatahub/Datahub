@@ -86,8 +86,7 @@ class ProfileController extends Controller
 
         $form = $this->createForm(
             ProfileEditFormType::class, $profileEditData, [
-                'create'      => false, 
-                'submitLabel' => 'Update user'
+                'create'      => false,
             ]
         );
 
@@ -109,7 +108,7 @@ class ProfileController extends Controller
             '@DataHubUser/Profile/profile.edit.form.html.twig',
             [
                 'form'      => $form->createView(),
-                'title'     => 'Edit user',
+                'title'     => 'Edit user ' . $user->getUserName(),
             ]
         );
     }

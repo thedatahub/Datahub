@@ -231,10 +231,10 @@ class ProfileControllerTest extends WebTestCase {
         $this->assertStatusCode(200, $client);
 
         $crawler = $client->getCrawler();
-        $this->assertContains('Edit an existing user', $client->getResponse()->getContent());
+        $this->assertContains('Edit user user', $client->getResponse()->getContent());
 
         $crawler = $client->getCrawler();
-        $form = $crawler->selectButton('Update user')->form();
+        $form = $crawler->selectButton('Update this user')->form();
         $form->setValues(
             array(
                 'profile_edit_form[username]' => 'user',

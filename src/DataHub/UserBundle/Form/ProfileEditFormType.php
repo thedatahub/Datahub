@@ -132,7 +132,7 @@ class ProfileEditFormType extends AbstractType
             [
                 'data_class' => ProfileEditData::class,
                 'create'     => true,
-                'submitLabel' => 'Edit user',
+                'submitLabel' => 'Update this user',
             ]
         );
     }

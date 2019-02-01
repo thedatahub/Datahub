@@ -110,7 +110,7 @@ class ResettingControllerTest extends WebTestCase {
         $this->assertSame(1, $crawler->filter('a.logged-in-user')->count());
         $this->assertSame('admin', $crawler->filter('a.logged-in-user')->text());
 
-        $form = $crawler->selectButton('Update user')->form();
+        $form = $crawler->selectButton('Update this user')->form();
         $form->setValues(
             array(
                 'profile_edit_form[plainPassword][first]' => 'Foob4r!',
