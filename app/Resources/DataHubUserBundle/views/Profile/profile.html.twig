@@ -1,5 +1,7 @@
 {% extends 'DataHubUserBundle:Layouts:default.html.twig' %}
 
+{% trans_default_domain 'DataHubUserBundle' %}
+
 {% set page_title = 'users.adduser' | trans({}, 'FOSUserBundle') %}
 
 {% block content %}
@@ -34,7 +36,7 @@
                 <dt>{{ 'E-mail' | trans }}</dt>
                 <dd class="field-email">{{ user.getEmail() }}</dd>
                 <dt>{{ 'Roles' | trans }}</dt>
-                <dd class="field-roles">{{ user.getRoles() | join('<br>') | raw }}</dd>
+                <dd class="field-roles">{{ user.getRoles() | roleLabels | trans }}</dd>
                 <dt>{{ 'Active / Inactive account' | trans }}</dt>
                 <dd class="field-enabled">
                     {% if user.getEnabled() %}
