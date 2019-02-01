@@ -308,223 +308,223 @@ class ProfileControllerTest extends WebTestCase {
         // @todo delete a non-existing user
     }
 
-    // public function testElevateRolesAsAdministrator()
-    // {
-    //     // @todo
-    //     //   Implement me
-    // }
+    public function testElevateRolesAsAdministrator()
+    {
+        // @todo
+        //   Implement me
+    }
 
-    // public function testEnableUserAccountAsAdministrator()
-    // {
-    //     $client = $this->makeClient();
+    public function testEnableUserAccountAsAdministrator()
+    {
+        $client = $this->makeClient();
 
-    //     // Log in as an administrator
-    //     $crawler = $client->request('GET', '/');
-    //     $link = $crawler->filter('a[class="login"]')->link();
-    //     $client->click($link);
+        // Log in as an administrator
+        $crawler = $client->request('GET', '/');
+        $link = $crawler->filter('a[class="login"]')->link();
+        $client->click($link);
         
-    //     $crawler = $client->getCrawler();
-    //     $form = $crawler->selectButton('Login')->form();
-    //     $form->setValues(
-    //         array(
-    //             'login_form[_username]' => 'admin',
-    //             'login_form[_password]' => 'datahub',
-    //         )
-    //     );
-    //     $client->submit($form);
-    //     $client->followRedirect();
+        $crawler = $client->getCrawler();
+        $form = $crawler->selectButton('Login')->form();
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'admin',
+                'login_form[_password]' => 'datahub',
+            )
+        );
+        $client->submit($form);
+        $client->followRedirect();
 
-    //     // Go to the 'Administration' page.
+        // Go to the 'Administration' page.
 
-    //     $crawler = $client->getCrawler();
-    //     $link = $crawler->filter('a.admin-administration')->link();
-    //     $client->click($link);
+        $crawler = $client->getCrawler();
+        $link = $crawler->filter('a.admin-administration')->link();
+        $client->click($link);
 
-    //     $this->assertStatusCode(200, $client);
+        $this->assertStatusCode(200, $client);
 
-    //     $crawler = $client->getCrawler();
+        $crawler = $client->getCrawler();
 
-    //     // Add a new user
+        // Add a new user
         
-    //     $link = $crawler->filter('a.users-add-user')->link();
-    //     $client->click($link);
+        $link = $crawler->filter('a.users-add-user')->link();
+        $client->click($link);
         
-    //     $crawler = $client->getCrawler();
-    //     $form = $crawler->selectButton('New user')->form();
-    //     $form->setValues(
-    //         array(
-    //             'profile_create_form[username]' => 'inactive',
-    //             'profile_create_form[enabled]' => false,
-    //             'profile_create_form[firstName]' => 'foo',
-    //             'profile_create_form[lastName]' => 'bar',
-    //             'profile_create_form[email]' => 'user@foo.barfoo',
-    //             'profile_create_form[plainPassword][first]' => 'Foob4r!',
-    //             'profile_create_form[plainPassword][second]' => 'Foob4r!',
-    //         )
-    //     );
-    //     $client->submit($form);
+        $crawler = $client->getCrawler();
+        $form = $crawler->selectButton('New user')->form();
+        $form->setValues(
+            array(
+                'profile_create_form[username]' => 'inactive',
+                'profile_create_form[enabled]' => false,
+                'profile_create_form[firstName]' => 'foo',
+                'profile_create_form[lastName]' => 'bar',
+                'profile_create_form[email]' => 'user@foo.barfoo',
+                'profile_create_form[plainPassword][first]' => 'Foob4r!',
+                'profile_create_form[plainPassword][second]' => 'Foob4r!',
+            )
+        );
+        $client->submit($form);
 
-    //     $client->followRedirect();
-    //     $this->assertStatusCode(200, $client);
+        $client->followRedirect();
+        $this->assertStatusCode(200, $client);
 
-    //     $crawler = $client->getCrawler();
+        $crawler = $client->getCrawler();
        
-    //     // Try to log in as the inactive user.
+        // Try to log in as the inactive user.
 
-    //     $userClient = $this->makeClient();
+        $userClient = $this->makeClient();
 
-    //     $crawler = $userClient->request('GET', '/');
-    //     $link = $crawler->filter('a[class="login"]')->link();
-    //     $userClient->click($link);
+        $crawler = $userClient->request('GET', '/');
+        $link = $crawler->filter('a[class="login"]')->link();
+        $userClient->click($link);
         
-    //     $crawler = $userClient->getCrawler();
-    //     $form = $crawler->selectButton('Login')->form();
-    //     $form->setValues(
-    //         array(
-    //             'login_form[_username]' => 'inactive',
-    //             'login_form[_password]' => 'Foob4r!',
-    //         )
-    //     );
-    //     $userClient->submit($form);
+        $crawler = $userClient->getCrawler();
+        $form = $crawler->selectButton('Login')->form();
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'inactive',
+                'login_form[_password]' => 'Foob4r!',
+            )
+        );
+        $userClient->submit($form);
 
-    //     $userClient->followRedirect();
-    //     $this->assertStatusCode(200, $userClient);
-    //     $crawler = $userClient->getCrawler();
+        $userClient->followRedirect();
+        $this->assertStatusCode(200, $userClient);
+        $crawler = $userClient->getCrawler();
 
-    //     $this->assertSame(1, $crawler->filter('div.alert-danger')->count());
-    //     $this->assertSame('Your account is inactive and needs be activated.', $crawler->filter('div.alert-danger > strong')->text());
+        $this->assertSame(1, $crawler->filter('div.alert-danger')->count());
+        $this->assertSame('Your account is inactive and needs be activated.', $crawler->filter('div.alert-danger > strong')->text());
 
-    // }
+    }
 
-    // public function testManageProfilesAsAManager()
-    // {
-    //     // @todo
-    //     //   Write tests for this case
-    //     $client = $this->makeClient();
+    public function testManageProfilesAsAManager()
+    {
+        // @todo
+        //   Write tests for this case
+        $client = $this->makeClient();
 
-    //     // Log in as an administrator
+        // Log in as an administrator
         
-    //     $crawler = $client->request('GET', '/');
-    //     $link = $crawler->filter('a[class="login"]')->link();
-    //     $client->click($link);
+        $crawler = $client->request('GET', '/');
+        $link = $crawler->filter('a[class="login"]')->link();
+        $client->click($link);
         
-    //     $crawler = $client->getCrawler();
-    //     $form = $crawler->selectButton('Login')->form();
-    //     $form->setValues(
-    //         array(
-    //             'login_form[_username]' => 'manager',
-    //             'login_form[_password]' => 'manager',
-    //         )
-    //     );
-    //     $client->submit($form);
-    //     $client->followRedirect();
+        $crawler = $client->getCrawler();
+        $form = $crawler->selectButton('Login')->form();
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'manager',
+                'login_form[_password]' => 'manager',
+            )
+        );
+        $client->submit($form);
+        $client->followRedirect();
 
-    //     // Not be able to view the user management panel
+        // Not be able to view the user management panel
 
-    //     $this->assertSame(0, $crawler->filter('a.admin-administration')->count());
-    //     $client->request('GET', '/user/users');
-    //     $this->assertStatusCode(403, $client);
+        $this->assertSame(0, $crawler->filter('a.admin-administration')->count());
+        $client->request('GET', '/user/users');
+        $this->assertStatusCode(403, $client);
 
-    //     // Not be able to add new users
+        // Not be able to add new users
 
-    //     $client->request('GET', '/user/add');
-    //     $this->assertStatusCode(403, $client);
+        $client->request('GET', '/user/add');
+        $this->assertStatusCode(403, $client);
 
-    //     // Not be able to edit other users
+        // Not be able to edit other users
 
-    //     $client->request('GET', '/user/profile/consumer/edit');
-    //     $this->assertStatusCode(403, $client);
+        $client->request('GET', '/user/profile/consumer/edit');
+        $this->assertStatusCode(403, $client);
 
-    //     // Not be able to delete other users
+        // Not be able to delete other users
 
-    //     $client->request('GET', '/user/profile/consumer/delete');
-    //     $this->assertStatusCode(403, $client);
+        $client->request('GET', '/user/profile/consumer/delete');
+        $this->assertStatusCode(403, $client);
 
-    //     // I can view my own profile
+        // I can view my own profile
 
-    //     $client->request('GET', '/user/profile/manager');
-    //     $this->assertStatusCode(200, $client);
+        $client->request('GET', '/user/profile/manager');
+        $this->assertStatusCode(200, $client);
 
-    //     // I can edit myself
+        // I can edit myself
 
-    //     $client->request('GET', '/user/profile/manager/edit');
-    //     $this->assertStatusCode(200, $client);
+        $client->request('GET', '/user/profile/manager/edit');
+        $this->assertStatusCode(200, $client);
        
-    //     // I can delete my own account
+        // I can delete my own account
 
-    //     $client->request('GET', '/user/profile/manager/delete');
-    //     $this->assertStatusCode(200, $client);
+        $client->request('GET', '/user/profile/manager/delete');
+        $this->assertStatusCode(200, $client);
 
-    //     // I can't change my roles
+        // I can't change my roles
 
-    //     $client->request('GET', '/user/profile/manager/edit');
-    //     $crawler = $client->getCrawler();
-    //     $this->assertSame(0, $crawler->filter('form label[for="profile_edit_form_roles"]')->count());
-    // }
+        $client->request('GET', '/user/profile/manager/edit');
+        $crawler = $client->getCrawler();
+        $this->assertSame(0, $crawler->filter('form label[for="profile_edit_form_roles"]')->count());
+    }
 
-    // public function testManageProfilesAsAConsumer()
-    // {
-    //     // @todo
-    //     //   Write tests for this case
-    //     $client = $this->makeClient();
+    public function testManageProfilesAsAConsumer()
+    {
+        // @todo
+        //   Write tests for this case
+        $client = $this->makeClient();
 
-    //     // Log in as a consumer
+        // Log in as a consumer
         
-    //     $crawler = $client->request('GET', '/');
-    //     $link = $crawler->filter('a[class="login"]')->link();
-    //     $client->click($link);
+        $crawler = $client->request('GET', '/');
+        $link = $crawler->filter('a[class="login"]')->link();
+        $client->click($link);
         
-    //     $crawler = $client->getCrawler();
-    //     $form = $crawler->selectButton('Login')->form();
-    //     $form->setValues(
-    //         array(
-    //             'login_form[_username]' => 'consumer',
-    //             'login_form[_password]' => 'consumer',
-    //         )
-    //     );
-    //     $client->submit($form);
-    //     $client->followRedirect();
+        $crawler = $client->getCrawler();
+        $form = $crawler->selectButton('Login')->form();
+        $form->setValues(
+            array(
+                'login_form[_username]' => 'consumer',
+                'login_form[_password]' => 'consumer',
+            )
+        );
+        $client->submit($form);
+        $client->followRedirect();
 
-    //     // Not be able to view the user management panel
+        // Not be able to view the user management panel
 
-    //     $this->assertSame(0, $crawler->filter('a.admin-administration')->count());
-    //     $client->request('GET', '/user/users');
-    //     $this->assertStatusCode(403, $client);
+        $this->assertSame(0, $crawler->filter('a.admin-administration')->count());
+        $client->request('GET', '/user/users');
+        $this->assertStatusCode(403, $client);
 
-    //     // Not be able to add new users
+        // Not be able to add new users
 
-    //     $client->request('GET', '/user/add');
-    //     $this->assertStatusCode(403, $client);
+        $client->request('GET', '/user/add');
+        $this->assertStatusCode(403, $client);
 
-    //     // Not be able to edit other users
+        // Not be able to edit other users
 
-    //     $client->request('GET', '/user/profile/manager/edit');
-    //     $this->assertStatusCode(403, $client);
+        $client->request('GET', '/user/profile/manager/edit');
+        $this->assertStatusCode(403, $client);
 
-    //     // Not be able to delete other users
+        // Not be able to delete other users
 
-    //     $client->request('GET', '/user/profile/manager/delete');
-    //     $this->assertStatusCode(403, $client);
+        $client->request('GET', '/user/profile/manager/delete');
+        $this->assertStatusCode(403, $client);
 
-    //     // I can view my own profile
+        // I can view my own profile
 
-    //     $client->request('GET', '/user/profile/consumer');
-    //     $this->assertStatusCode(200, $client);
+        $client->request('GET', '/user/profile/consumer');
+        $this->assertStatusCode(200, $client);
 
-    //     // I can edit myself
+        // I can edit myself
 
-    //     $client->request('GET', '/user/profile/consumer/edit');
-    //     $this->assertStatusCode(200, $client);
+        $client->request('GET', '/user/profile/consumer/edit');
+        $this->assertStatusCode(200, $client);
        
-    //     // I can delete my own account
+        // I can delete my own account
 
-    //     $client->request('GET', '/user/profile/consumer/delete');
-    //     $this->assertStatusCode(200, $client);
+        $client->request('GET', '/user/profile/consumer/delete');
+        $this->assertStatusCode(200, $client);
 
-    //     // I can't change my roles
+        // I can't change my roles
 
-    //     $client->request('GET', '/user/profile/consumer/edit');
-    //     $crawler = $client->getCrawler();
-    //     $this->assertSame(0, $crawler->filter('form label[for="profile_edit_form_roles"]')->count());
-    // }
+        $client->request('GET', '/user/profile/consumer/edit');
+        $crawler = $client->getCrawler();
+        $this->assertSame(0, $crawler->filter('form label[for="profile_edit_form_roles"]')->count());
+    }
 }
