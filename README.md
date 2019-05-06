@@ -54,6 +54,7 @@ have created a user with the right permissions. From the
 commands to create the required artefacts in MongoDB:
 
 ```
+> mongo -u siteUserAdmin -p passw0rd --authenticationDatabase admin
 > use datahub
 > db.createUser(
    {
