@@ -150,9 +150,7 @@ GET oai/?metadataPrefix=oai_lid&verb=GetRecord&identifier=objectPID
 GET oai/?metadataPrefix=oai_lido&verb=ListIdentifiers&from=2017-06-29T05:22:30Z&until=2017-07-14T04:22:30Z
 ```
 
-The datahub doesn't implement grouping of records nor soft deletes. As such, 
-the OAI endpoint doesn't OAI sets and indicating whether a record has been 
-deleted.
+The datahub implements grouping of records into sets, but no soft deletes. As such, the OAI endpoint doesn't indicate whether a record has been deleted.
 
 ### OAuth support and security
 
