@@ -4,6 +4,9 @@ namespace DataHub\ResourceAPIBundle\Controller;
 
 use DataHub\ResourceAPIBundle\Document\Record;
 use DataHub\ResourceAPIBundle\Repository\RecordRepository;
+use DataHub\SetBundle\Document\Set;
+use DOMDocument;
+use DOMXPath;
 use FOS\RestBundle\Controller\Annotations as FOS;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Hateoas\HateoasBuilder;
@@ -211,6 +214,8 @@ class RecordController extends Controller
         $documentManager = $this->get('doctrine_mongodb')->getManager();
 
         $record = new Record();
+        $sets = $this->extractSetsFromRecord($variantXML, $documentManager);
+        $record->setSets($sets);
         $record->setRecordIds($dataPids);
         $record->setObjectIds($objectPids);
         $record->setRaw($variantXML);
@@ -295,6 +300,8 @@ class RecordController extends Controller
         //
         if (!$record instanceof Record) {
             $record = new Record();
+            $sets = $this->extractSetsFromRecord($variantXML, $documentManager);
+            $record->setSets($sets);
             $record->setRecordIds($recordIds);
             $record->setObjectIds($objectIds);
             $record->setRaw($variantXML);
@@ -312,6 +319,9 @@ class RecordController extends Controller
                 $headers = [];
             }
         } else {
+
+            $sets = $this->extractSetsFromRecord($variantXML, $documentManager);
+            $record->setSets($sets);
             $record->setRecordIds($recordIds);
             $record->setObjectIds($objectIds);
             $record->setRaw($variantXML);
@@ -360,5 +370,91 @@ class RecordController extends Controller
         $documentManager = $this->get('doctrine_mongodb')->getManager();
         $documentManager->remove($record);
         $documentManager->flush();
+    }
+
+    private function extractSetsFromRecord($variantXML, $documentManager)
+    {
+        // Classify this record into a (number of) set(s)
+        $sets = array();
+        $setRepository = $this->get('datahub.set.repository.default');
+        $setsDefinition = $this->getParameter('sets');
+        $domDoc = new DOMDocument;
+        $domDoc->loadXML($variantXML);
+        $xpath = new DOMXPath($domDoc);
+        foreach($setsDefinition as $setKey => $setDefinition) {
+            if(is_array($setDefinition)) {
+                // Loop over the array until we find a set
+                $found = false;
+                for($i = 0; $i < count($setDefinition) && !$found; $i++) {
+                    $query = $this->buildXpath($setDefinition[$i], 'lido');
+                    if($this->extractSet($sets, $query, $xpath, $setKey, $setRepository, $documentManager)) {
+                        $found = true;
+                    }
+                }
+            } else {
+                $query = $this->buildXpath($setDefinition, 'lido');
+                $this->extractSet($sets, $query, $xpath, $setKey, $setRepository, $documentManager);
+            }
+        }
+        return $sets;
+    }
+
+    private function extractSet(&$sets, $query, $xpath, $setKey, $setRepository, $documentManager)
+    {
+        $foundSet = false;
+        $extracted = $xpath->query($query);
+        if ($extracted) {
+            if (count($extracted) > 0) {
+                foreach ($extracted as $extr) {
+                    if ($extr->nodeValue !== 'n/a') {
+                        $name = $extr->nodeValue;
+                        $spec = $setKey . ':' . $this->cleanSpec($name);
+                        $sets[] = $spec;
+                        $foundSet = true;
+
+                        // Check if this set already exists, otherwise create a new one
+                        $set = $setRepository->findOneByProperty('spec', $spec);
+                        if(!$set) {
+                            $set = new Set();
+                            $set->setSpec($spec);
+                            $set->setName($name);
+                            $documentManager->persist($set);
+                            $documentManager->flush();
+                        }
+                    }
+                }
+            }
+        }
+        return $foundSet;
+    }
+
+    // Build the xpath based on the provided namespace
+    private function buildXpath($xpath, $namespace, $language = null)
+    {
+        if($language != null) {
+            $xpath = str_replace('{language}', $language, $xpath);
+        }
+        $xpath = str_replace('[@', '[@' . $namespace . ':', $xpath);
+        $xpath = str_replace('[@' . $namespace . ':xml:', '[@xml:', $xpath);
+        $xpath = preg_replace('/\[([^@])/', '[' . $namespace . ':${1}', $xpath);
+        $xpath = preg_replace('/\/([^\/])/', '/' . $namespace . ':${1}', $xpath);
+        if(strpos($xpath, '/') !== 0) {
+            $xpath = $namespace . ':' . $xpath;
+        }
+        $xpath = 'descendant::' . $xpath;
+        return $xpath;
+    }
+
+    private function cleanSpec($spec)
+    {
+        $spec = strtolower($spec);
+        $spec = preg_replace('/[^a-z0-9 _\-]/', '', $spec);
+        $spec = str_replace(' ', '_', $spec);
+        $spec = str_replace('-', '_', $spec);
+        while(strpos($spec, '__') > -1) {
+            $spec = str_replace('__', '_', $spec);
+        }
+        $spec = trim($spec);
+        return $spec;
     }
 }

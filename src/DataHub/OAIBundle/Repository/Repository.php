@@ -4,8 +4,8 @@ namespace DataHub\OAIBundle\Repository;
 
 use DataHub\ResourceAPIBundle\Document\Record as DOCRecord;
 use DataHub\ResourceAPIBundle\Repository\RecordRepository as DOCRecordRepository;
+use DataHub\SetBundle\Repository\SetRepository as SetRepository;
 use DateTime;
-use OpenSkos2\OaiPmh\Concept as OaiConcept;
 use Picturae\OaiPmh\Exception\IdDoesNotExistException;
 use Picturae\OaiPmh\Exception\BadResumptionTokenException;
 use Picturae\OaiPmh\Implementation\MetadataFormatType as ImplementationMetadataFormatType;
@@ -27,10 +27,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class Repository implements InterfaceRepository
 {
-    private $dataService;
-    private $dataConvertersService;
-    private $dataConverter;
-
     private $oaiBaseUrl;
     private $repositoryName;
     private $contactEmail;
@@ -38,14 +34,16 @@ class Repository implements InterfaceRepository
     private $paginationSize;
 
     private $recordRepository;
+    private $setRepository;
 
     /**
      * Constructor.
      *
      * @param RecordRepository
      */
-    public function __construct(DOCRecordRepository $recordRepository) {
+    public function __construct(DOCRecordRepository $recordRepository, SetRepository $setRepository) {
         $this->recordRepository = $recordRepository;
+        $this->setRepository = $setRepository;
     }
 
     /**
@@ -71,8 +69,11 @@ class Repository implements InterfaceRepository
      */
     public function listSets()
     {
+        $allSets = $this->setRepository->findAll();
         $items = [];
-        $items[] = new Set('set:all', 'All records');
+        foreach($allSets as $set) {
+            $items[] = new Set($set->getSpec(), $set->getName());
+        }
         return new SetList($items);
     }
 
@@ -106,10 +107,11 @@ class Repository implements InterfaceRepository
 
         $updated = $record->getUpdated();
         $xml = $record->getRaw();
+        $sets = $record->getSets();
         $metadata = new \DOMDocument();
         $metadata->loadXML($xml);
 
-        $header = new Header($identifier, $updated);
+        $header = new Header($identifier, $updated, $sets);
         return new Record($header, $metadata);
     }
 
@@ -128,13 +130,18 @@ class Repository implements InterfaceRepository
         $limit = $this->getPaginationSize();
 
         if (is_null($from) && is_null($until)) {
-            $records = $this->recordRepository->findBy(array(), null, $limit, $offset);
+            if(is_null($set)) {
+                $records = $this->recordRepository->findBy(array(), null, $limit, $offset);
+                $totalCount = $this->recordRepository->count();
+            } else {
+                $records = $this->recordRepository->findBy(array('sets' => $set), null, $limit, $offset);
+                $totalCount = count($this->recordRepository->findBy(array('sets' => $set), null, null, null));
+            }
             $intervalCount = count($records);
-            $totalCount = $this->recordRepository->count();
         } else {
             $records = $this->recordRepository->findByBetweenFromUntil($from, $until, $limit, $offset);
             $intervalCount = $records->count(true);
-            $totalCount = $this->recordRepository->findByBetweenFromUntil($from, $until, null, null, true);
+            $totalCount = count($this->recordRepository->findByBetweenFromUntil($from, $until, null, null, true));
         }
 
         $token = null;
@@ -148,12 +155,12 @@ class Repository implements InterfaceRepository
             $identifiers = $record->getRecordIds();
             $updated = $record->getUpdated();
             $xml = $record->getRaw();
-
+            $sets = $record->getSets();
             $metadata = new \DOMDocument();
             $metadata->loadXML($xml);
 
             $identifier = array_pop($identifiers);
-            $header = new Header($identifier, $updated);
+            $header = new Header($identifier, $updated, $sets);
             $items[] = new Record($header, $metadata);
         }
 
@@ -172,6 +179,7 @@ class Repository implements InterfaceRepository
         $params = $this->decodeResumptionToken($token);
         extract($params);
 
+        //TODO does this even work?
         $records = $this->listRecords($metadataPrefix, $from, $until, $set, $offset);
 
         $totalCount = $records->getCompleteListSize();

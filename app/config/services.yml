@@ -31,13 +31,13 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: createMainMenu, alias: main }
             - { name: knp_menu.menu_builder, method: createProfileMenu, alias: profile }
-    
+
     datahub.oai.http_foundation_factory:
         class: Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory
 
     datahub.oai.repository:
         class: DataHub\OAIBundle\Repository\Repository
-        arguments: ['@datahub.resource_api.repository.default']
+        arguments: ['@datahub.resource_api.repository.default', '@datahub.set.repository.default']
         calls:
             - [setRepositoryName, [%datahub_oai_repo_name%]]
             - [setContactEmail, [%datahub_oai_contact_email%]]
@@ -55,20 +55,16 @@ services:
         factory: ["@doctrine_mongodb", getRepository]
         arguments: [DataHub\ResourceAPIBundle\Document\Record]
 
+    datahub.set.repository.default:
+        class: DataHub\SetBundle\Repository\SetRepository
+        factory: ["@doctrine_mongodb", getRepository]
+        arguments: [DataHub\SetBundle\Document\Set]
+
     datahub.resource_api.param_converter.record_converter:
         class: DataHub\ResourceAPIBundle\Request\ParamConverter\RecordParamConverter
         tags:
             - { name: request.param_converter, converter: record_converter }
         arguments: ['@doctrine_mongodb']
-
-    datahub.resource.datatype.datatypeRegister:
-        class: DataHub\ResourceBundle\DataType\DataTypeRegister
-
-    datahub.resource.builder.converter.factory:
-        class: DataHub\ResourceBundle\Builder\ConverterFactory
-        arguments: ["@datahub.resource.datatype.datatypeRegister"]
-        calls:
-          - ['setConverter', ['%datahub_enabled_data_type%']]
 
     datahub.resource.datatype.datatypeRegister:
         class: DataHub\ResourceBundle\DataType\DataTypeRegister
