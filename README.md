@@ -144,10 +144,11 @@ The endpoint is available via the `/oai` path.
 
 ```
 GET oai/?metadataPrefix=oai_lido&verb=ListIdentifiers
+GET oai/?metadataPrefix=oai_lido&verb=ListSets
 GET oai/?metadataPrefix=oai_lido&verb=ListRecords
-GET oai/?metadataPrefix=oai_lid&verb=GetRecord&identifier=objectPID
-GET oai/?metadataPrefix=oai_lid&verb=GetRecord&identifier=objectPID
-GET oai/?metadataPrefix=oai_lido&verb=ListIdentifiers&from=2017-06-29T05:22:30Z&until=2017-07-14T04:22:30Z
+GET oai/?metadataPrefix=oai_lido&verb=ListRecords&metadataPrefix=oai_lido&set=creator:brueghel_pieter_ii
+GET oai/?metadataPrefix=oai_lid&verb=GetRecord&metadataPrefix=oai_lido&identifier=objectPID
+GET oai/?metadataPrefix=oai_lido&verb=ListIdentifiers&metadataPrefix=oai_lido&from=2017-06-29T05:22:30Z&until=2017-07-14T04:22:30Z
 ```
 
 The datahub implements grouping of records into sets, but no soft deletes. As such, the OAI endpoint doesn't indicate whether a record has been deleted.
