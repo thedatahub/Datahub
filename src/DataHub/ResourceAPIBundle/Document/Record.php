@@ -40,6 +40,11 @@ class Record
     protected $created;
 
     /**
+     * @ODM\Field(type="collection")
+     */
+    protected $sets;
+
+    /**
      * @var \DateTime $updated
      *
      * @ODM\Field(type="date")
@@ -87,6 +92,20 @@ class Record
     public function getCreated()
     {
         return $this->created;
+    }
+
+    public function getSets()
+    {
+        if(!$this->sets) {
+            return array();
+        } else {
+            return $this->sets;
+        }
+    }
+
+    public function setSets($sets)
+    {
+        $this->sets = $sets;
     }
 
     public function getRaw() {

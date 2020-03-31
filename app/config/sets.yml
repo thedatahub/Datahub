@@ -1,0 +1,12 @@
+parameters:
+    sets:
+        institution: 'administrativeMetadata/recordWrap/recordSource/legalBodyName/appellationValue'
+        creator:
+            - 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventActor/actorInRole/actor/nameActorSet/appellationValue[@pref="alternate"]'
+            - 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventActor/actorInRole/actor/nameActorSet/appellationValue[@pref="preferred"]'
+        period: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/periodName/term'
+        object_category:
+            - 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="objectcategorie"]/term[@pref="alternate"]'
+            - 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="objectcategorie"]/term[@pref="preferred"]'
+        subject: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectConcept/term'
+        material: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventMaterialsTech/materialsTech/termMaterialsTech/term[@pref="preferred"]'
