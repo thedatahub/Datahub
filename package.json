@@ -2,7 +2,7 @@
   "dependencies": {
     "bootstrap-sass": "^3.4.1",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.4.0",
+    "jquery": "^3.5.0",
     "selectize": "^0.12.4",
     "timeago": "^1.6.3"
   },
