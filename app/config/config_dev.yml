@@ -32,9 +32,9 @@ monolog:
 
 swiftmailer:
     transport: gmail
-    username: matthias.vandermaesen@gmail.com
-    password: rhuttmcbqyrvqgji
-    delivery_address: ['matthias.vandermaesen@gmail.com']
+    username: gmail_email_address
+    password: gmail_app_password
+    delivery_address: ['delivery_address']
 
 #swiftmailer:
 #    delivery_address: me@example.com
