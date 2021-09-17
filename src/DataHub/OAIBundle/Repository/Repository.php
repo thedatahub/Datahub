@@ -140,7 +140,7 @@ class Repository implements InterfaceRepository
             $intervalCount = count($records);
         } else {
             $records = $this->recordRepository->findByBetweenFromUntil($from, $until, $limit, $offset);
-            $intervalCount = count($records);
+            $intervalCount = $records->count(true);
             $totalCount = $this->recordRepository->findByBetweenFromUntil($from, $until, null, null, true);
         }
 
