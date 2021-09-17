@@ -9,4 +9,5 @@ parameters:
             - 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="objectcategorie"]/term[@pref="alternate"]'
             - 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="objectcategorie"]/term[@pref="preferred"]'
         subject: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectConcept/term'
-        material: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventMaterialsTech/materialsTech/termMaterialsTech/term[@pref="preferred"]'
+        material: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventMaterialsTech/materialsTech/termMaterialsTech[@type="material"]/term[@pref="preferred"]'
+        technique: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventMaterialsTech/materialsTech/termMaterialsTech[@type="technique"]/term[@pref="preferred"]'

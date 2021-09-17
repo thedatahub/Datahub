@@ -141,7 +141,7 @@ class Repository implements InterfaceRepository
         } else {
             $records = $this->recordRepository->findByBetweenFromUntil($from, $until, $limit, $offset);
             $intervalCount = $records->count(true);
-            $totalCount = count($this->recordRepository->findByBetweenFromUntil($from, $until, null, null, true));
+            $totalCount = $this->recordRepository->findByBetweenFromUntil($from, $until, null, null, true);
         }
 
         $token = null;
@@ -179,7 +179,6 @@ class Repository implements InterfaceRepository
         $params = $this->decodeResumptionToken($token);
         extract($params);
 
-        //TODO does this even work?
         $records = $this->listRecords($metadataPrefix, $from, $until, $set, $offset);
 
         $totalCount = $records->getCompleteListSize();
@@ -267,7 +266,7 @@ class Repository implements InterfaceRepository
      *
      * @param int $offset
      * @param DateTime $from
-     * @param DateTime $util
+     * @param DateTime $until
      * @param string $metadataPrefix
      * @param string $set
      *
@@ -276,7 +275,7 @@ class Repository implements InterfaceRepository
     private function encodeResumptionToken(
         $offset = 0,
         DateTime $from = null,
-        DateTime $util = null,
+        DateTime $until = null,
         $metadataPrefix = null,
         $set = null
     ) {
@@ -291,8 +290,8 @@ class Repository implements InterfaceRepository
             $params['from'] = $from->getTimestamp();
         }
 
-        if ($util) {
-            $params['until'] = $util->getTimestamp();
+        if ($until) {
+            $params['until'] = $until->getTimestamp();
         }
 
         return base64_encode(json_encode($params));
